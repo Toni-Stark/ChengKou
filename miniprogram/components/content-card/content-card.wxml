@@ -1,0 +1,40 @@
+<view class="content-card card" bindtap="onTap" data-id="{{item._id}}">
+  <!-- 标题 -->
+  <view class="card-title font-bold">{{item.title}}</view>
+
+  <!-- 内容 -->
+  <view class="card-content text-secondary text-ellipsis-3">{{item.content}}</view>
+
+  <!-- 图片 -->
+  <view class="card-images" wx:if="{{item.images && item.images.length > 0}}">
+    <image
+      wx:for="{{item.images}}"
+      wx:key="index"
+      class="card-image"
+      src="{{item}}"
+      mode="aspectFill"
+      bindtap="onImageTap"
+      data-index="{{index}}"
+      data-images="{{item.images}}">
+    </image>
+  </view>
+
+  <!-- 底部信息 -->
+  <view class="card-footer flex-between mt-base">
+    <view class="card-meta flex-row align-center">
+      <text class="meta-item text-xs text-placeholder">{{item.publishTime}}</text>
+      <text class="meta-item text-xs text-placeholder">浏览 {{item.views || 0}}</text>
+    </view>
+
+    <view class="card-actions flex-row align-center" wx:if="{{showActions}}" catchtap="stopPropagation">
+      <view class="action-btn" bindtap="onLike" data-id="{{item._id}}">
+        <text class="action-icon">♥</text>
+        <text class="action-text text-xs">{{item.likes || 0}}</text>
+      </view>
+      <view class="action-btn" bindtap="onShare" data-id="{{item._id}}">
+        <text class="action-icon">↗</text>
+        <text class="action-text text-xs">分享</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,85 @@
+@import "../../styles/variables.less";
+
+.content-card {
+  transition: all 0.3s;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.card-title {
+  font-size: @font-lg;
+  color: @text-color;
+  margin-bottom: @space-sm;
+}
+
+.card-content {
+  font-size: @font-sm;
+  line-height: 1.6;
+  margin-bottom: @space-base;
+}
+
+// 图片
+.card-images {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: @space-xs;
+  margin-bottom: @space-base;
+}
+
+.card-image {
+  width: 100%;
+  height: 100px;
+  border-radius: @radius-sm;
+  background-color: @bg-gray;
+}
+
+// 单张图片样式（需要在 WXML 中添加 class="single-image"）
+.card-images.single-image {
+  grid-template-columns: 1fr;
+
+  .card-image {
+    height: 200px;
+  }
+}
+
+// 两张图片样式（需要在 WXML 中添加 class="double-image"）
+.card-images.double-image {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+// 底部信息
+.card-footer {
+  padding-top: @space-sm;
+  border-top: 1px solid @border-light;
+}
+
+.card-meta {
+  gap: @space-base;
+}
+
+.card-actions {
+  gap: @space-lg;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: @space-xs;
+  color: @text-placeholder;
+  transition: all 0.3s;
+
+  &:active {
+    color: @primary-color;
+  }
+}
+
+.action-icon {
+  font-size: @font-lg;
+}
+
+.action-text {
+  font-size: @font-xs;
+}

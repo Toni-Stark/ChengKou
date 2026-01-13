@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "动态详情",
+  "usingComponents": {
+    "dynamic-item": "/components/dynamic-item/dynamic-item",
+    "user-avatar": "/components/user-avatar/user-avatar"
+  },
+  "enablePullDownRefresh": false,
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true
+}

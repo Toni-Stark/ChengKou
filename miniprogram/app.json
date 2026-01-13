@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/dynamics/dynamics",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/publish/publish",
+    "pages/dynamic-detail/dynamic-detail",
+    "pages/edit-profile/edit-profile",
+    "pages/my-dynamics/my-dynamics",
+    "pages/my-likes/my-likes",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "小程序",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#07c160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/static/tabbar/2345.png",
+        "selectedIconPath": "/static/tabbar/345.png"
+      },
+      {
+        "pagePath": "pages/dynamics/dynamics",
+        "text": "动态",
+        "iconPath": "/static/tabbar/3456.png",
+        "selectedIconPath": "/static/tabbar/456.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "/static/tabbar/4567.png",
+        "selectedIconPath": "/static/tabbar/567.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000,
+    "uploadFile": 10000
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseAddress",
+    "chooseLocation"
+  ],
+  "cloud": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

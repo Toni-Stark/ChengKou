@@ -1,0 +1,100 @@
+[
+  {
+    "userInfo": {
+      "nickName": "游泳教练小王",
+      "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+    },
+    "displayType": "large",
+    "title": "自由泳技巧分享",
+    "subtitle": "初学者必看",
+    "content": "今天给大家分享一些自由泳的基本技巧。首先是呼吸节奏，建议初学者采用3-5次划手换一次气的方式，不要急于求成。打腿要保持稳定的节奏，脚踝放松，大腿带动小腿。",
+    "images": ["cloud://your-env-id.xxxx/placeholder.jpg"],
+    "location": {
+      "name": "市游泳馆"
+    },
+    "likesCount": 128,
+    "commentsCount": 35,
+    "sharesCount": 0,
+    "status": "published",
+    "isPrivate": false,
+    "createTime": "2026-01-07 14:30:00"
+  },
+  {
+    "userInfo": {
+      "nickName": "蛙泳小达人",
+      "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+    },
+    "displayType": "text",
+    "title": "",
+    "subtitle": "",
+    "content": "今天的训练成果！连续游了20个来回，终于突破了自己的极限。感谢教练的耐心指导，蛙泳的腿部动作终于标准了。",
+    "images": [],
+    "location": {
+      "name": "体育中心游泳池"
+    },
+    "likesCount": 66,
+    "commentsCount": 18,
+    "sharesCount": 0,
+    "status": "published",
+    "isPrivate": false,
+    "createTime": "2026-01-07 13:15:00"
+  },
+  {
+    "userInfo": {
+      "nickName": "游泳爱好者",
+      "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+    },
+    "displayType": "text",
+    "title": "",
+    "subtitle": "",
+    "content": "今天学会了仰泳的换气技巧！原来仰泳换气比自由泳简单多了，因为面部一直朝上。建议初学者可以先从仰泳开始练习，建立对水的信心。坚持就是胜利！",
+    "images": [],
+    "location": null,
+    "likesCount": 42,
+    "commentsCount": 12,
+    "sharesCount": 0,
+    "status": "published",
+    "isPrivate": false,
+    "createTime": "2026-01-07 11:45:00"
+  },
+  {
+    "userInfo": {
+      "nickName": "水上运动达人",
+      "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+    },
+    "displayType": "text",
+    "title": "",
+    "subtitle": "",
+    "content": "周末游泳训练营圆满结束！这次训练营学到了很多专业的游泳技巧，特别是转身和出发的动作要领。感谢所有教练和小伙伴们的陪伴！",
+    "images": [],
+    "location": {
+      "name": "国家游泳中心"
+    },
+    "likesCount": 95,
+    "commentsCount": 24,
+    "sharesCount": 0,
+    "status": "published",
+    "isPrivate": false,
+    "createTime": "2026-01-06 17:20:00"
+  },
+  {
+    "userInfo": {
+      "nickName": "专业游泳教练",
+      "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+    },
+    "displayType": "large",
+    "title": "蝶泳进阶教学",
+    "subtitle": "适合有基础的学员",
+    "content": "蝶泳是四种泳姿中最难掌握的，需要良好的核心力量和身体协调性。今天重点讲解海豚腿的技巧，记住要用腰腹发力，而不是单纯用腿。",
+    "images": ["cloud://your-env-id.xxxx/placeholder.jpg"],
+    "location": {
+      "name": "专业训练馆"
+    },
+    "likesCount": 156,
+    "commentsCount": 48,
+    "sharesCount": 0,
+    "status": "published",
+    "isPrivate": false,
+    "createTime": "2026-01-06 15:00:00"
+  }
+]

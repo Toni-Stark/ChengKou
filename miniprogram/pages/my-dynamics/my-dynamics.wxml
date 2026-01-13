@@ -1,0 +1,34 @@
+<view class="my-dynamics-page page">
+  <!-- 动态列表 -->
+  <view class="dynamics-list" wx:if="{{!isEmpty}}">
+    <view
+      wx:for="{{dynamicsList}}"
+      wx:key="_id"
+      bindtap="onDynamicTap"
+      data-id="{{item._id}}">
+      <dynamic-item
+        item="{{item}}"
+        showDelete="{{true}}"
+        bind:like="onDynamicLike"
+        bind:comment="onDynamicComment"
+        bind:delete="onDeleteDynamic">
+      </dynamic-item>
+    </view>
+
+    <!-- 加载更多提示 -->
+    <view class="load-more" wx:if="{{loading}}">
+      <text class="text-secondary text-sm">加载中...</text>
+    </view>
+
+    <view class="load-more" wx:if="{{!hasMore && dynamicsList.length > 0}}">
+      <text class="text-secondary text-sm">没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{isEmpty && !loading}}">
+    <text class="empty-icon">📝</text>
+    <text class="empty-text text-secondary">还没有发布动态</text>
+    <button class="btn btn-primary mt-lg" bindtap="goToPublish">发布动态</button>
+  </view>
+</view>

@@ -1,0 +1,75 @@
+<view class="container">
+  <!-- 动态内容 -->
+  <view class="dynamic-section" wx:if="{{dynamic}}">
+    <dynamic-item
+      item="{{dynamic}}"
+      bind:like="onDynamicLike"
+      bind:comment="onComment">
+    </dynamic-item>
+  </view>
+
+  <!-- 评论列表 -->
+  <view class="comments-section">
+    <view class="section-title">
+      <text class="title-text">评论 {{dynamic.commentsCount || 0}}</text>
+    </view>
+
+    <view class="comments-list">
+      <view
+        class="comment-item"
+        wx:for="{{commentsList}}"
+        wx:key="_id">
+        <view class="comment-header flex-row">
+          <user-avatar src="{{item.userInfo.avatarUrl}}" size="small"></user-avatar>
+          <view class="comment-info flex-1 ml-sm">
+            <text class="comment-author text-sm font-bold">{{item.userInfo.nickName}}</text>
+            <text class="comment-time text-xs text-placeholder ml-sm">{{item.createTime}}</text>
+          </view>
+          <view
+            class="comment-like-btn {{item.isLiked ? 'liked' : ''}}"
+            bindtap="onCommentLike"
+            data-id="{{item._id}}"
+            data-index="{{index}}">
+            <text class="like-icon">{{item.isLiked ? '❤' : '♡'}}</text>
+            <text class="like-count text-xs" wx:if="{{item.likesCount > 0}}">{{item.likesCount}}</text>
+          </view>
+        </view>
+
+        <view class="comment-content mt-sm">
+          <text class="comment-text">{{item.content}}</text>
+        </view>
+
+        <view class="comment-reply mt-xs" wx:if="{{item.replyToUser}}">
+          <text class="reply-text text-xs text-secondary">回复 {{item.replyToUser.nickName}}</text>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:if="{{commentsList.length === 0 && !loading}}">
+        <text class="empty-text text-secondary">暂无评论，快来抢沙发吧</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 评论输入框 -->
+<view class="comment-input-bar">
+  <view class="input-wrapper">
+    <input
+      class="comment-input"
+      type="text"
+      placeholder="说点什么..."
+      value="{{commentContent}}"
+      bindinput="onCommentInput"
+      confirm-type="send"
+      bindconfirm="submitComment">
+    </input>
+    <button
+      class="submit-btn"
+      size="mini"
+      type="primary"
+
+      bindtap="submitComment">
+      发送
+    </button>
+  </view>
+</view>

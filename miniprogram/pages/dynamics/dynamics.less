@@ -1,0 +1,171 @@
+@import "../../styles/variables.less";
+
+.dynamics-page {
+  padding-bottom: @space-lg;
+  background-color: @bg-gray;
+  min-height: 100vh;
+}
+
+// ======== 顶部选项卡样式 ========
+.tabs-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background-color: #fff;
+  border-bottom: 1rpx solid @border-color;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 @space-lg;
+}
+
+.tab-item {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: all 0.3s;
+
+    .tab-text {
+      color: @primary-color;
+      font-weight: bold;
+      font-size: @font-lg;
+    }
+}
+
+.tab-text {
+  font-size: @font-base;
+  color: @text-secondary;
+  transition: all 0.3s;
+  padding: @space-xs @space-base;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background: @ocean-gradient;
+  border-radius: @radius-round;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 40rpx;
+    opacity: 1;
+  }
+}
+
+// ======== 发布按钮 ========
+.publish-btn {
+  position: fixed;
+  right: @space-lg;
+  bottom: calc(@space-3xl + 50px);
+  width: 112rpx;
+  height: 112rpx;
+  background: @ocean-gradient;
+  border-radius: @radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(30, 136, 229, 0.4);
+  z-index: 100;
+  transition: all 0.3s;
+
+  &:active {
+    transform: scale(0.9);
+    box-shadow: 0 4rpx 12rpx rgba(30, 136, 229, 0.4);
+  }
+}
+
+.publish-icon {
+  font-size: 64rpx;
+  color: #fff;
+  font-weight: 300;
+  line-height: 1;
+}
+
+// ======== 动态列表 ========
+.dynamics-list {
+  padding-top: @space-base;
+  min-height: calc(100vh - 88rpx);
+}
+
+// ======== 加载状态 ========
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: @space-3xl 0;
+}
+
+.loading-text {
+  font-size: @font-base;
+  color: @text-placeholder;
+  margin-top: @space-base;
+}
+
+// ======== 空状态 ========
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: @space-3xl @space-lg;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.empty-image {
+  width: 400rpx;
+  height: 300rpx;
+  margin-bottom: @space-lg;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: @font-base;
+  color: @text-placeholder;
+  margin-bottom: @space-xl;
+  line-height: 1.6;
+}
+
+.empty-btn {
+  padding: @space-sm @space-xl;
+  background: @ocean-gradient;
+  color: #fff;
+  border-radius: @radius-round;
+  font-size: @font-base;
+  transition: all 0.3s;
+
+  &:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+}
+
+// ======== 加载更多 ========
+.load-more {
+  text-align: center;
+  padding: @space-xl 0;
+}
+
+.load-more-text {
+  font-size: @font-sm;
+  color: @text-placeholder;
+}

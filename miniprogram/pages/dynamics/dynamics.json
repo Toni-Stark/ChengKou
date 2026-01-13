@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "dynamic-item": "../../components/dynamic-item/dynamic-item"
+  },
+  "navigationBarTitleText": "动态",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true
+}

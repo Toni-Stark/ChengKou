@@ -1,0 +1,43 @@
+<view class="edit-profile-page page">
+  <view class="container">
+    <!-- 头像 -->
+    <view class="form-item">
+      <text class="label">头像</text>
+      <view class="avatar-wrapper" bindtap="chooseAvatar">
+        <user-avatar src="{{form.avatarUrl}}" size="large"></user-avatar>
+        <text class="change-text">点击更换</text>
+      </view>
+    </view>
+
+    <!-- 昵称 -->
+    <view class="form-item">
+      <text class="label">昵称</text>
+      <input
+        class="input"
+        type="text"
+        value="{{form.nickName}}"
+        placeholder="请输入昵称"
+        maxlength="20"
+        bindinput="onNickNameInput"
+      />
+    </view>
+
+    <!-- 个性签名 -->
+    <view class="form-item">
+      <text class="label">个性签名</text>
+      <textarea
+        class="textarea"
+        value="{{form.signature}}"
+        placeholder="请输入个性签名"
+        maxlength="100"
+        bindinput="onSignatureInput"
+        auto-height
+      />
+    </view>
+
+    <!-- 保存按钮 -->
+    <button class="save-btn btn-primary" bindtap="saveProfile" disabled="{{saving}}">
+      {{saving ? '保存中...' : '保存'}}
+    </button>
+  </view>
+</view>

@@ -1,0 +1,32 @@
+<view class="my-likes-page page">
+  <!-- 点赞列表 -->
+  <view class="likes-list" wx:if="{{!isEmpty}}">
+    <view
+      wx:for="{{likesList}}"
+      wx:key="_id"
+      bindtap="onDynamicTap"
+      data-id="{{item._id}}">
+      <dynamic-item
+        item="{{item}}"
+        bind:like="onDynamicLike"
+        bind:comment="onDynamicComment">
+      </dynamic-item>
+    </view>
+
+    <!-- 加载更多提示 -->
+    <view class="load-more" wx:if="{{loading}}">
+      <text class="text-secondary text-sm">加载中...</text>
+    </view>
+
+    <view class="load-more" wx:if="{{!hasMore && likesList.length > 0}}">
+      <text class="text-secondary text-sm">没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{isEmpty && !loading}}">
+    <text class="empty-icon">❤️</text>
+    <text class="empty-text text-secondary">还没有点赞过任何动态</text>
+    <button class="btn btn-primary mt-lg" bindtap="goToDynamics">去看看</button>
+  </view>
+</view>

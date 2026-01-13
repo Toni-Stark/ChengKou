@@ -1,0 +1,17 @@
+{
+  "name": "miniprogram",
+  "version": "1.0.0",
+  "description": "小程序项目 - 支持Less预处理器",
+  "main": "app.js",
+  "scripts": {
+    "dev": "echo 'Development mode - Less files will be auto-compiled by WeChat DevTools'",
+    "build": "echo 'Build mode - Less files will be compiled to WXSS by WeChat DevTools'"
+  },
+  "keywords": ["miniprogram", "wechat", "less"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "less": "^4.5.1"
+  }
+}
+

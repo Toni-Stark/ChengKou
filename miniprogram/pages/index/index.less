@@ -1,0 +1,169 @@
+@import "../../styles/variables.less";
+
+.index-page {
+  padding-bottom: @space-lg;
+  background-color: @bg-color;
+}
+
+// 最新动态卡片区域
+.featured-card-wrapper {
+  padding-top: @space-lg;
+  padding-bottom: @space-lg;
+}
+
+.featured-card {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; // 等宽等高（1:1 比例）
+  border-radius: @radius-lg;
+  overflow: hidden;
+  box-shadow: @shadow-base;
+  transition: all 0.3s;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: @shadow-sm;
+  }
+}
+
+.featured-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.featured-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: @space-xl @space-lg;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: @space-xs;
+}
+
+.featured-title {
+  font-size: @font-xl;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.featured-desc {
+  font-size: @font-sm;
+  opacity: 0.9;
+}
+
+// Tab区域
+.tab-section {
+  padding-bottom: @space-xl;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: @space-base;
+}
+
+.tab-button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: @space-2xl @space-lg;
+  background-color: @bg-white;
+  border-radius: @radius-lg;
+  box-shadow: @shadow-sm;
+  transition: all 0.3s;
+
+  &:active {
+    transform: scale(0.95);
+    background-color: @primary-color;
+
+    .tab-icon {
+      transform: scale(1.2);
+    }
+
+    .tab-text {
+      color: #fff;
+    }
+  }
+}
+
+.tab-icon {
+  font-size: 48px;
+  margin-bottom: @space-sm;
+  transition: all 0.3s;
+}
+
+.tab-text {
+  font-size: @font-base;
+  font-weight: 500;
+  color: @text-color;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+// 联系方式区域
+.contact-section {
+  padding-bottom: @space-lg;
+}
+
+.contact-card {
+  padding: @space-xl @space-lg;
+  border-radius: @radius-lg;
+  box-shadow: @shadow-sm;
+}
+
+.contact-title {
+  font-size: @font-lg;
+  font-weight: bold;
+  color: @text-color;
+  margin-bottom: @space-lg;
+  text-align: center;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: @space-base 0;
+  border-bottom: 1px solid @border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.contact-label {
+  font-size: @font-base;
+  color: @text-secondary;
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.contact-value {
+  flex: 1;
+  font-size: @font-base;
+  color: @text-color;
+  font-weight: 500;
+}
+
+.copy-icon {
+  font-size: 24px;
+  padding: @space-xs;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  opacity: 0.6;
+
+  &:active {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}

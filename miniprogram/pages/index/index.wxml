@@ -1,0 +1,47 @@
+<view class="index-page page">
+  <!-- 最新动态卡片 -->
+  <view class="featured-card-wrapper container">
+    <view class="featured-card" bindtap="onFeaturedCardTap">
+      <image
+        class="featured-image"
+        src="{{featuredDynamic.image || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'}}"
+        mode="aspectFill">
+      </image>
+      <view class="featured-overlay">
+        <text class="featured-title">{{featuredDynamic.title || '最新动态'}}</text>
+        <text class="featured-desc">{{featuredDynamic.desc || '点击查看详情'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tab区域 -->
+  <view class="tab-section container">
+    <view class="tab-buttons flex-row">
+      <view class="tab-button" bindtap="onVideoTabTap">
+        <view class="tab-icon">📹</view>
+        <text class="tab-text">游泳教学视频</text>
+      </view>
+      <view class="tab-button" bindtap="onCertificationTabTap">
+        <view class="tab-icon">🏊</view>
+        <text class="tab-text">教练认证</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系方式区域 -->
+  <view class="contact-section container">
+    <view class="contact-card bg-white">
+      <view class="contact-title">联系我们</view>
+      <view class="contact-item">
+        <text class="contact-label">微信：</text>
+        <text class="contact-value" selectable="true">{{contactInfo.wechat}}</text>
+        <view class="copy-icon" bindtap="onCopyWechat" data-text="{{contactInfo.wechat}}">📋</view>
+      </view>
+      <view class="contact-item">
+        <text class="contact-label">QQ：</text>
+        <text class="contact-value" selectable="true">{{contactInfo.qq}}</text>
+        <view class="copy-icon" bindtap="onCopyQQ" data-text="{{contactInfo.qq}}">📋</view>
+      </view>
+    </view>
+  </view>
+</view>

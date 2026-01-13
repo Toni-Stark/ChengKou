@@ -1,0 +1,32 @@
+<view class="login-page page">
+  <view class="login-container">
+    <!-- Logo区域 -->
+    <view class="logo-section">
+      <image class="logo" src="cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png" mode="aspectFill"></image>
+      <text class="app-name">小程序</text>
+    </view>
+
+    <!-- 介绍文字 -->
+    <view class="intro-section">
+      <text class="intro-title">欢迎使用</text>
+      <text class="intro-desc">登录后可以浏览官方内容、发布动态、管理个人信息</text>
+    </view>
+
+    <!-- 登录按钮 -->
+    <view class="button-section">
+      <button class="login-btn btn-primary" style="color:#ffffff" bindtap="handleLogin">
+        <text>微信登录</text>
+      </button>
+    </view>
+
+    <!-- 用户协议 -->
+    <view class="agreement-section">
+      <view class="agreement-text">
+        登录即表示同意
+        <text class="link">《用户协议》</text>
+        和
+        <text class="link">《隐私政策》</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "name": "silentLogin",
+  "version": "1.0.0",
+  "description": "静默登录，如果用户已注册则自动登录",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

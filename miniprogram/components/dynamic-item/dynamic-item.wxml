@@ -1,0 +1,89 @@
+<view class="dynamic-item card">
+  <!-- 用户信息 -->
+  <view class="dynamic-header flex-row align-center" bindtap="onUserTap">
+    <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
+    <view class="user-info flex-1 ml-base">
+      <text class="user-name text-base font-bold">{{item.userInfo.nickName}}</text>
+      <text class="dynamic-time text-xs text-placeholder">{{item.createTime}}</text>
+    </view>
+  </view>
+
+  <!-- 动态内容 - 根据 displayType 展示不同样式 -->
+
+  <!-- 大图模式 (large) -->
+  <view wx:if="{{item.displayType === 'large'}}" class="dynamic-large-mode">
+    <view class="large-image-wrapper mt-base" wx:if="{{item.images && item.images.length > 0}}">
+      <image
+        class="large-image"
+        src="{{item.images[0]}}"
+        mode="aspectFill"
+        bindtap="onImageTap"
+        data-index="0"
+        data-images="{{item.images}}">
+      </image>
+    </view>
+    <view class="large-content mt-base">
+      <text class="large-title text-lg font-bold">{{item.title}}</text>
+      <text class="large-subtitle text-sm text-secondary mt-xs" wx:if="{{item.subtitle}}">{{item.subtitle}}</text>
+      <text class="content-text mt-sm" wx:if="{{item.content}}">{{item.content}}</text>
+    </view>
+  </view>
+
+  <!-- 九宫格模式 (grid9) 或默认 -->
+  <view wx:elif="{{item.displayType === 'grid9' || (!item.displayType && item.images && item.images.length > 0)}}" class="dynamic-grid-mode">
+    <view class="dynamic-content mt-base" wx:if="{{item.content}}">
+      <text class="content-text">{{item.content}}</text>
+    </view>
+
+    <!-- 图片九宫格 -->
+    <view
+      class="dynamic-images mt-base {{item.images.length === 1 ? 'single-image' : ''}} {{item.images.length === 2 ? 'double-image' : ''}}"
+      wx:if="{{item.images && item.images.length > 0}}">
+      <image
+        wx:for="{{item.images}}"
+        wx:for-item="imageUrl"
+        wx:for-index="imgIndex"
+        wx:key="imgIndex"
+        class="dynamic-image"
+        src="{{imageUrl}}"
+        mode="aspectFill"
+        bindtap="onImageTap"
+        data-index="{{imgIndex}}"
+        data-images="{{item.images}}">
+      </image>
+    </view>
+  </view>
+
+  <!-- 纯文本模式 (text) -->
+  <view wx:else class="dynamic-text-mode">
+    <view class="dynamic-content mt-base">
+      <text class="content-text">{{item.content}}</text>
+    </view>
+  </view>
+
+  <!-- 位置信息 -->
+  <view class="dynamic-location flex-row align-center mt-base" wx:if="{{item.location}}">
+    <text class="location-icon text-sm">📍</text>
+    <text class="location-text text-sm text-secondary">{{item.location.name}}</text>
+  </view>
+
+  <!-- 操作栏 -->
+  <view class="dynamic-actions flex-between mt-lg pt-base border-top">
+    <view class="action-btn {{item.isLiked ? 'liked' : ''}}" catch:tap="onLike" data-id="{{item._id}}">
+      <text class="action-icon">{{item.isLiked ? '❤' : '♡'}}</text>
+      <text class="action-text text-sm">{{item.likesCount || 0}}</text>
+    </view>
+    <view class="action-btn" bindtap="onComment" data-id="{{item._id}}">
+      <text class="action-icon">💬</text>
+      <text class="action-text text-sm">{{item.commentsCount || 0}}</text>
+    </view>
+    <view class="action-btn" catch:tap="onShare" data-id="{{item._id}}">
+      <text class="action-icon">↗</text>
+      <text class="action-text text-sm">分享</text>
+    </view>
+    <view class="action-btn" wx:if="{{showDelete}}" catch:tap="onDelete" data-id="{{item._id}}">
+      <text class="action-icon">🗑</text>
+      <text class="action-text text-sm">删除</text>
+    </view>
+  </view>
+</view>
