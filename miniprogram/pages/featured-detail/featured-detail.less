@@ -1,0 +1,180 @@
+// pages/featured-detail/featured-detail.less
+@import '../../styles/variables.less';
+@import '../../styles/common.less';
+
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+// 轮播图区域
+.swiper-container {
+  width: 100%;
+  height: 500rpx;
+  background-color: #000;
+}
+
+.media-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-image {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-video {
+  width: 100%;
+  height: 100%;
+}
+
+// 内容区域
+.content-section {
+  background-color: #fff;
+  padding: @space-xl @space-lg;
+  margin-bottom: @space-lg;
+}
+
+.content-title {
+  font-size: @font-xl;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: @space-base;
+}
+
+.content-desc {
+  font-size: @font-base;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: @space-lg;
+}
+
+// 信息列表
+.info-list {
+  border-top: 1px solid #f0f0f0;
+  padding-top: @space-lg;
+}
+
+.info-item {
+  display: flex;
+  padding: @space-sm 0;
+  font-size: @font-base;
+
+  .info-label {
+    color: #999;
+    min-width: 140rpx;
+  }
+
+  .info-value {
+    color: #333;
+    flex: 1;
+  }
+}
+
+// 报名区域
+.registration-section {
+  background-color: #fff;
+  padding: @space-xl @space-lg;
+  margin: 0 @space-lg;
+  border-radius: @radius-lg;
+  box-shadow: @shadow-base;
+}
+
+.section-title {
+  font-size: @font-lg;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: @space-xl;
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60rpx;
+    height: 4rpx;
+    background: linear-gradient(90deg, @primary-light, @primary-dark);
+    border-radius: 2rpx;
+  }
+}
+
+// 表单样式
+.form-item {
+  margin-bottom: @space-xl;
+}
+
+.form-label {
+  font-size: @font-base;
+  color: #333;
+  margin-bottom: @space-sm;
+  display: flex;
+  align-items: center;
+
+  .required {
+    color: @error-color;
+    margin-right: 4rpx;
+    font-size: @font-lg;
+  }
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 @space-lg;
+  font-size: @font-base;
+  background-color: #f5f5f5;
+  border-radius: @radius-lg;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+
+  &:focus {
+    background-color: #fff;
+    border-color: @primary-light;
+  }
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: @space-lg;
+  font-size: @font-base;
+  background-color: #f5f5f5;
+  border-radius: @radius-lg;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+
+  &:focus {
+    background-color: #fff;
+    border-color: @primary-light;
+  }
+}
+
+// 提交按钮
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, @primary-light, @primary-dark);
+  color: #fff;
+  font-size: @font-lg;
+  font-weight: 600;
+  border-radius: @radius-lg;
+  border: none;
+  margin-top: @space-xl;
+  box-shadow: 0 8rpx 20rpx rgba(66, 165, 245, 0.3);
+  transition: all 0.3s;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 4rpx 12rpx rgba(66, 165, 245, 0.3);
+  }
+
+  &::after {
+    border: none;
+  }
+}

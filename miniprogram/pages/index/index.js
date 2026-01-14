@@ -35,11 +35,12 @@ Page({
 
   // 点击最新动态卡片
   onFeaturedCardTap() {
-    wx.showModal({
-      title: '最新动态',
-      content: '功能开发中，敬请期待',
-      showCancel: false
+    wx.navigateTo({
+      url: '/pages/featured-detail/featured-detail'
     });
+    // wx.navigateTo({
+      // url: '/pages/get-openid/get-openid'
+    // });
   },
 
   // 点击游泳教学视频Tab

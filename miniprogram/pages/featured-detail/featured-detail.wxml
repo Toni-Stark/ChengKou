@@ -1,0 +1,100 @@
+<!--pages/featured-detail/featured-detail.wxml-->
+<view class="container">
+  <!-- 轮播图区域 -->
+  <view class="swiper-container">
+    <swiper
+      class="media-swiper"
+      indicator-dots="{{true}}"
+      indicator-color="rgba(255, 255, 255, 0.5)"
+      indicator-active-color="#fff"
+      autoplay="{{autoplay}}"
+      interval="{{3000}}"
+      duration="{{500}}"
+      circular="{{true}}">
+      <block wx:for="{{mediaList}}" wx:key="index">
+        <swiper-item>
+          <!-- 图片类型 -->
+          <image
+            wx:if="{{item.type === 'image'}}"
+            class="swiper-image"
+            src="{{item.url}}"
+            mode="aspectFill"
+          />
+          <!-- 视频类型 -->
+          <video
+            wx:if="{{item.type === 'video'}}"
+            class="swiper-video"
+            src="{{item.url}}"
+            object-fit="cover"
+            controls="{{true}}"
+            autoplay="{{false}}"
+            loop="{{false}}"
+            bindplay="onVideoPlay"
+            data-index="{{index}}"
+          />
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <!-- 内容详情 -->
+  <view class="content-section">
+    <view class="content-title">{{contentData.title}}</view>
+    <view class="content-desc">{{contentData.description}}</view>
+
+    <!-- 课程信息 -->
+    <view class="info-list" wx:if="{{contentData.courseInfo}}">
+      <view class="info-item" wx:for="{{contentData.courseInfo}}" wx:key="label">
+        <text class="info-label">{{item.label}}：</text>
+        <text class="info-value">{{item.value}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报名表单 -->
+  <view class="registration-section">
+    <view class="section-title">立即报名</view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>姓名</text>
+      </view>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入您的姓名"
+        value="{{formData.name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>手机号</text>
+      </view>
+      <input
+        class="form-input"
+        type="number"
+        placeholder="请输入您的手机号"
+        maxlength="11"
+        value="{{formData.phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">备注</view>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入备注信息（选填）"
+        maxlength="200"
+        value="{{formData.remark}}"
+        bindinput="onRemarkInput"
+      />
+    </view>
+
+    <button class="submit-btn" bindtap="onSubmit">提交报名</button>
+  </view>
+</view>

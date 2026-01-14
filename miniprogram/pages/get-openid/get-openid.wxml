@@ -1,0 +1,28 @@
+<!--获取管理员 openid 的临时页面-->
+<view class="container">
+  <view class="title">获取管理员 OpenID</view>
+
+  <view class="info-box">
+    <text class="label">你的 OpenID：</text>
+    <view class="openid-box">
+      <text class="openid" selectable="true">{{openid || '加载中...'}}</text>
+    </view>
+  </view>
+
+  <view class="tips">
+    <text class="tips-title">使用说明：</text>
+    <text class="tips-item">1. OpenID 已自动获取并显示在上方</text>
+    <text class="tips-item">2. 长按 OpenID 可以复制</text>
+    <text class="tips-item">3. 将复制的 OpenID 发送给开发者配置</text>
+    <text class="tips-item">4. 配置完成后可删除此页面</text>
+
+    <view class="divider"></view>
+
+    <text class="tips-title">⚠️ 如果显示"加载中..."：</text>
+    <text class="tips-item">1. 在开发者工具找到 cloudfunctions/getOpenid</text>
+    <text class="tips-item">2. 右键 → "上传并部署：云端安装依赖"</text>
+    <text class="tips-item">3. 等待上传完成，重新打开此页面</text>
+  </view>
+
+  <button class="copy-btn" bindtap="copyOpenid">复制 OpenID</button>
+</view>

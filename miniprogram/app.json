@@ -6,10 +6,12 @@
     "pages/login/login",
     "pages/publish/publish",
     "pages/dynamic-detail/dynamic-detail",
+    "pages/featured-detail/featured-detail",
     "pages/edit-profile/edit-profile",
     "pages/my-dynamics/my-dynamics",
     "pages/my-likes/my-likes",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/get-openid/get-openid"
   ],
   "window": {
     "backgroundTextStyle": "light",
