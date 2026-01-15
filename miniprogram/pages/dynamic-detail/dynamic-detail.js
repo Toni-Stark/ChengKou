@@ -62,7 +62,7 @@ Page({
         this.loadMockDynamic();
         return;
       }
-
+      let openid = wx.getStorageSync('openid')
       const result = await request.callFunction('getDynamicDetail', {
         dynamicId: this.data.dynamicId
       }, {
@@ -70,7 +70,7 @@ Page({
       });
       console.log(result)
       this.setData({
-        dynamic: result
+        dynamic: openid?result:{}
       });
     } catch (error) {
       console.error('加载动态失败:', error);
@@ -81,9 +81,10 @@ Page({
   // 加载模拟动态数据
   loadMockDynamic() {
     const mockDynamic = {}
+    let openid = wx.getStorageSync('openid')
 
     this.setData({
-      dynamic: mockDynamic
+      dynamic: openid?mockDynamic:{}
     });
   },
 
@@ -111,9 +112,10 @@ Page({
       const newList = loadMore
         ? [...this.data.commentsList, ...result.list]
         : result.list;
+      let openid = wx.getStorageSync('openid')
 
       this.setData({
-        commentsList: newList,
+        commentsList: openid?newList:[],
         hasMore: result.hasMore,
         loading: false
       });

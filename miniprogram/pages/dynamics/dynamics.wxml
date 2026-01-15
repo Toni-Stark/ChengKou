@@ -1,6 +1,6 @@
 <view class="dynamics-page page">
   <!-- 发布按钮 -->
-  <view class="publish-btn" bindtap="goToPublish">
+  <view wx:if="{{openid}}" class="publish-btn" bindtap="goToPublish">
     <text class="publish-icon">+</text>
   </view>
 

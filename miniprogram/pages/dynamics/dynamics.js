@@ -7,6 +7,7 @@ Page({
     page: 1,
     pageSize: 10,
     hasMore: true,
+    openid: null,
     loading: false,
     shareInfo: null // 保存当前要分享的动态信息
   },
@@ -73,8 +74,8 @@ Page({
   // 加载动态列表
   async loadDynamics(isPullRefresh = false) {
     if (this.data.loading) return;
-
-    this.setData({ loading: true });
+    let openid = wx.getStorageSync('openid')
+    this.setData({ loading: true,openid });
 
     try {
       // 检查云开发是否可用
@@ -97,7 +98,7 @@ Page({
       const newList = this.data.page === 1 ? result.list : [...this.data.dynamicsList, ...result.list];
 
       this.setData({
-        dynamicsList: newList,
+        dynamicsList: openid?newList:[],
         hasMore: result.hasMore,
         loading: false
       });
