@@ -166,10 +166,11 @@ Page({
 
   // 分享
   onShare(e) {
-    const id = e.detail.id;
-    const dynamic = this.data.dynamicsList.find(item => item._id === id);
+    const { id, item } = e.detail;
+    const dynamic = item || this.data.dynamicsList.find(d => d._id === id);
 
     if (!dynamic) {
+      console.warn('未找到要分享的动态');
       return;
     }
 
@@ -178,11 +179,7 @@ Page({
       shareInfo: dynamic
     });
 
-    // 触发分享面板
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    });
+    console.log('准备分享动态:', dynamic._id);
   },
 
   // 删除动态

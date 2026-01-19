@@ -77,10 +77,10 @@
       <text class="action-icon">💬</text>
       <text class="action-text text-sm">{{item.commentsCount || 0}}</text>
     </view>
-    <view class="action-btn" catch:tap="onShare" data-id="{{item._id}}">
+    <button class="action-btn share-btn" open-type="share" catch:tap="onShare" data-id="{{item._id}}">
       <text class="action-icon">↗</text>
       <text class="action-text text-sm">分享</text>
-    </view>
+    </button>
     <view class="action-btn" wx:if="{{showDelete}}" catch:tap="onDelete" data-id="{{item._id}}">
       <text class="action-icon">🗑</text>
       <text class="action-text text-sm">删除</text>

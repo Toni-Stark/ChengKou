@@ -4,7 +4,8 @@
     <dynamic-item
       item="{{dynamic}}"
       bind:like="onDynamicLike"
-      bind:comment="onComment">
+      bind:comment="onComment"
+      bind:share="onShare">
     </dynamic-item>
   </view>
 

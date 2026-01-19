@@ -267,6 +267,13 @@ Page({
     }
   },
 
+  // 处理分享事件
+  onShare(e) {
+    console.log('准备分享动态:', this.data.dynamicId);
+    // 在详情页中，分享数据直接从 this.data.dynamic 获取
+    // onShareAppMessage 会自动被触发
+  },
+
   // 分享给好友
   onShareAppMessage() {
     const dynamic = this.data.dynamic;

@@ -84,7 +84,11 @@ Component({
 
     onShare(e) {
       const id = e.currentTarget.dataset.id;
-      this.triggerEvent('share', { id });
+      // 通知父组件保存分享信息，传递完整的动态数据
+      this.triggerEvent('share', {
+        id,
+        item: this.data.item
+      });
     },
 
     onDelete(e) {
