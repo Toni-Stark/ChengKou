@@ -14,13 +14,35 @@ exports.main = async (event, context) => {
   const openid = wxContext.OPENID;
   const { userInfo } = event;
 
+  // ===== 调试日志：打印关键信息 =====
+  console.log('===== 登录调试信息 =====');
+  console.log('wxContext:', JSON.stringify(wxContext));
+  console.log('OPENID:', openid);
+  console.log('APPID:', wxContext.APPID);
+  console.log('UNIONID:', wxContext.UNIONID);
+  console.log('前端传入的userInfo:', JSON.stringify(userInfo));
+  console.log('========================');
+
+  // 检查 openid 是否有效
+  if (!openid) {
+    console.error('错误：无法获取用户 openid');
+    return {
+      code: -1,
+      message: '获取用户身份失败，请重试',
+      data: null
+    };
+  }
+
   try {
     // 查询用户是否已存在
+    console.log('查询用户，openid:', openid);
     const userResult = await db.collection('users')
       .where({
         _openid: openid
       })
       .get();
+
+    console.log('查询结果，找到', userResult.data.length, '条记录');
 
     const now = db.serverDate();
 
