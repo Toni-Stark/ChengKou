@@ -9,7 +9,9 @@ Page({
     hasMore: true,
     openid: null,
     loading: false,
-    shareInfo: null // 保存当前要分享的动态信息
+    shareInfo: null, // 保存当前要分享的动态信息
+    userInfo: null, // 当前用户信息
+    isShow: false // 当前用户的 is_show 权限
   },
 
   onLoad(options) {
@@ -20,7 +22,24 @@ Page({
       this.trySilentLogin();
     }
 
+    // 加载用户信息
+    this.loadUserInfo();
     this.loadDynamics();
+  },
+
+  // 加载用户信息
+  async loadUserInfo() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        this.setData({
+          userInfo: userInfo,
+          isShow: userInfo.is_show !== false // 默认为true，只有明确设置为false才隐藏
+        });
+      }
+    } catch (error) {
+      console.error('加载用户信息失败:', error);
+    }
   },
 
   // 尝试静默登录
@@ -41,6 +60,9 @@ Page({
   },
 
   onShow() {
+    // 重新加载用户信息，确保权限是最新的
+    this.loadUserInfo();
+
     // 从发布页面返回时刷新列表
     if (this.data.shouldRefresh) {
       this.refreshDynamics();

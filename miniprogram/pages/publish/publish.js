@@ -17,6 +17,22 @@ Page({
     ]
   },
 
+  onLoad() {
+    // 检查用户的 is_show 权限
+    const userInfo = wx.getStorageSync('userInfo');
+    if (!userInfo || userInfo.is_show === false) {
+      wx.showModal({
+        title: '提示',
+        content: '您暂无发布动态的权限',
+        showCancel: false,
+        success: () => {
+          wx.navigateBack();
+        }
+      });
+      return;
+    }
+  },
+
   onDisplayTypeChange(e) {
     this.setData({
       displayType: e.detail.value

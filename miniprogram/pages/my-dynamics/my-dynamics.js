@@ -8,7 +8,9 @@ Page({
     pageSize: 10,
     hasMore: true,
     loading: false,
-    isEmpty: false
+    isEmpty: false,
+    userInfo: null,
+    isShow: true // 我的动态页面默认显示操作按钮
   },
 
   onLoad() {
@@ -25,7 +27,23 @@ Page({
       return;
     }
 
+    this.loadUserInfo();
     this.loadMyDynamics();
+  },
+
+  // 加载用户信息
+  loadUserInfo() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        this.setData({
+          userInfo: userInfo,
+          isShow: userInfo.is_show !== false
+        });
+      }
+    } catch (error) {
+      console.error('加载用户信息失败:', error);
+    }
   },
 
   onPullDownRefresh() {

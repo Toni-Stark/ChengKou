@@ -8,6 +8,7 @@
       data-id="{{item._id}}">
       <dynamic-item
         item="{{item}}"
+        isShow="{{isShow}}"
         bind:like="onDynamicLike"
         bind:comment="onDynamicComment">
       </dynamic-item>

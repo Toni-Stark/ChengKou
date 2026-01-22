@@ -3,6 +3,7 @@
   <view class="dynamic-section" wx:if="{{dynamic}}">
     <dynamic-item
       item="{{dynamic}}"
+      isShow="{{isShow}}"
       bind:like="onDynamicLike"
       bind:comment="onComment"
       bind:share="onShare">
@@ -27,6 +28,7 @@
             <text class="comment-time text-xs text-placeholder ml-sm">{{item.createTime}}</text>
           </view>
           <view
+            wx:if="{{isShow}}"
             class="comment-like-btn {{item.isLiked ? 'liked' : ''}}"
             bindtap="onCommentLike"
             data-id="{{item._id}}"
@@ -52,8 +54,8 @@
   </view>
 </view>
 
-<!-- 评论输入框 -->
-<view class="comment-input-bar">
+<!-- 评论输入框 - 需要 is_show 权限 -->
+<view wx:if="{{isShow}}" class="comment-input-bar">
   <view class="input-wrapper">
     <input
       class="comment-input"

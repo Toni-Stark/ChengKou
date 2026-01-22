@@ -12,7 +12,9 @@ Page({
     loading: false,
     commentContent: '',
     submitting: false,
-    fromShare: false // 标记是否从分享进入
+    fromShare: false, // 标记是否从分享进入
+    userInfo: null,
+    isShow: true
   },
 
   onLoad(options) {
@@ -25,10 +27,27 @@ Page({
       this.trySilentLogin();
     }
 
+    this.loadUserInfo();
+
     if (id) {
       this.setData({ dynamicId: id });
       this.loadDynamic();
       this.loadComments();
+    }
+  },
+
+  // 加载用户信息
+  loadUserInfo() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        this.setData({
+          userInfo: userInfo,
+          isShow: userInfo.is_show != false
+        });
+      }
+    } catch (error) {
+      console.error('加载用户信息失败:', error);
     }
   },
 

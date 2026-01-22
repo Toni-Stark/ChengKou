@@ -17,6 +17,10 @@ Component({
     showDelete: {
       type: Boolean,
       value: false
+    },
+    isShow: {
+      type: Boolean,
+      value: true // 默认显示操作栏
     }
   },
 

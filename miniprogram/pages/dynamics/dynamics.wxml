@@ -1,6 +1,6 @@
 <view class="dynamics-page page">
-  <!-- 发布按钮 -->
-  <view wx:if="{{openid}}" class="publish-btn" bindtap="goToPublish">
+  <!-- 发布按钮 - 需要登录且有 is_show 权限 -->
+  <view wx:if="{{openid && isShow}}" class="publish-btn" bindtap="goToPublish">
     <text class="publish-icon">+</text>
   </view>
 
@@ -17,6 +17,7 @@
         wx:for="{{dynamicsList}}"
         wx:key="_id"
         item="{{item}}"
+        isShow="{{isShow}}"
         bind:userTap="onUserTap"
         bind:like="onLike"
         bind:comment="onComment"

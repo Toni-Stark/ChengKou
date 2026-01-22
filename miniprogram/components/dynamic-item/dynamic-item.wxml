@@ -67,8 +67,8 @@
     <text class="location-text text-sm text-secondary">{{item.location.name}}</text>
   </view>
 
-  <!-- 操作栏 -->
-  <view class="dynamic-actions flex-between mt-lg pt-base border-top">
+  <!-- 操作栏 - 需要 is_show 权限才显示 -->
+  <view wx:if="{{isShow}}" class="dynamic-actions flex-between mt-lg pt-base border-top">
     <view class="action-btn {{item.isLiked ? 'liked' : ''}}" catch:tap="onLike" data-id="{{item._id}}">
       <text class="action-icon">{{item.isLiked ? '❤' : '♡'}}</text>
       <text class="action-text text-sm">{{item.likesCount || 0}}</text>

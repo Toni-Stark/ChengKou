@@ -37,6 +37,7 @@ exports.main = async (event, context) => {
           signature: '',
           phone: '',
           email: '',
+          is_show: true, // 权限字段：控制是否显示评论/点赞/添加动态等功能
           stats: {
             dynamicsCount: 0,
             followersCount: 0,
