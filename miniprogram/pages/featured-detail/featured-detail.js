@@ -1,4 +1,6 @@
 // pages/featured-detail/featured-detail.js
+const request = require('../../utils/request.js');
+
 Page({
   data: {
     // 内容数据
@@ -117,33 +119,64 @@ Page({
   },
 
   // 加载默认数据（示例）
-  loadDefaultData() {
-    this.setData({
-      contentData: {
-        title: '游泳培训课程',
-        description: '专业教练一对一指导，零基础也能快速学会游泳。提供成人班、儿童班、私教课等多种课程选择。',
-        courseInfo: [
-          { label: '课程时长', value: '10课时/期' },
-          { label: '上课时间', value: '周一至周日 9:00-21:00' },
-          { label: '上课地点', value: '市体育中心游泳馆' },
-          { label: '课程费用', value: '￥1980起' }
-        ]
+  async loadDefaultData() {
+    const mediaList = [
+      {
+        type: 'image',
+        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
       },
-      mediaList: [
-        {
-          type: 'image',
-          url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+      {
+        type: 'image',
+        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+      },
+      {
+        type: 'video',
+        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/videos/sample.mp4'
+      }
+    ];
+
+    // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
+    try {
+      // 提取所有需要转换的URL
+      const urlsToConvert = mediaList.map(item => item.url);
+      const convertedUrls = await request.getTempFileURL(urlsToConvert);
+
+      // 更新mediaList中的URL
+      const processedMediaList = mediaList.map((item, index) => ({
+        ...item,
+        url: Array.isArray(convertedUrls) ? convertedUrls[index] : convertedUrls
+      }));
+
+      this.setData({
+        contentData: {
+          title: '游泳培训课程',
+          description: '专业教练一对一指导，零基础也能快速学会游泳。提供成人班、儿童班、私教课等多种课程选择。',
+          courseInfo: [
+            { label: '课程时长', value: '10课时/期' },
+            { label: '上课时间', value: '周一至周日 9:00-21:00' },
+            { label: '上课地点', value: '市体育中心游泳馆' },
+            { label: '课程费用', value: '￥1980起' }
+          ]
         },
-        {
-          type: 'image',
-          url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+        mediaList: processedMediaList
+      });
+    } catch (error) {
+      console.error('转换图片URL失败:', error);
+      // 失败时使用原始URL
+      this.setData({
+        contentData: {
+          title: '游泳培训课程',
+          description: '专业教练一对一指导，零基础也能快速学会游泳。提供成人班、儿童班、私教课等多种课程选择。',
+          courseInfo: [
+            { label: '课程时长', value: '10课时/期' },
+            { label: '上课时间', value: '周一至周日 9:00-21:00' },
+            { label: '上课地点', value: '市体育中心游泳馆' },
+            { label: '课程费用', value: '￥1980起' }
+          ]
         },
-        {
-          type: 'video',
-          url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/videos/sample.mp4'
-        }
-      ]
-    })
+        mediaList: mediaList
+      });
+    }
   },
 
   // 视频播放事件

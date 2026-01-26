@@ -19,6 +19,7 @@
             class="swiper-image"
             src="{{item.url}}"
             mode="aspectFill"
+            show-menu-by-longpress="{{true}}"
           />
           <!-- 视频类型 -->
           <video

@@ -5,7 +5,9 @@
       <image
         class="featured-image"
         src="{{featuredDynamic.image || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'}}"
-        mode="aspectFill">
+        mode="aspectFill"
+        lazy-load="{{false}}"
+        show-menu-by-longpress="{{true}}">
       </image>
       <view class="featured-overlay">
         <text class="featured-title">{{featuredDynamic.title || '最新游龙'}}</text>

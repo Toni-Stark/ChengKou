@@ -1,3 +1,5 @@
+const request = require('../../utils/request.js');
+
 Page({
   data: {
     // 最新动态数据
@@ -19,7 +21,7 @@ Page({
   },
 
   // 加载最新动态
-  loadFeaturedDynamic() {
+  async loadFeaturedDynamic() {
     // TODO: 从云端获取最新动态数据
     // 这里使用模拟数据
     const mockData = {
@@ -27,6 +29,14 @@ Page({
       desc: '专业教练团队，小班教学',
       image: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
     };
+
+    // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
+    try {
+      const convertedImage = await request.getTempFileURL(mockData.image);
+      mockData.image = convertedImage;
+    } catch (error) {
+      console.error('转换图片URL失败:', error);
+    }
 
     this.setData({
       featuredDynamic: mockData
