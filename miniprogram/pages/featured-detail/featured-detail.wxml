@@ -51,8 +51,8 @@
     </view>
   </view>
 
-  <!-- 报名表单 -->
-  <view class="registration-section">
+  <!-- 报名表单（根据全局配置控制显示/隐藏） -->
+  <view class="registration-section" wx:if="{{registrationVisible}}">
     <view class="section-title">立即报名</view>
 
     <view class="form-item">

@@ -14,7 +14,7 @@ Page({
     submitting: false,
     fromShare: false, // 标记是否从分享进入
     userInfo: null,
-    isShow: true
+    isShow: false
   },
 
   onLoad(options) {

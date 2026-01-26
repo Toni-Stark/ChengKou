@@ -10,11 +10,11 @@ Page({
     openid: null,
     loading: false,
     shareInfo: null, // 保存当前要分享的动态信息
-    userInfo: null, // 当前用户信息
+    userInfo: null, // 当前用户信息 
     isShow: false // 当前用户的 is_show 权限
   },
 
-  onLoad(options) {
+  onLoad(options){
     const { from } = options;
 
     // 如果是从分享进入，尝试静默登录
@@ -35,6 +35,7 @@ Page({
         this.setData({
           userInfo: userInfo,
           isShow: userInfo.is_show !== false // 默认为true，只有明确设置为false才隐藏
+          // isShow: true // 默认为true，只有明确设置为false才隐藏
         });
       }
     } catch (error) {

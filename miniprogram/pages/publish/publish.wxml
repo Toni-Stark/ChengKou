@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" wx:if="{{loading}}">
   <view class="content-con">
     <scroll-view class="scroll" scroll-y>
       <!-- 选择展示类型 -->
@@ -152,4 +152,5 @@
     <view style="width: 100%; background: #d1d1d1; height: 100px"></view></button>
   </view>
 </view>
+<view wx:else=""></view>
 <!-- 发布按钮 -->

@@ -21,16 +21,72 @@ Page({
     },
     // 订阅消息模板ID（需要在微信公众平台申请）
     // 配置说明：打开 cloudfunctions/sendSubscribeMessage/index.js 查看如何申请模板
-    subscribeTemplateId: 'YOUR_USER_TEMPLATE_ID' // 替换为你的模板ID
+    subscribeTemplateId: 'YOUR_USER_TEMPLATE_ID', // 替换为你的模板ID
+    // 报名表单是否显示（由数据库配置控制）
+    registrationVisible: true // 默认显示，加载配置后会更新
   },
 
   onLoad(options) {
+    // 加载全局配置
+    this.loadGlobalConfig();
+
     // 从上一页接收参数
     if (options.id) {
       this.loadContentDetail(options.id)
     } else {
       // 如果没有传入ID，加载默认数据（示例数据）
       this.loadDefaultData()
+    }
+  },
+
+  // 加载全局配置
+  async loadGlobalConfig() {
+    try {
+      console.log('===== 开始加载全局配置 =====');
+      console.log('请求参数 key:', 'registration_form');
+
+      const res = await wx.cloud.callFunction({
+        name: 'getGlobalConfig',
+        data: {
+          key: 'registration_form' // 获取报名表单配置
+        }
+      });
+
+      console.log('云函数完整返回结果:', JSON.stringify(res, null, 2));
+      console.log('res.result:', res.result);
+      console.log('res.result.code:', res.result ? res.result.code : 'undefined');
+      console.log('res.result.data:', res.result ? res.result.data : 'undefined');
+
+      if (res.result && res.result.code === 0 && res.result.data) {
+        // 更新报名表单显示状态
+        console.log('✓ 配置获取成功');
+        console.log('visible 字段值:', res.result.data.visible);
+        console.log('visible 字段类型:', typeof res.result.data.visible);
+
+        this.setData({
+          registrationVisible: res.result.data.visible !== false // 默认为 true
+        });
+        console.log('最终设置 registrationVisible 为:', res.result.data.visible !== false);
+      } else {
+        // 如果配置不存在，默认显示
+        console.log('✗ 全局配置不存在，使用默认值（显示）');
+        console.log('判断失败原因:');
+        console.log('  - res.result 存在?', !!res.result);
+        console.log('  - res.result.code === 0?', res.result ? res.result.code === 0 : false);
+        console.log('  - res.result.data 存在?', res.result ? !!res.result.data : false);
+
+        this.setData({
+          registrationVisible: true
+        });
+      }
+      console.log('===== 全局配置加载完成 =====');
+    } catch (error) {
+      console.error('✗ 加载全局配置失败:', error);
+      console.error('错误详情:', JSON.stringify(error, null, 2));
+      // 出错时默认显示报名表单
+      this.setData({
+        registrationVisible: true
+      });
     }
   },
 

@@ -9,7 +9,7 @@
     <!-- 介绍文字 -->
     <view class="intro-section">
       <text class="intro-title">欢迎使用</text>
-      <text class="intro-desc">登录后可以浏览官方内容、发布动态、管理个人信息</text>
+      <text class="intro-desc">登录后可以浏览官方内容、发布游龙、管理个人信息</text>
     </view>
 
     <!-- 登录按钮 -->

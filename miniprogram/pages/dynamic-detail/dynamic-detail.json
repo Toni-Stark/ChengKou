@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "动态详情",
+  "navigationBarTitleText": "宛若游龙",
   "usingComponents": {
     "dynamic-item": "/components/dynamic-item/dynamic-item",
     "user-avatar": "/components/user-avatar/user-avatar"

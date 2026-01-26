@@ -1,5 +1,5 @@
 <view class="my-dynamics-page page">
-  <!-- 动态列表 -->
+  <!-- 游龙列表 -->
   <view class="dynamics-list" wx:if="{{!isEmpty}}">
     <view
       wx:for="{{dynamicsList}}"
@@ -29,7 +29,7 @@
   <!-- 空状态 -->
   <view class="empty-state" wx:if="{{isEmpty && !loading}}">
     <text class="empty-icon">📝</text>
-    <text class="empty-text text-secondary">还没有发布动态</text>
-    <button class="btn btn-primary mt-lg" bindtap="goToPublish">发布动态</button>
+    <text class="empty-text text-secondary">还没有发布游龙</text>
+    <button class="btn btn-primary mt-lg" bindtap="goToPublish">发布游龙</button>
   </view>
 </view>

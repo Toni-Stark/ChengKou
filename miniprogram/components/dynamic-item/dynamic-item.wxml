@@ -5,10 +5,10 @@
     <view class="user-info flex-1 ml-base">
       <text class="user-name text-base font-bold">{{item.userInfo.nickName}}</text>
       <text class="dynamic-time text-xs text-placeholder">{{item.createTime}}</text>
-    </view>
+    </view> 
   </view>
 
-  <!-- 动态内容 - 根据 displayType 展示不同样式 -->
+  <!-- 游龙内容 - 根据 displayType 展示不同样式 -->
 
   <!-- 大图模式 (large) -->
   <view wx:if="{{item.displayType === 'large'}}" class="dynamic-large-mode">

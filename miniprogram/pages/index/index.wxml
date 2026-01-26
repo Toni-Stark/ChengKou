@@ -1,5 +1,5 @@
 <view class="index-page page">
-  <!-- 最新动态卡片 -->
+  <!-- 最新游龙卡片 -->
   <view class="featured-card-wrapper container">
     <view class="featured-card" bindtap="onFeaturedCardTap">
       <image
@@ -8,7 +8,7 @@
         mode="aspectFill">
       </image>
       <view class="featured-overlay">
-        <text class="featured-title">{{featuredDynamic.title || '最新动态'}}</text>
+        <text class="featured-title">{{featuredDynamic.title || '最新游龙'}}</text>
         <text class="featured-desc">{{featuredDynamic.desc || '点击查看详情'}}</text>
       </view>
     </view>

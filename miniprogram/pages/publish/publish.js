@@ -9,15 +9,33 @@ Page({
     images: [],
     location: null,
     submitting: false,
-
+    loading: false,
     displayTypes: [
       { value: 'grid9', label: '九宫格', desc: '适合分享多张图片和文字' },
       { value: 'large', label: '大图模式', desc: '适合展示精美图片和标题' },
       { value: 'text', label: '纯文本', desc: '只分享文字内容' }
     ]
   },
+  async getGlobalConfig(){
+    const res = await wx.cloud.callFunction({
+      name: 'getGlobalConfig',
+      data: {
+        key: 'registration_form' // 获取报名表单配置
+      }
+    });
 
+    console.log('数据库查询结果:', JSON.stringify(res, null, 2));
+    console.log('result.data:', res.data);
+    console.log('result.data 类型:', typeof res.data);
+    let visible = res?.result?.data?.visible;
+    if(visible){
+      this.setData({
+        loading: visible
+      })
+    }
+  },
   onLoad() {
+    this.getGlobalConfig()
     // 检查用户的 is_show 权限
     const userInfo = wx.getStorageSync('userInfo');
     if (!userInfo || userInfo.is_show === false) {

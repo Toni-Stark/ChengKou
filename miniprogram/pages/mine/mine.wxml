@@ -13,7 +13,7 @@
     <view class="user-stats flex-between mt-lg">
       <view class="stat-item text-center">
         <text class="stat-value font-bold">{{userInfo.stats.dynamicsCount || 0}}</text>
-        <text class="stat-label text-xs text-secondary">动态</text>
+        <text class="stat-label text-xs text-secondary">游龙</text>
       </view>
       <view class="stat-item text-center">
         <text class="stat-value font-bold">{{userInfo.stats.followersCount || 0}}</text>
@@ -41,7 +41,7 @@
   <!-- 功能菜单 -->
   <view class="menu-list container mt-base">
     <view class="menu-item card flex-between align-center" bindtap="goToMyDynamics">
-      <text class="menu-title">我的动态</text>
+      <text class="menu-title">我的游龙</text>
       <text class="menu-arrow">→</text>
     </view>
     <view class="menu-item card flex-between align-center" bindtap="goToMyLikes">
