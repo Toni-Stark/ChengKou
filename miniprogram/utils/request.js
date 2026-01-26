@@ -174,6 +174,121 @@ async function uploadImages(tempFilePaths, folder = 'images') {
   }
 }
 
+/**
+ * 将云存储文件ID转换为临时HTTP链接
+ * 解决iOS设备上cloud://协议图片无法显示的问题
+ * @param {string|Array} fileList - 单个fileID或fileID数组
+ * @returns {Promise} 返回临时链接
+ */
+async function getTempFileURL(fileList) {
+  try {
+    // 统一处理为数组
+    const isArray = Array.isArray(fileList);
+    const files = isArray ? fileList : [fileList];
+
+    // 过滤掉空值和已经是HTTP链接的
+    const cloudFiles = files.filter(file => {
+      return file && typeof file === 'string' && file.startsWith('cloud://');
+    });
+
+    // 如果没有需要转换的，直接返回原值
+    if (cloudFiles.length === 0) {
+      return isArray ? files : files[0];
+    }
+
+    const res = await wx.cloud.getTempFileURL({
+      fileList: cloudFiles
+    });
+
+    if (res.fileList && res.fileList.length > 0) {
+      // 创建映射表
+      const urlMap = {};
+      res.fileList.forEach(item => {
+        if (item.tempFileURL) {
+          urlMap[item.fileID] = item.tempFileURL;
+        }
+      });
+
+      // 替换原数组中的URL
+      const result = files.map(file => {
+        if (file && urlMap[file]) {
+          return urlMap[file];
+        }
+        return file;
+      });
+
+      return isArray ? result : result[0];
+    }
+
+    return fileList;
+  } catch (error) {
+    console.error('获取临时链接失败:', error);
+    // 失败时返回原值，让系统尝试使用cloud://协议
+    return fileList;
+  }
+}
+
+/**
+ * 批量处理动态列表中的图片URL
+ * @param {Array} dynamics - 动态列表
+ * @returns {Promise} 处理后的动态列表
+ */
+async function processDynamicsImages(dynamics) {
+  if (!dynamics || dynamics.length === 0) {
+    return dynamics;
+  }
+
+  try {
+    // 收集所有需要转换的图片URL
+    const allImageUrls = [];
+    dynamics.forEach(item => {
+      if (item.images && Array.isArray(item.images)) {
+        allImageUrls.push(...item.images);
+      }
+      // 处理用户头像
+      if (item.userInfo && item.userInfo.avatarUrl) {
+        allImageUrls.push(item.userInfo.avatarUrl);
+      }
+    });
+
+    // 批量转换
+    const convertedUrls = await getTempFileURL(allImageUrls);
+
+    // 创建URL映射表
+    const urlMap = {};
+    allImageUrls.forEach((url, index) => {
+      if (Array.isArray(convertedUrls)) {
+        urlMap[url] = convertedUrls[index];
+      }
+    });
+
+    // 更新动态列表中的URL
+    const processedDynamics = dynamics.map(item => {
+      const newItem = { ...item };
+
+      // 更新图片URL
+      if (newItem.images && Array.isArray(newItem.images)) {
+        newItem.images = newItem.images.map(img => urlMap[img] || img);
+      }
+
+      // 更新头像URL
+      if (newItem.userInfo && newItem.userInfo.avatarUrl) {
+        newItem.userInfo = {
+          ...newItem.userInfo,
+          avatarUrl: urlMap[newItem.userInfo.avatarUrl] || newItem.userInfo.avatarUrl
+        };
+      }
+
+      return newItem;
+    });
+
+    return processedDynamics;
+  } catch (error) {
+    console.error('处理动态图片失败:', error);
+    return dynamics;
+  }
+}
+
 module.exports = {
   showLoading,
   hideLoading,
@@ -181,5 +296,7 @@ module.exports = {
   handleError,
   callFunction,
   uploadFile,
-  uploadImages
+  uploadImages,
+  getTempFileURL,
+  processDynamicsImages
 };

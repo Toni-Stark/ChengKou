@@ -88,8 +88,12 @@ Page({
         showLoad: true
       });
       console.log(result)
+
+      // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
+      const processedDynamic = result ? (await request.processDynamicsImages([result]))[0] : {};
+
       this.setData({
-        dynamic: openid?result:{}
+        dynamic: openid ? processedDynamic : {}
       });
     } catch (error) {
       console.error('加载动态失败:', error);

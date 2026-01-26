@@ -47,6 +47,8 @@
         class="dynamic-image"
         src="{{imageUrl}}"
         mode="aspectFill"
+        lazy-load="{{true}}"
+        show-menu-by-longpress="{{true}}"
         bindtap="onImageTap"
         data-index="{{imgIndex}}"
         data-images="{{item.images}}">

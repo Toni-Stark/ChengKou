@@ -118,7 +118,10 @@ Page({
         showLoad: !isPullRefresh
       });
 
-      const newList = this.data.page === 1 ? result.list : [...this.data.dynamicsList, ...result.list];
+      // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
+      const processedList = await request.processDynamicsImages(result.list);
+
+      const newList = this.data.page === 1 ? processedList : [...this.data.dynamicsList, ...processedList];
 
       this.setData({
         dynamicsList: openid?newList:[],
