@@ -1,0 +1,209 @@
+:root {
+  /* 极致简约的黑白灰色彩体系，仅保留极少量强调色 */
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent-primary: #555555; /* 改为深灰色作为唯一强调色 */
+  --border-color: #e9ecef;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.03); /* 弱化阴影 */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.aerospace-page {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 20px;
+  line-height: 1.6;
+  font-family: "Microsoft Yahei", Arial, sans-serif;
+}
+
+/* 返回链接 */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: #3182CE;
+  text-decoration: none;
+  font-size: 16px;
+  margin-bottom: 20px;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #2563EB;
+}
+
+.back-link i {
+  margin-right: 8px;
+}
+
+/* 页面标题 - 极简样式 */
+.page-title {
+  text-align: center;
+  margin: 20px 0 40px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+/* 核心卡片样式 - 极简论文展示风格 */
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 4px; /* 弱化圆角 */
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid var(--border-color);
+}
+
+.card-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-body {
+  color: var(--text-primary);
+}
+
+/* 折叠面板 - 极简交互 */
+.accordion {
+  margin-bottom: 10px;
+}
+
+.accordion-header {
+  background-color: var(--bg-primary);
+  padding: 10px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.accordion-header:hover {
+  background-color: #e9ecef;
+}
+
+.accordion-content {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 2px 2px;
+  animation: fadeIn 0.3s ease;
+}
+
+.accordion-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 表格样式 - 论文级极简展示 */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.data-table th {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+}
+
+.data-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* 标签样式 - 去色彩化，仅用灰度区分 */
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
+/* 总结面板 - 极简样式（仅保留客观知识总结） */
+.summary-panel {
+  background: var(--bg-primary);
+  border-left: 2px solid var(--accent-primary);
+  padding: 12px;
+  border-radius: 2px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.summary-panel h3 {
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.summary-panel ul {
+  padding-left: 20px;
+  color: var(--text-secondary);
+  list-style-type: disc;
+}
+
+.summary-panel li {
+  margin-bottom: 6px;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .aerospace-page {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .data-table {
+    font-size: 11px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 6px 8px;
+  }
+}

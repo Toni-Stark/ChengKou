@@ -1,0 +1,90 @@
+/* 思维导图样式 */
+.mind-map {
+  list-style: none;
+  margin-left: 20px;
+}
+
+.mind-map li {
+  position: relative;
+  padding: 8px 0 8px 25px;
+  color: #34495e;
+  font-size: 16px;
+}
+
+/* 层级线条 */
+.mind-map li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 15px;
+  height: 1px;
+  background: #bdc3c7;
+}
+
+.mind-map li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 1px;
+  height: calc(100% - 16px);
+  background: #bdc3c7;
+}
+
+.mind-map li:last-child::after {
+  height: 10px;
+}
+
+/* 可折叠节点样式 */
+.collapsible {
+  cursor: pointer;
+  font-weight: 600;
+  color: #2980b9;
+}
+
+.collapsible::before {
+  content: '▶ ';
+  font-size: 12px;
+  color: #2980b9;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.collapsible.open::before {
+  transform: rotate(90deg);
+}
+
+/* 子节点容器 */
+.children {
+  display: none;
+  margin-left: 15px;
+}
+
+.children.open {
+  display: block;
+}
+
+/* 不同层级的样式区分 */
+.level-1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.level-2 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.level-3 {
+  color: #2980b9;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .mind-map li {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+
+  .journal-border {
+    border: 1px solid #E2E8F0;
+  }
+
+  .cnn-layer {
+    transition: all 0.2s ease;
+  }
+
+  .cnn-layer:hover {
+    stroke: #3182CE;
+    stroke-width: 2;
+  }
+
+  .math-notion {
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+  }
+
+  .journal-article {
+    border-left: 3px solid #3182CE;
+  }
+}
