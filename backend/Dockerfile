@@ -1,5 +1,5 @@
 # Backend Dockerfile
-FROM befyzewc.mirror.aliyuncs.com/library/node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
