@@ -27,7 +27,7 @@ services:
 
   # MySQL数据库
   mysql:
-    image: beyzecw.mirror.aliyuncs.com/library/mysql:8.0
+    image: befyzewc.mirror.aliyuncs.com/library/mysql:8.0
     ports:
       - "3306:3306"
     restart: always
