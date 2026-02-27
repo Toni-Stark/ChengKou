@@ -15,7 +15,8 @@
       "Bash(ping:*)",
       "Bash(npm run init-db:*)",
       "Bash(cmd //c \"taskkill /PID 30028 /F\")",
-      "Bash(node src/scripts/testData.js:*)"
+      "Bash(node src/scripts/testData.js:*)",
+      "Bash(docker-compose config:*)"
     ]
   }
 }

@@ -1,38 +1,47 @@
 version: '3.8'
 
 services:
-  # 后端服务
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: academic-backend
-    restart: unless-stopped
-    ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    networks:
-      - academic-network
-
   # 前端服务
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: academic-frontend
-    restart: unless-stopped
+    build: ./frontend
     ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - "8080:80"
+    restart: always
     networks:
-      - academic-network
+      - app-network
+
+  # 后端服务
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PASSWORD=3209233073
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=3209233073
+      - MYSQL_DATABASE=chengkou
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
 
 networks:
-  academic-network:
+  app-network:
     driver: bridge
+
+volumes:
+  mysql-data:
