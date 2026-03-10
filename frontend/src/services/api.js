@@ -1,6 +1,23 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://47.108.239.232:3001/api';
+// 获取API基础URL，优先使用环境变量
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // 如果有环境变量配置
+  if (envUrl) {
+    // 在生产环境且当前页面是HTTPS时，自动将API地址也改为HTTPS
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      return envUrl.replace(/^http:/, 'https:');
+    }
+    return envUrl;
+  }
+
+  // 如果没有环境变量，使用相对路径（会自动使用当前页面的协议和域名）
+  return '/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
