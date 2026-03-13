@@ -93,7 +93,17 @@ function Footer() {
         </div>
 
         <div className="border-t border-white/10 mt-6 pt-6 text-center text-white/50 text-xs">
-          <p>© 2025 学术研究期刊 版权所有 | ISSN 1234-5678 | 京ICP备12345678号</p>
+          <p>
+            © 2025 学术研究期刊 版权所有 | ISSN 1234-5678 |
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition"
+            >
+              渝ICP备2026000887号-2
+            </a>
+          </p>
         </div>
       </div>
     </footer>
