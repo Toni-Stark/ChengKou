@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { researchAPI } from '../services/api';
 
 function Methods() {
+  const navigate = useNavigate();
   const [methods, setMethods] = useState({ aiExplainability: [], researchTools: [] });
 
   useEffect(() => {
@@ -17,6 +19,20 @@ function Methods() {
     fetchMethods();
   }, []);
 
+  // 处理点击事件
+  const handleMethodClick = (title) => {
+    const clickableItems = ['多层神经网络', '反向传播', '梯度下降'];
+    if (clickableItems.includes(title)) {
+      navigate('/neural-network-visualization');
+    }
+  };
+
+  // 判断是否可点击
+  const isClickable = (title) => {
+    const clickableItems = ['多层神经网络', '反向传播', '梯度下降'];
+    return clickableItems.includes(title);
+  };
+
   return (
     <section id="methods" className="mb-12">
       <div className="border-b border-journal-border pb-2 mb-6">
@@ -31,8 +47,17 @@ function Methods() {
               <li key={index} className="flex items-start">
                 <i className="fa fa-circle text-journal-highlight text-xs mt-1 mr-2"></i>
                 <div>
-                  <span className="font-medium">{method.title}：</span>
-                  <span className="text-journal-muted">{method.description}</span>
+                  <span
+                    className={`font-medium ${
+                      isClickable(method.title)
+                        ? 'text-blue-600 hover:text-blue-800 cursor-pointer hover:underline'
+                        : ''
+                    }`}
+                    onClick={() => handleMethodClick(method.title)}
+                  >
+                    {method.title}
+                  </span>
+                  <span className="text-journal-muted">：{method.description}</span>
                 </div>
               </li>
             ))}

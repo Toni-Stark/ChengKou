@@ -12,6 +12,10 @@ import AIDetailPage from './pages/AIDetailPage';
 import AerospaceDetailPage from './pages/AerospaceDetailPage';
 import DataScienceDetailPage from './pages/DataScienceDetailPage';
 import ComputationalMechanicsDetailPage from './pages/ComputationalMechanicsDetailPage';
+import NeuralNetworkVisualization from './pages/NeuralNetworkVisualization';
+import DeepLearningVisualization from './pages/DeepLearningVisualization';
+import MachineLearningVisualization from './pages/MachineLearningVisualization';
+import BayesVisualization from './pages/BayesVisualization';
 import './styles/index.css';
 
 function HomePage() {
@@ -46,6 +50,10 @@ function App() {
           <Route path="/aerospace-detail" element={<AerospaceDetailPage />} />
           <Route path="/data-science-detail" element={<DataScienceDetailPage />} />
           <Route path="/computational-mechanics-detail" element={<ComputationalMechanicsDetailPage />} />
+          <Route path="/neural-network-visualization" element={<NeuralNetworkVisualization />} />
+          <Route path="/deep-learning/:topic" element={<DeepLearningVisualization />} />
+          <Route path="/machine-learning/:topic" element={<MachineLearningVisualization />} />
+          <Route path="/bayes/:topic" element={<BayesVisualization />} />
         </Routes>
         <Footer />
       </div>

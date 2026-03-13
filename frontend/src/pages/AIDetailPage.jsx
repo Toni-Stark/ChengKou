@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { researchAPI } from '../services/api';
 import '../styles/ai-mindmap.css';
 
 function AIDetailPage() {
+  const navigate = useNavigate();
   const [mindMapData, setMindMapData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +23,43 @@ function AIDetailPage() {
     fetchMindMapData();
   }, []);
 
+  // 恢复展开状态
+  useEffect(() => {
+    if (!mindMapData) return;
+
+    // 延迟执行，确保 DOM 已渲染
+    setTimeout(() => {
+      const savedState = localStorage.getItem('ai-mindmap-state');
+      if (savedState) {
+        try {
+          const openNodes = JSON.parse(savedState);
+          openNodes.forEach(nodeId => {
+            const collapsible = document.querySelector(`[data-target="${nodeId}"]`);
+            const children = document.getElementById(nodeId);
+            if (collapsible && children) {
+              collapsible.classList.add('open');
+              children.classList.add('open');
+            }
+          });
+        } catch (error) {
+          console.error('Failed to restore mindmap state:', error);
+        }
+      }
+    }, 100);
+  }, [mindMapData]);
+
+  // 保存展开状态
+  const saveState = () => {
+    const openNodes = [];
+    document.querySelectorAll('.collapsible.open').forEach(node => {
+      const targetId = node.getAttribute('data-target');
+      if (targetId) {
+        openNodes.push(targetId);
+      }
+    });
+    localStorage.setItem('ai-mindmap-state', JSON.stringify(openNodes));
+  };
+
   const toggleNode = (e) => {
     e.stopPropagation();
     const target = e.currentTarget;
@@ -32,11 +70,91 @@ function AIDetailPage() {
     if (targetElement) {
       targetElement.classList.toggle('open');
     }
+
+    // 保存状态
+    saveState();
+  };
+
+  // 判断节点是否可点击跳转
+  const isClickableNode = (title) => {
+    const clickableNodes = [
+      '多层神经网络', '反向传播', '梯度下降',
+      '卷积神经网络（CNN）及其变体',
+      '循环神经网络（RNN）、LSTM、GRU',
+      '生成对抗网络（GAN）',
+      'Transformer 架构',
+      '正则化（Dropout、BatchNorm）',
+      '优化器（Adam、RMSprop）',
+      '学习率调度',
+      '自监督学习',
+      '图神经网络（GNN）',
+      '元学习',
+      '决策树与随机森林',
+      '支持向量机（SVM）',
+      'K近邻（KNN）',
+      '朴素贝叶斯',
+      '聚类算法（K-Means、DBSCAN等）',
+      '降维方法（PCA、t-SNE等）',
+      'Bagging',
+      'Boosting（AdaBoost、GBDT、XGBoost）',
+      'Q-learning',
+      '策略梯度',
+      '深度强化学习（DQN等）',
+      '贝叶斯定理与贝叶斯推断',
+      '朴素贝叶斯分类器',
+      '贝叶斯网络与概率图模型',
+      '马尔可夫链蒙特卡洛方法（MCMC）'
+    ];
+    return clickableNodes.includes(title);
+  };
+
+  // 节点标题到路由的映射
+  const getRouteForNode = (title) => {
+    const routeMap = {
+      '多层神经网络': '/neural-network-visualization',
+      '反向传播': '/neural-network-visualization',
+      '梯度下降': '/neural-network-visualization',
+      '卷积神经网络（CNN）及其变体': '/deep-learning/cnn',
+      '循环神经网络（RNN）、LSTM、GRU': '/deep-learning/rnn',
+      '生成对抗网络（GAN）': '/deep-learning/gan',
+      'Transformer 架构': '/deep-learning/transformer',
+      '正则化（Dropout、BatchNorm）': '/deep-learning/regularization',
+      '优化器（Adam、RMSprop）': '/deep-learning/optimizer',
+      '学习率调度': '/deep-learning/learning-rate',
+      '自监督学习': '/deep-learning/self-supervised',
+      '图神经网络（GNN）': '/deep-learning/gnn',
+      '元学习': '/deep-learning/meta-learning',
+      '决策树与随机森林': '/machine-learning/decision-tree',
+      '支持向量机（SVM）': '/machine-learning/svm',
+      'K近邻（KNN）': '/machine-learning/knn',
+      '朴素贝叶斯': '/machine-learning/naive-bayes',
+      '聚类算法（K-Means、DBSCAN等）': '/machine-learning/clustering',
+      '降维方法（PCA、t-SNE等）': '/machine-learning/dimension-reduction',
+      'Bagging': '/machine-learning/ensemble',
+      'Boosting（AdaBoost、GBDT、XGBoost）': '/machine-learning/ensemble',
+      'Q-learning': '/machine-learning/reinforcement-learning',
+      '策略梯度': '/machine-learning/reinforcement-learning',
+      '深度强化学习（DQN等）': '/machine-learning/reinforcement-learning',
+      '贝叶斯定理与贝叶斯推断': '/bayes/bayes-theorem',
+      '朴素贝叶斯分类器': '/bayes/naive-bayes',
+      '贝叶斯网络与概率图模型': '/bayes/bayesian-network',
+      '马尔可夫链蒙特卡洛方法（MCMC）': '/bayes/mcmc'
+    };
+    return routeMap[title] || '/';
+  };
+
+  // 处理节点点击
+  const handleNodeClick = (e, title) => {
+    if (isClickableNode(title)) {
+      e.stopPropagation();
+      navigate(getRouteForNode(title));
+    }
   };
 
   const renderNode = (node, level = 1) => {
     const hasChildren = node.children && node.children.length > 0;
     const levelClass = `level-${level}`;
+    const clickable = isClickableNode(node.title);
 
     return (
       <li key={node.id}>
@@ -57,7 +175,18 @@ function AIDetailPage() {
             </ul>
           </>
         ) : (
-          <span>{node.title}</span>
+          <span
+            className={clickable ? 'clickable-node' : ''}
+            onClick={(e) => handleNodeClick(e, node.title)}
+            style={clickable ? {
+              color: '#2196F3',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontWeight: '500'
+            } : {}}
+          >
+            {node.title}
+          </span>
         )}
       </li>
     );
