@@ -198,7 +198,7 @@ docker-compose ps
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name lovebeyonddays.com;
 
     location / {
         proxy_pass http://localhost:80;
