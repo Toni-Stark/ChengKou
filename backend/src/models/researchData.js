@@ -101,102 +101,90 @@ const popularTags = [
 
 // AI思维导图数据
 const aiMindMapData = {
-  id: 'ai-root',
-  title: '人工智能',
+  id: 'theory',
+  title: '基础理论',
   defaultOpen: true,
   children: [
     {
-      id: 'theory',
-      title: '基础理论',
+      id: 'traditional-ml',
+      title: '传统机器学习',
+      children: [
+        { id: 'trad-1', title: '决策树与随机森林' },
+        { id: 'trad-2', title: '支持向量机（SVM）' },
+        { id: 'trad-3', title: 'K近邻（KNN）' },
+        { id: 'trad-4', title: '朴素贝叶斯' },
+        { id: 'trad-5', title: '聚类算法（K-Means、DBSCAN等）' },
+        { id: 'trad-6', title: '降维方法（PCA、t-SNE等）' }
+      ]
+    },
+    {
+      id: 'ensemble',
+      title: '集成学习',
+      children: [
+        { id: 'ens-1', title: 'Bagging' },
+        { id: 'ens-2', title: 'Boosting（AdaBoost、GBDT、XGBoost）' }
+      ]
+    },
+    {
+      id: 'ml-rl',
+      title: '强化学习',
+      children: [
+        { id: 'ml-rl-1', title: 'Q-learning' },
+        { id: 'ml-rl-2', title: '策略梯度' },
+        { id: 'ml-rl-3', title: '深度强化学习（DQN等）' }
+      ]
+    },
+    {
+      id: 'dl',
+      title: '深度学习',
       children: [
         {
-          id: 'ml',
-          title: '机器学习',
+          id: 'dl-mechanism',
+          title: '核心机制',
           children: [
-            {
-              id: 'traditional-ml',
-              title: '传统机器学习',
-              children: [
-                { id: 'trad-1', title: '决策树与随机森林' },
-                { id: 'trad-2', title: '支持向量机（SVM）' },
-                { id: 'trad-3', title: 'K近邻（KNN）' },
-                { id: 'trad-4', title: '朴素贝叶斯' },
-                { id: 'trad-5', title: '聚类算法（K-Means、DBSCAN等）' },
-                { id: 'trad-6', title: '降维方法（PCA、t-SNE等）' }
-              ]
-            },
-            {
-              id: 'ensemble',
-              title: '集成学习',
-              children: [
-                { id: 'ens-1', title: 'Bagging' },
-                { id: 'ens-2', title: 'Boosting（AdaBoost、GBDT、XGBoost）' }
-              ]
-            },
-            {
-              id: 'ml-rl',
-              title: '强化学习',
-              children: [
-                { id: 'ml-rl-1', title: 'Q-learning' },
-                { id: 'ml-rl-2', title: '策略梯度' },
-                { id: 'ml-rl-3', title: '深度强化学习（DQN等）' }
-              ]
-            },
-            {
-              id: 'dl',
-              title: '深度学习',
-              children: [
-                {
-                  id: 'dl-mechanism',
-                  title: '核心机制',
-                  children: [
-                    { id: 'dl-m-1', title: '多层神经网络' },
-                    { id: 'dl-m-2', title: '反向传播' },
-                    { id: 'dl-m-3', title: '梯度下降' }
-                  ]
-                },
-                {
-                  id: 'dl-architecture',
-                  title: '网络架构',
-                  children: [
-                    { id: 'dl-a-1', title: '卷积神经网络（CNN）及其变体' },
-                    { id: 'dl-a-2', title: '循环神经网络（RNN）、LSTM、GRU' },
-                    { id: 'dl-a-3', title: '生成对抗网络（GAN）' },
-                    { id: 'dl-a-4', title: 'Transformer 架构' }
-                  ]
-                },
-                {
-                  id: 'dl-training',
-                  title: '训练技术',
-                  children: [
-                    { id: 'dl-t-1', title: '正则化（Dropout、BatchNorm）' },
-                    { id: 'dl-t-2', title: '优化器（Adam、RMSprop）' },
-                    { id: 'dl-t-3', title: '学习率调度' }
-                  ]
-                },
-                {
-                  id: 'dl-advanced',
-                  title: '前沿方向',
-                  children: [
-                    { id: 'dl-adv-1', title: '自监督学习' },
-                    { id: 'dl-adv-2', title: '图神经网络（GNN）' },
-                    { id: 'dl-adv-3', title: '元学习' }
-                  ]
-                }
-              ]
-            }
+            { id: 'dl-m-1', title: '多层神经网络' },
+            { id: 'dl-m-2', title: '反向传播' },
+            { id: 'dl-m-3', title: '梯度下降' }
           ]
         },
         {
-          id: 'bayes',
-          title: '贝叶斯',
+          id: 'dl-architecture',
+          title: '网络架构',
           children: [
-            { id: 'bayes-1', title: '贝叶斯定理与贝叶斯推断' },
-            { id: 'bayes-2', title: '朴素贝叶斯分类器' },
-            { id: 'bayes-3', title: '贝叶斯网络与概率图模型' },
-            { id: 'bayes-4', title: '马尔可夫链蒙特卡洛方法（MCMC）' }
+            { id: 'dl-a-1', title: '卷积神经网络（CNN）及其变体' },
+            { id: 'dl-a-2', title: '循环神经网络（RNN）、LSTM、GRU' },
+            { id: 'dl-a-3', title: '生成对抗网络（GAN）' },
+            { id: 'dl-a-4', title: 'Transformer 架构' }
+          ]
+        },
+        {
+          id: 'dl-training',
+          title: '训练技术',
+          children: [
+            { id: 'dl-t-1', title: '正则化（Dropout、BatchNorm）' },
+            { id: 'dl-t-2', title: '优化器（Adam、RMSprop）' },
+            { id: 'dl-t-3', title: '学习率调度' }
+          ]
+        },
+        {
+          id: 'dl-advanced',
+          title: '前沿方向',
+          children: [
+            { id: 'dl-adv-1', title: '自监督学习' },
+            { id: 'dl-adv-2', title: '图神经网络（GNN）' },
+            { id: 'dl-adv-3', title: '元学习' }
           ]
         }
+      ]
+    },
+    {
+      id: 'bayes',
+      title: '贝叶斯',
+      children: [
+        { id: 'bayes-1', title: '贝叶斯定理与贝叶斯推断' },
+        { id: 'bayes-2', title: '朴素贝叶斯分类器' },
+        { id: 'bayes-3', title: '贝叶斯网络与概率图模型' },
+        { id: 'bayes-4', title: '马尔可夫链蒙特卡洛方法（MCMC）' }
       ]
     }
   ]
