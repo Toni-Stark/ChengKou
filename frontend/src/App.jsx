@@ -7,9 +7,13 @@ import Visualization from './components/Visualization';
 import Articles from './components/Articles';
 import Methods from './components/Methods';
 import Sidebar from './components/Sidebar';
+import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
 import AIDetailPage from './pages/AIDetailPage';
 import AerospaceDetailPage from './pages/AerospaceDetailPage';
+import AerospaceAlgorithmDetail from './pages/AerospaceAlgorithmDetail';
+import AerospaceAlgorithmModelDetail from './pages/AerospaceAlgorithmModelDetail';
+import AerospaceTopicDetail from './pages/AerospaceTopicDetail';
 import DataScienceDetailPage from './pages/DataScienceDetailPage';
 import ComputationalMechanicsDetailPage from './pages/ComputationalMechanicsDetailPage';
 import NeuralNetworkVisualization from './pages/NeuralNetworkVisualization';
@@ -42,12 +46,16 @@ function HomePage() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="bg-journal-secondary font-serif text-journal-primary">
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/ai-detail" element={<AIDetailPage />} />
           <Route path="/aerospace-detail" element={<AerospaceDetailPage />} />
+          <Route path="/aerospace-algorithm/:topic" element={<AerospaceAlgorithmDetail />} />
+          <Route path="/aerospace-algorithm-model/:topic/:model" element={<AerospaceAlgorithmModelDetail />} />
+          <Route path="/aerospace-topic/:topic" element={<AerospaceTopicDetail />} />
           <Route path="/data-science-detail" element={<DataScienceDetailPage />} />
           <Route path="/computational-mechanics-detail" element={<ComputationalMechanicsDetailPage />} />
           <Route path="/neural-network-visualization" element={<NeuralNetworkVisualization />} />

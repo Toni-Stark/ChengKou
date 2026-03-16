@@ -102,6 +102,28 @@
   background-color: #e9ecef;
 }
 
+.accordion-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-link-button {
+  border: 1px solid #d0d7e2;
+  background: #ffffff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-link-button:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
 .accordion-content {
   padding: 15px;
   border: 1px solid var(--border-color);
@@ -186,6 +208,21 @@
 
 .summary-panel li {
   margin-bottom: 6px;
+}
+
+/* 可点击的表格行 */
+.clickable-row {
+  transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f0f4ff !important;
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.clickable-row:active {
+  transform: translateX(1px);
 }
 
 /* 响应式适配 */

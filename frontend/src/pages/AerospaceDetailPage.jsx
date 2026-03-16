@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/aerospace.css';
 
 function AerospaceDetailPage() {
+  const navigate = useNavigate();
+  const goToAlgorithmDetail = (topic) => {
+    navigate(`/aerospace-algorithm/${encodeURIComponent(topic)}`);
+  };
+  const goToAlgorithmModelDetail = (topic, model) => {
+    navigate(`/aerospace-algorithm-model/${encodeURIComponent(topic)}/${encodeURIComponent(model)}`);
+  };
+
   const [expandedAccordions, setExpandedAccordions] = useState({
     accordion1: true,
     accordion2: false,
@@ -223,7 +231,12 @@ function AerospaceDetailPage() {
             </thead>
             <tbody>
               {researchDirections.map((item, index) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  onClick={() => navigate(`/aerospace-topic/${encodeURIComponent(item.category)}`)}
+                  style={{ cursor: 'pointer' }}
+                  className="clickable-row"
+                >
                   <td><span className="tag">{item.category}</span></td>
                   <td>{item.subdivisions}</td>
                   <td>{item.coreTasks}</td>
@@ -247,7 +260,19 @@ function AerospaceDetailPage() {
               onClick={() => toggleAccordion('accordion1')}
             >
               <span>气动与推进算法</span>
-              <span>{expandedAccordions.accordion1 ? '▲' : '▼'}</span>
+              <div className="accordion-actions">
+                <button
+                  type="button"
+                  className="detail-link-button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    goToAlgorithmDetail('气动与推进算法');
+                  }}
+                >
+                  查看详情
+                </button>
+                <span>{expandedAccordions.accordion1 ? '▲' : '▼'}</span>
+              </div>
             </div>
             {expandedAccordions.accordion1 && (
               <div className="accordion-content active">
@@ -261,7 +286,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {aerodynamicAlgorithms.map((item, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={index}
+                        onClick={() => goToAlgorithmModelDetail('气动与推进算法', item.algorithm)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.algorithm}</td>
                         <td>{item.capability}</td>
                         <td>{item.bottleneck}</td>
@@ -280,7 +310,19 @@ function AerospaceDetailPage() {
               onClick={() => toggleAccordion('accordion2')}
             >
               <span>动力学与控制算法</span>
-              <span>{expandedAccordions.accordion2 ? '▲' : '▼'}</span>
+              <div className="accordion-actions">
+                <button
+                  type="button"
+                  className="detail-link-button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    goToAlgorithmDetail('动力学与控制算法');
+                  }}
+                >
+                  查看详情
+                </button>
+                <span>{expandedAccordions.accordion2 ? '▲' : '▼'}</span>
+              </div>
             </div>
             {expandedAccordions.accordion2 && (
               <div className="accordion-content active">
@@ -294,7 +336,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {dynamicsAlgorithms.map((item, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={index}
+                        onClick={() => goToAlgorithmModelDetail('动力学与控制算法', item.algorithm)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.algorithm}</td>
                         <td>{item.capability}</td>
                         <td>{item.bottleneck}</td>
@@ -313,7 +360,19 @@ function AerospaceDetailPage() {
               onClick={() => toggleAccordion('accordion3')}
             >
               <span>感知与信息处理算法</span>
-              <span>{expandedAccordions.accordion3 ? '▲' : '▼'}</span>
+              <div className="accordion-actions">
+                <button
+                  type="button"
+                  className="detail-link-button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    goToAlgorithmDetail('感知与信息处理算法');
+                  }}
+                >
+                  查看详情
+                </button>
+                <span>{expandedAccordions.accordion3 ? '▲' : '▼'}</span>
+              </div>
             </div>
             {expandedAccordions.accordion3 && (
               <div className="accordion-content active">
@@ -327,7 +386,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {perceptionAlgorithms.map((item, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={index}
+                        onClick={() => goToAlgorithmModelDetail('感知与信息处理算法', item.algorithm)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.algorithm}</td>
                         <td>{item.capability}</td>
                         <td>{item.bottleneck}</td>
@@ -346,7 +410,19 @@ function AerospaceDetailPage() {
               onClick={() => toggleAccordion('accordion4')}
             >
               <span>制造与优化算法</span>
-              <span>{expandedAccordions.accordion4 ? '▲' : '▼'}</span>
+              <div className="accordion-actions">
+                <button
+                  type="button"
+                  className="detail-link-button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    goToAlgorithmDetail('制造与优化算法');
+                  }}
+                >
+                  查看详情
+                </button>
+                <span>{expandedAccordions.accordion4 ? '▲' : '▼'}</span>
+              </div>
             </div>
             {expandedAccordions.accordion4 && (
               <div className="accordion-content active">
@@ -360,7 +436,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {manufacturingAlgorithms.map((item, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={index}
+                        onClick={() => goToAlgorithmModelDetail('制造与优化算法', item.algorithm)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.algorithm}</td>
                         <td>{item.capability}</td>
                         <td>{item.bottleneck}</td>
