@@ -10,6 +10,9 @@ function AerospaceDetailPage() {
   const goToAlgorithmModelDetail = (topic, model) => {
     navigate(`/aerospace-algorithm-model/${encodeURIComponent(topic)}/${encodeURIComponent(model)}`);
   };
+  const goToMechanicsDetail = (topic) => {
+    navigate(`/aerospace-mechanics/${encodeURIComponent(topic)}`);
+  };
 
   const [expandedAccordions, setExpandedAccordions] = useState({
     accordion1: true,
@@ -483,7 +486,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {mechanicsBranches.map((item, index) => (
-                      <tr key={index}>
+                      <tr 
+                        key={index}
+                        onClick={() => goToMechanicsDetail(item.branch)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.branch}</td>
                         <td>{item.application}</td>
                         <td>{item.equations}</td>
@@ -517,7 +525,12 @@ function AerospaceDetailPage() {
                   </thead>
                   <tbody>
                     {engineeringFields.map((item, index) => (
-                      <tr key={index}>
+                      <tr 
+                        key={index}
+                        onClick={() => goToMechanicsDetail(item.field)}
+                        className="clickable-row"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.field}</td>
                         <td>{item.content}</td>
                         <td>{item.cases}</td>

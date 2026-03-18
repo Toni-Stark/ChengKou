@@ -14,6 +14,7 @@ import AerospaceDetailPage from './pages/AerospaceDetailPage';
 import AerospaceAlgorithmDetail from './pages/AerospaceAlgorithmDetail';
 import AerospaceAlgorithmModelDetail from './pages/AerospaceAlgorithmModelDetail';
 import AerospaceTopicDetail from './pages/AerospaceTopicDetail';
+import AerospaceMechanicsDetail from './pages/AerospaceMechanicsDetail';
 import DataScienceDetailPage from './pages/DataScienceDetailPage';
 import ComputationalMechanicsDetailPage from './pages/ComputationalMechanicsDetailPage';
 import NeuralNetworkVisualization from './pages/NeuralNetworkVisualization';
@@ -56,6 +57,7 @@ function App() {
           <Route path="/aerospace-algorithm/:topic" element={<AerospaceAlgorithmDetail />} />
           <Route path="/aerospace-algorithm-model/:topic/:model" element={<AerospaceAlgorithmModelDetail />} />
           <Route path="/aerospace-topic/:topic" element={<AerospaceTopicDetail />} />
+          <Route path="/aerospace-mechanics/:topic" element={<AerospaceMechanicsDetail />} />
           <Route path="/data-science-detail" element={<DataScienceDetailPage />} />
           <Route path="/computational-mechanics-detail" element={<ComputationalMechanicsDetailPage />} />
           <Route path="/neural-network-visualization" element={<NeuralNetworkVisualization />} />
