@@ -5,7 +5,15 @@ const compression = require('compression');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config();
+
+const defaultEnvPath = path.resolve(__dirname, '../.env');
+const productionEnvPath = path.resolve(__dirname, '../.env.production');
+
+require('dotenv').config({ path: defaultEnvPath });
+
+if (process.env.NODE_ENV === 'production' && fs.existsSync(productionEnvPath)) {
+  require('dotenv').config({ path: productionEnvPath, override: true });
+}
 
 const researchRoutes = require('./routes/research');
 const articlesRoutes = require('./routes/articles');

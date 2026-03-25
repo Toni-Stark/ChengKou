@@ -175,7 +175,7 @@ NODE_ENV=production
 
 **前端:**
 ```env
-VITE_API_BASE_URL=https://your-api-domain.com/api
+VITE_API_BASE_URL=/api
 ```
 
 ### 2. 使用Docker Compose部署
@@ -198,7 +198,7 @@ docker-compose ps
 ```nginx
 server {
     listen 80;
-    server_name lovebeyonddays.com;
+    server_name aerospace.lovebeyonddays.com;
 
     location / {
         proxy_pass http://localhost:80;

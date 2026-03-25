@@ -34,7 +34,7 @@ npm install
 ```bash
 PORT=3001
 NODE_ENV=production
-ALLOWED_ORIGINS=https://yourdomain.com
+ALLOWED_ORIGINS=https://aerospace.lovebeyonddays.com
 ```
 
 ### 3. 启动服务
