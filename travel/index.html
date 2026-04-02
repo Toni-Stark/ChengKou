@@ -613,26 +613,146 @@
       font-size: 13px;
     }
 
-    /* Responsive */
+    /* Responsive - Mobile */
     @media (max-width: 768px) {
+      body { overflow: auto; height: auto; }
+
+      /* Header compact */
+      .header {
+        padding: 10px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .header-left { gap: 10px; }
+      .logo { font-size: 18px; }
+      .header-right { gap: 8px; width: 100%; }
+      .header-right .search-box { flex: 1; }
+      .header-right .search-box input { width: 100%; }
+      .date-filter { flex-shrink: 0; }
+      .stats-pill { display: none; }
+
+      /* Mobile tab bar */
+      .mobile-tabs {
+        display: flex;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+      }
+      .mobile-tab {
+        flex: 1;
+        padding: 10px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+      .mobile-tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      /* Main layout - full height panels, toggle visibility */
       .main-container {
         flex-direction: column;
+        height: calc(100vh - 94px); /* header + tabs */
       }
       .timeline-panel {
         width: 100%;
         min-width: 100%;
-        height: 50%;
+        height: 100%;
+        display: flex;
       }
+      .timeline-panel.mobile-hidden { display: none; }
       .map-panel {
-        height: 50%;
-      }
-      .header-right .search-box input {
-        width: 120px;
-      }
-      .stats-pill {
+        height: 100%;
         display: none;
       }
+      .map-panel.mobile-visible { display: block; }
+
+      /* Timeline header compact */
+      .timeline-header { padding: 12px 14px; }
+      .timeline-header h2 { font-size: 14px; }
+
+      /* Timeline scroll */
+      .timeline-scroll { padding: 14px; }
+
+      /* Day label */
+      .day-label { font-size: 13px; margin-bottom: 10px; }
+
+      /* Timeline items compact */
+      .timeline-item { padding-left: 24px; }
+      .timeline-card { padding: 12px; }
+      .timeline-title { font-size: 13px; }
+      .timeline-desc { font-size: 11px; -webkit-line-clamp: 2; }
+      .timeline-time { font-size: 10px; }
+      .timeline-tags { gap: 4px; margin-top: 6px; }
+      .timeline-tag { font-size: 9px; padding: 1px 6px; }
+      .timeline-thumb { height: 100px; margin-top: 8px; }
+
+      /* Map overlay compact */
+      .map-overlay-info {
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        padding: 10px 14px;
+        gap: 12px;
+        font-size: 11px;
+        justify-content: center;
+        border-radius: 10px;
+      }
+
+      /* Modal full screen on mobile */
+      .modal {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+      }
+      .modal-hero { height: 200px; border-radius: 0; }
+      .modal-body { padding: 16px; }
+      .modal-title { font-size: 18px; }
+      .modal-text { font-size: 13px; line-height: 1.7; }
+      .modal-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .modal-gallery img { height: 120px; }
+      .modal-close {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        margin: 0;
+        z-index: 10;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        background: rgba(10, 10, 15, 0.8);
+        backdrop-filter: blur(8px);
+      }
     }
+
+    /* Extra small screens */
+    @media (max-width: 380px) {
+      .header { padding: 8px 10px; }
+      .logo { font-size: 16px; }
+      .header-right .search-box { padding: 5px 8px; }
+      .header-right .search-box input { font-size: 12px; }
+      .date-filter { padding: 5px 8px; font-size: 12px; }
+      .timeline-scroll { padding: 10px; }
+      .timeline-card { padding: 10px; }
+      .timeline-thumb { height: 80px; }
+      .modal-body { padding: 14px; }
+      .modal-title { font-size: 16px; }
+    }
+
+    /* Hide mobile tabs on desktop */
+    .mobile-tabs { display: none; }
 
     /* Image lightbox */
     .lightbox-overlay {
@@ -710,6 +830,12 @@
       </div>
     </div>
   </header>
+
+  <!-- Mobile Tab Bar -->
+  <div class="mobile-tabs" id="mobileTabs">
+    <button class="mobile-tab active" data-tab="timeline" onclick="switchMobileTab('timeline')">&#128203; 时间线</button>
+    <button class="mobile-tab" data-tab="map" onclick="switchMobileTab('map')">&#128506; 地图</button>
+  </div>
 
   <!-- Main Layout -->
   <div class="main-container">
@@ -947,16 +1073,24 @@
       // Update timeline active state
       renderTimeline();
 
+      // On mobile, switch to map tab
+      if (window.innerWidth <= 768) {
+        switchMobileTab('map');
+      }
+
       // Fly to marker
       var point = new BMap.Point(item.lng, item.lat);
-      map.panTo(point);
-      map.setZoom(12);
-
-      // Open info window
-      renderMapMarkers();
       setTimeout(function() {
-        showInfoWindow(item, point);
-      }, 300);
+        if (map) map.checkResize();
+        map.panTo(point);
+        map.setZoom(12);
+
+        // Open info window
+        renderMapMarkers();
+        setTimeout(function() {
+          showInfoWindow(item, point);
+        }, 300);
+      }, 150);
     }
 
     // ===== FILTERING =====
@@ -1098,6 +1232,30 @@
         clearTimeout(timer);
         timer = setTimeout(() => fn(...args), delay);
       };
+    }
+
+    // ===== MOBILE TAB SWITCHING =====
+    function switchMobileTab(tab) {
+      var tabs = document.querySelectorAll('.mobile-tab');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === tab);
+      }
+      var timeline = document.querySelector('.timeline-panel');
+      var mapPanel = document.querySelector('.map-panel');
+      if (tab === 'map') {
+        timeline.classList.add('mobile-hidden');
+        mapPanel.classList.add('mobile-visible');
+        // Baidu map needs a resize trigger after becoming visible
+        if (map) {
+          setTimeout(function() {
+            map.checkResize();
+            fitMapBounds();
+          }, 100);
+        }
+      } else {
+        timeline.classList.remove('mobile-hidden');
+        mapPanel.classList.remove('mobile-visible');
+      }
     }
 
     // ===== DATA LOADING =====
