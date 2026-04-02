@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行日志 - 后台管理</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a26;
+      --bg-card-hover: #222233;
+      --bg-input: #0e0e16;
+      --text-primary: #e8e6e3;
+      --text-secondary: #9a9a9a;
+      --text-muted: #666;
+      --accent: #f0a050;
+      --accent-light: #ffc88a;
+      --accent-dark: #c07828;
+      --border: #2a2a3a;
+      --danger: #e05050;
+      --danger-dark: #a03030;
+      --success: #50c878;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    .admin-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #f0a050, #e06060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--bg-card-hover); border-color: var(--accent-dark); }
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-color: var(--accent-dark);
+      color: #fff;
+      font-weight: 500;
+    }
+    .btn-accent:hover { opacity: 0.9; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
+    .btn-danger { border-color: var(--danger-dark); color: var(--danger); }
+    .btn-danger:hover { background: var(--danger-dark); color: #fff; }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-back { background: none; border: none; color: var(--text-secondary); padding: 8px 12px; }
+    .btn-back:hover { color: var(--accent); background: none; border: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px; }
+    .trips-grid { display: flex; flex-direction: column; gap: 16px; }
+    .trip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+    }
+    .trip-card:hover { border-color: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .trip-cover { width: 200px; min-height: 140px; object-fit: cover; flex-shrink: 0; }
+    .trip-cover-placeholder {
+      width: 200px; min-height: 140px;
+      background: var(--bg-secondary);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 36px; flex-shrink: 0;
+    }
+    .trip-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .trip-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .trip-desc {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px;
+      flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .trip-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-muted); }
+    .trip-meta span { display: flex; align-items: center; gap: 4px; }
+    .trip-actions {
+      padding: 18px; display: flex; flex-direction: column;
+      justify-content: center; gap: 8px; flex-shrink: 0;
+    }
+    .detail-header {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px; margin-bottom: 24px;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+    }
+    .detail-info h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .detail-info p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+    .detail-meta { display: flex; gap: 20px; font-size: 12px; color: var(--text-muted); }
+    .detail-meta span { display: flex; align-items: center; gap: 4px; }
+    .detail-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-bar h3 { font-size: 16px; font-weight: 600; }
+    .checkpoint-list { display: flex; flex-direction: column; gap: 10px; }
+    .checkpoint-item {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 18px; display: flex; align-items: flex-start; gap: 16px; transition: all 0.2s;
+    }
+    .checkpoint-item:hover { border-color: var(--accent-dark); }
+    .cp-index {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+    .cp-body { flex: 1; min-width: 0; }
+    .cp-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+    .cp-time { font-size: 12px; color: var(--accent); font-weight: 500; }
+    .cp-location { font-size: 12px; color: var(--text-muted); }
+    .cp-coords { font-size: 11px; color: var(--text-muted); opacity: 0.7; }
+    .cp-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .cp-desc {
+      font-size: 12px; color: var(--text-secondary); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cp-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .cp-tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 10px;
+      background: rgba(240,160,80,0.1); color: var(--accent-light); border: 1px solid rgba(240,160,80,0.15);
+    }
+    .cp-images { display: flex; gap: 6px; margin-top: 8px; }
+    .cp-images img { width: 60px; height: 40px; border-radius: 6px; object-fit: cover; }
+    .cp-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.25s;
+    }
+    .modal-overlay.show { opacity: 1; visibility: visible; }
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      width: 90%; max-width: 620px; max-height: 85vh; overflow-y: auto;
+      transform: translateY(20px); transition: transform 0.25s;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .modal-overlay.show .modal { transform: translateY(0); }
+    .modal::-webkit-scrollbar { width: 4px; }
+    .modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .modal-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: var(--bg-card); z-index: 1;
+    }
+    .modal-header h3 { font-size: 16px; font-weight: 600; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--bg-primary); border: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .modal-body { padding: 24px; }
+    .modal-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 10px;
+      position: sticky; bottom: 0; background: var(--bg-card);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-row { display: flex; gap: 14px; }
+    .form-row .form-group { flex: 1; }
+    .form-label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+    .form-input, .form-textarea {
+      width: 100%; padding: 9px 13px;
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-primary); font-size: 13px; font-family: inherit;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+    .empty-state p { font-size: 14px; margin-bottom: 16px; }
+    .toast-container { position: fixed; top: 70px; right: 28px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 18px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: flex; align-items: center; gap: 8px;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+    }
+    .toast-success { border-left: 3px solid var(--success); }
+    .toast-error { border-left: 3px solid var(--danger); }
+    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+    .confirm-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 1500; display: flex; align-items: center; justify-content: center;
+    }
+    .confirm-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px; max-width: 380px; width: 90%; text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .confirm-box h4 { font-size: 16px; margin-bottom: 10px; }
+    .confirm-box p { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+    .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+    @media (max-width: 768px) {
+      .trip-card { flex-direction: column; }
+      .trip-cover, .trip-cover-placeholder { width: 100%; min-height: 120px; height: 120px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .detail-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="btn btn-back" id="backBtn" onclick="showTrips()" style="display:none">&#8592; 返回</button>
+      <h1 id="pageTitle">旅行日志管理</h1>
+    </div>
+    <div class="header-actions">
+      <a class="btn" href="/" target="_blank">&#127758; 查看前台</a>
+      <button class="btn btn-accent" id="addMainBtn" onclick="openTripModal()">+ 新建旅行</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="tripsView">
+      <div class="trips-grid" id="tripsList"></div>
+    </div>
+    <div id="detailView" style="display:none">
+      <div class="detail-header" id="detailHeader"></div>
+      <div class="section-bar">
+        <h3>节点记录</h3>
+        <button class="btn btn-accent btn-sm" onclick="openCheckpointModal()">+ 添加节点</button>
+      </div>
+      <div class="checkpoint-list" id="checkpointList"></div>
+    </div>
+  </div>
+
+  <!-- Trip Modal -->
+  <div class="modal-overlay" id="tripModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="tripModalTitle">新建旅行</h3>
+        <button class="modal-close" onclick="closeModal('tripModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">旅行名称 *</label>
+          <input class="form-input" id="tripName" placeholder="例如：2026春季云南之旅" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">旅行描述</label>
+          <textarea class="form-textarea" id="tripDescription" placeholder="简单描述这次旅行..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">开始日期 *</label>
+            <input type="date" class="form-input" id="tripStartDate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">结束日期</label>
+            <input type="date" class="form-input" id="tripEndDate" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">封面图片 URL</label>
+          <input class="form-input" id="tripCover" placeholder="https://..." />
+          <div class="form-hint">粘贴图片链接地址</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('tripModal')">取消</button>
+        <button class="btn btn-accent" onclick="saveTrip()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkpoint Modal -->
+  <div class="modal-overlay" id="cpModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="cpModalTitle">添加节点</h3>
+        <button class="modal-close" onclick="closeModal('cpModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">日期 *</label>
+            <input type="date" class="form-input" id="cpDate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">时间 *</label>
+            <input type="time" class="form-input" id="cpTime" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">标题 *</label>
+          <input class="form-input" id="cpTitle" placeholder="例如：抵达昆明长水机场" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">地点 *</label>
+          <input class="form-input" id="cpLocation" placeholder="例如：昆明" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">纬度 (lat) *</label>
+            <input type="number" step="any" class="form-input" id="cpLat" placeholder="25.0194" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">经度 (lng) *</label>
+            <input type="number" step="any" class="form-input" id="cpLng" placeholder="102.7493" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">简短描述</label>
+          <textarea class="form-textarea" id="cpDesc" rows="2" placeholder="在时间线上显示的简短描述..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">详细内容</label>
+          <textarea class="form-textarea" id="cpFullText" rows="5" placeholder="点击详情后展示的完整日志内容..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">图片 URL</label>
+          <textarea class="form-textarea" id="cpImages" rows="2" placeholder="每行一个图片 URL"></textarea>
+          <div class="form-hint">每行一个图片链接，支持多张</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">视频 URL</label>
+          <input class="form-input" id="cpVideo" placeholder="视频链接（可选）" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">标签</label>
+          <input class="form-input" id="cpTags" placeholder="用逗号分隔，例如：昆明, 春城, 美食" />
+          <div class="form-hint">用逗号分隔多个标签</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('cpModal')">取消</button>
+        <button class="btn btn-accent" onclick="saveCheckpoint()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmDialog" style="display:none"></div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const API = window.location.origin + '/api';
+    let currentTrips = [];
+    let currentTripId = null;
+    let editingTripId = null;
+    let editingCpId = null;
+
+    async function api(url, method, body) {
+      method = method || 'GET';
+      const opts = { method: method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(API + url, opts);
+      if (!res.ok) {
+        const err = await res.json().catch(function() { return { error: 'Request failed' }; });
+        throw new Error(err.error || 'Request failed');
+      }
+      return res.json();
+    }
+
+    async function loadTrips() {
+      try {
+        currentTrips = await api('/trips');
+        renderTrips();
+      } catch (e) { toast('加载失败: ' + e.message, 'error'); }
+    }
+
+    function renderTrips() {
+      var el = document.getElementById('tripsList');
+      if (currentTrips.length === 0) {
+        el.innerHTML = '<div class="empty-state"><div class="icon">&#9992;</div><p>还没有旅行日志，创建你的第一次旅行吧</p><button class="btn btn-accent" onclick="openTripModal()">+ 新建旅行</button></div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < currentTrips.length; i++) {
+        var t = currentTrips[i];
+        var cpCount = (t.checkpoints || []).length;
+        var cover = t.coverImage
+          ? '<img class="trip-cover" src="' + t.coverImage + '" alt="' + esc(t.name) + '" />'
+          : '<div class="trip-cover-placeholder">&#127748;</div>';
+        html += '<div class="trip-card" onclick="openTrip(' + t.id + ')">'
+          + cover
+          + '<div class="trip-info">'
+          + '<div class="trip-name">' + esc(t.name) + '</div>'
+          + '<div class="trip-desc">' + esc(t.description || '') + '</div>'
+          + '<div class="trip-meta">'
+          + '<span>&#128197; ' + (t.startDate || '--') + ' ~ ' + (t.endDate || '--') + '</span>'
+          + '<span>&#128205; ' + cpCount + ' 个节点</span>'
+          + '</div></div>'
+          + '<div class="trip-actions" onclick="event.stopPropagation()">'
+          + '<button class="btn btn-sm" onclick="editTrip(' + t.id + ')">&#9998; 编辑</button>'
+          + '<button class="btn btn-sm btn-danger" onclick="deleteTrip(' + t.id + ')">&#128465; 删除</button>'
+          + '</div></div>';
+      }
+      el.innerHTML = html;
+    }
+
+    function showTrips() {
+      currentTripId = null;
+      document.getElementById('tripsView').style.display = '';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('backBtn').style.display = 'none';
+      document.getElementById('pageTitle').textContent = '旅行日志管理';
+      document.getElementById('addMainBtn').textContent = '+ 新建旅行';
+      document.getElementById('addMainBtn').onclick = function() { openTripModal(); };
+      loadTrips();
+    }
+
+    async function openTrip(tripId) {
+      currentTripId = tripId;
+      document.getElementById('tripsView').style.display = 'none';
+      document.getElementById('detailView').style.display = '';
+      document.getElementById('backBtn').style.display = '';
+      document.getElementById('addMainBtn').textContent = '+ 添加节点';
+      document.getElementById('addMainBtn').onclick = function() { openCheckpointModal(); };
+      await renderTripDetail();
+    }
+
+    async function renderTripDetail() {
+      try {
+        var trip = await api('/trips/' + currentTripId);
+        document.getElementById('pageTitle').textContent = trip.name;
+        var headerEl = document.getElementById('detailHeader');
+        var cpCount = (trip.checkpoints || []).length;
+        headerEl.innerHTML =
+          '<div class="detail-info">'
+          + '<h2>' + esc(trip.name) + '</h2>'
+          + '<p>' + esc(trip.description || '暂无描述') + '</p>'
+          + '<div class="detail-meta">'
+          + '<span>&#128197; ' + (trip.startDate || '--') + ' ~ ' + (trip.endDate || '--') + '</span>'
+          + '<span>&#128205; ' + cpCount + ' 个节点</span>'
+          + '</div></div>'
+          + '<div class="detail-actions">'
+          + '<button class="btn btn-sm" onclick="editTrip(' + trip.id + ')">&#9998; 编辑旅行</button>'
+          + '<button class="btn btn-sm btn-danger" onclick="deleteTrip(' + trip.id + ')">&#128465; 删除旅行</button>'
+          + '</div>';
+        renderCheckpoints(trip.checkpoints || []);
+      } catch (e) { toast('加载失败: ' + e.message, 'error'); }
+    }
+
+    function renderCheckpoints(checkpoints) {
+      var el = document.getElementById('checkpointList');
+      if (checkpoints.length === 0) {
+        el.innerHTML = '<div class="empty-state"><div class="icon">&#128204;</div><p>暂无节点记录，添加你的第一个旅行节点吧</p><button class="btn btn-accent" onclick="openCheckpointModal()">+ 添加节点</button></div>';
+        return;
+      }
+      var sorted = checkpoints.slice().sort(function(a, b) {
+        return (a.date + ' ' + a.time).localeCompare(b.date + ' ' + b.time);
+      });
+      var html = '';
+      for (var i = 0; i < sorted.length; i++) {
+        var cp = sorted[i];
+        var imgs = '';
+        if (cp.images) {
+          for (var j = 0; j < Math.min(cp.images.length, 3); j++) {
+            imgs += '<img src="' + cp.images[j] + '" alt="" />';
+          }
+        }
+        var tags = '';
+        if (cp.tags) {
+          for (var k = 0; k < cp.tags.length; k++) {
+            tags += '<span class="cp-tag">' + esc(cp.tags[k]) + '</span>';
+          }
+        }
+        html += '<div class="checkpoint-item">'
+          + '<div class="cp-index">' + (i + 1) + '</div>'
+          + '<div class="cp-body">'
+          + '<div class="cp-top">'
+          + '<span class="cp-time">&#128336; ' + cp.date + ' ' + cp.time + '</span>'
+          + '<span class="cp-location">&#128205; ' + esc(cp.location || '') + '</span>'
+          + '<span class="cp-coords">(' + (cp.lat || 0).toFixed(4) + ', ' + (cp.lng || 0).toFixed(4) + ')</span>'
+          + '</div>'
+          + '<div class="cp-title">' + esc(cp.title || '') + '</div>'
+          + '<div class="cp-desc">' + esc(cp.description || '') + '</div>'
+          + (tags ? '<div class="cp-tags">' + tags + '</div>' : '')
+          + (imgs ? '<div class="cp-images">' + imgs + '</div>' : '')
+          + '</div>'
+          + '<div class="cp-actions">'
+          + '<button class="btn btn-sm" onclick="editCheckpoint(' + cp.id + ')">&#9998;</button>'
+          + '<button class="btn btn-sm btn-danger" onclick="deleteCheckpoint(' + cp.id + ')">&#128465;</button>'
+          + '</div></div>';
+      }
+      el.innerHTML = html;
+    }
+
+    function openTripModal(trip) {
+      editingTripId = trip ? trip.id : null;
+      document.getElementById('tripModalTitle').textContent = trip ? '编辑旅行' : '新建旅行';
+      document.getElementById('tripName').value = trip ? trip.name : '';
+      document.getElementById('tripDescription').value = trip ? (trip.description || '') : '';
+      document.getElementById('tripStartDate').value = trip ? (trip.startDate || '') : '';
+      document.getElementById('tripEndDate').value = trip ? (trip.endDate || '') : '';
+      document.getElementById('tripCover').value = trip ? (trip.coverImage || '') : '';
+      document.getElementById('tripModal').classList.add('show');
+    }
+
+    async function editTrip(id) {
+      try {
+        var trip = await api('/trips/' + id);
+        openTripModal(trip);
+      } catch (e) { toast('加载失败', 'error'); }
+    }
+
+    async function saveTrip() {
+      var name = document.getElementById('tripName').value.trim();
+      var startDate = document.getElementById('tripStartDate').value;
+      if (!name || !startDate) { toast('请填写旅行名称和开始日期', 'error'); return; }
+      var body = {
+        name: name,
+        description: document.getElementById('tripDescription').value.trim(),
+        startDate: startDate,
+        endDate: document.getElementById('tripEndDate').value || startDate,
+        coverImage: document.getElementById('tripCover').value.trim()
+      };
+      try {
+        if (editingTripId) {
+          await api('/trips/' + editingTripId, 'PUT', body);
+          toast('旅行已更新', 'success');
+        } else {
+          await api('/trips', 'POST', body);
+          toast('旅行已创建', 'success');
+        }
+        closeModal('tripModal');
+        if (currentTripId) await renderTripDetail();
+        else await loadTrips();
+      } catch (e) { toast('保存失败: ' + e.message, 'error'); }
+    }
+
+    async function deleteTrip(id) {
+      var ok = await confirm2('确定删除这个旅行吗？', '删除后所有相关的节点记录也会一起删除，此操作不可撤回。');
+      if (!ok) return;
+      try {
+        await api('/trips/' + id, 'DELETE');
+        toast('旅行已删除', 'success');
+        if (currentTripId === id) showTrips();
+        else await loadTrips();
+      } catch (e) { toast('删除失败: ' + e.message, 'error'); }
+    }
+
+    function openCheckpointModal(cp) {
+      editingCpId = cp ? cp.id : null;
+      document.getElementById('cpModalTitle').textContent = cp ? '编辑节点' : '添加节点';
+      document.getElementById('cpDate').value = cp ? cp.date : '';
+      document.getElementById('cpTime').value = cp ? cp.time : '';
+      document.getElementById('cpTitle').value = cp ? cp.title : '';
+      document.getElementById('cpLocation').value = cp ? (cp.location || '') : '';
+      document.getElementById('cpLat').value = cp ? cp.lat : '';
+      document.getElementById('cpLng').value = cp ? cp.lng : '';
+      document.getElementById('cpDesc').value = cp ? (cp.description || '') : '';
+      document.getElementById('cpFullText').value = cp ? (cp.fullText || '') : '';
+      document.getElementById('cpImages').value = cp && cp.images ? cp.images.join('\n') : '';
+      document.getElementById('cpVideo').value = cp ? (cp.video || '') : '';
+      document.getElementById('cpTags').value = cp && cp.tags ? cp.tags.join(', ') : '';
+      document.getElementById('cpModal').classList.add('show');
+    }
+
+    async function editCheckpoint(cpId) {
+      try {
+        var trip = await api('/trips/' + currentTripId);
+        var cp = null;
+        var cps = trip.checkpoints || [];
+        for (var i = 0; i < cps.length; i++) {
+          if (cps[i].id === cpId) { cp = cps[i]; break; }
+        }
+        if (cp) openCheckpointModal(cp);
+      } catch (e) { toast('加载失败', 'error'); }
+    }
+
+    async function saveCheckpoint() {
+      var date = document.getElementById('cpDate').value;
+      var time = document.getElementById('cpTime').value;
+      var title = document.getElementById('cpTitle').value.trim();
+      var location = document.getElementById('cpLocation').value.trim();
+      var lat = parseFloat(document.getElementById('cpLat').value);
+      var lng = parseFloat(document.getElementById('cpLng').value);
+      if (!date || !time || !title || !location || isNaN(lat) || isNaN(lng)) {
+        toast('请填写日期、时间、标题、地点和坐标', 'error');
+        return;
+      }
+      var imagesRaw = document.getElementById('cpImages').value.trim();
+      var tagsRaw = document.getElementById('cpTags').value.trim();
+      var body = {
+        date: date, time: time, title: title, location: location, lat: lat, lng: lng,
+        description: document.getElementById('cpDesc').value.trim(),
+        fullText: document.getElementById('cpFullText').value.trim(),
+        images: imagesRaw ? imagesRaw.split('\n').map(function(s) { return s.trim(); }).filter(Boolean) : [],
+        video: document.getElementById('cpVideo').value.trim(),
+        tags: tagsRaw ? tagsRaw.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : []
+      };
+      try {
+        if (editingCpId) {
+          await api('/trips/' + currentTripId + '/checkpoints/' + editingCpId, 'PUT', body);
+          toast('节点已更新', 'success');
+        } else {
+          await api('/trips/' + currentTripId + '/checkpoints', 'POST', body);
+          toast('节点已添加', 'success');
+        }
+        closeModal('cpModal');
+        await renderTripDetail();
+      } catch (e) { toast('保存失败: ' + e.message, 'error'); }
+    }
+
+    async function deleteCheckpoint(cpId) {
+      var ok = await confirm2('确定删除这个节点吗？', '此操作不可撤回。');
+      if (!ok) return;
+      try {
+        await api('/trips/' + currentTripId + '/checkpoints/' + cpId, 'DELETE');
+        toast('节点已删除', 'success');
+        await renderTripDetail();
+      } catch (e) { toast('删除失败: ' + e.message, 'error'); }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    var modals = document.querySelectorAll('.modal-overlay');
+    for (var i = 0; i < modals.length; i++) {
+      (function(el) {
+        el.addEventListener('click', function(e) { if (e.target === el) el.classList.remove('show'); });
+      })(modals[i]);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var openModals = document.querySelectorAll('.modal-overlay.show');
+        for (var i = 0; i < openModals.length; i++) openModals[i].classList.remove('show');
+      }
+    });
+
+    function toast(msg, type) {
+      var c = document.getElementById('toastContainer');
+      var t = document.createElement('div');
+      t.className = 'toast toast-' + (type || 'success');
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(function() { t.remove(); }, 3000);
+    }
+
+    function confirm2(title, msg) {
+      return new Promise(function(resolve) {
+        var el = document.getElementById('confirmDialog');
+        el.style.display = '';
+        el.innerHTML = '<div class="confirm-overlay"><div class="confirm-box">'
+          + '<h4>' + title + '</h4><p>' + msg + '</p>'
+          + '<div class="confirm-actions">'
+          + '<button class="btn" id="confirmNo">取消</button>'
+          + '<button class="btn btn-danger" id="confirmYes">确定删除</button>'
+          + '</div></div></div>';
+        document.getElementById('confirmYes').onclick = function() { el.style.display = 'none'; resolve(true); };
+        document.getElementById('confirmNo').onclick = function() { el.style.display = 'none'; resolve(false); };
+      });
+    }
+
+    function esc(str) {
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    loadTrips();
+  </script>
+</body>
+</html>

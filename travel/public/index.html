@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行日志 - Love Beyond Days</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=UriRHSmq8YQwwrkDI8GHnUsIU9AGtwa4"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a26;
+      --bg-card-hover: #222233;
+      --text-primary: #e8e6e3;
+      --text-secondary: #9a9a9a;
+      --text-muted: #666;
+      --accent: #f0a050;
+      --accent-light: #ffc88a;
+      --accent-dark: #c07828;
+      --timeline-line: #2a2a3a;
+      --border: #2a2a3a;
+      --shadow: rgba(0, 0, 0, 0.4);
+      --gradient-start: #f0a050;
+      --gradient-end: #e06060;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Serif SC', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .trip-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      gap: 8px;
+      transition: border-color 0.3s;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent);
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      width: 180px;
+      font-family: inherit;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .date-filter {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .date-filter:focus {
+      border-color: var(--accent);
+    }
+
+    .stats-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stats-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* Main Layout */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 52px);
+    }
+
+    /* Timeline Panel */
+    .timeline-panel {
+      width: 420px;
+      min-width: 420px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .timeline-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .timeline-header h2 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .timeline-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+
+    .timeline-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .timeline-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .timeline-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .timeline-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    /* Timeline Day Group */
+    .day-group {
+      margin-bottom: 28px;
+    }
+
+    .day-label {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .day-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Timeline Item */
+    .timeline-item {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 24px;
+      bottom: -6px;
+      width: 1px;
+      background: var(--timeline-line);
+    }
+
+    .timeline-item:last-child::before {
+      display: none;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--timeline-line);
+      transition: all 0.3s;
+      z-index: 1;
+    }
+
+    .timeline-item:hover .timeline-dot,
+    .timeline-item.active .timeline-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(240, 160, 80, 0.4);
+    }
+
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      transition: all 0.3s;
+    }
+
+    .timeline-item:hover .timeline-card,
+    .timeline-item.active .timeline-card {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-dark);
+      transform: translateX(4px);
+    }
+
+    .timeline-time {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-time svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .timeline-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .timeline-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .timeline-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .timeline-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(240, 160, 80, 0.1);
+      color: var(--accent-light);
+      border: 1px solid rgba(240, 160, 80, 0.2);
+    }
+
+    .timeline-thumb {
+      margin-top: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 120px;
+    }
+
+    .timeline-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .timeline-item:hover .timeline-thumb img {
+      transform: scale(1.05);
+    }
+
+    /* Map Panel */
+    .map-panel {
+      flex: 1;
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Custom Baidu Map Styles */
+    .BMap_pop div { background: transparent !important; border: none !important; }
+    .BMap_pop .BMap_top, .BMap_pop .BMap_center, .BMap_pop .BMap_bottom { display: none; }
+    .BMap_shadow { display: none !important; }
+
+    .bmap-popup {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .popup-content {
+      width: 300px;
+    }
+
+    .popup-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .popup-body {
+      padding: 14px;
+    }
+
+    .popup-time {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .popup-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .popup-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .popup-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .popup-btn:hover { opacity: 0.85; }
+
+    /* Detail Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: translateY(30px);
+      transition: transform 0.3s;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .modal-close {
+      position: sticky;
+      top: 0;
+      float: right;
+      margin: 12px 12px 0 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .modal-hero {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-date {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .modal-location {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .modal-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .modal-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .modal-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .modal-gallery img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .modal-gallery img:hover {
+      transform: scale(1.03);
+    }
+
+    .modal-video {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      background: #000;
+    }
+
+    .modal-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .modal-tag {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      background: rgba(240, 160, 80, 0.1);
+      color: var(--accent-light);
+      border: 1px solid rgba(240, 160, 80, 0.2);
+    }
+
+    /* No results */
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .no-results svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .no-results p {
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+      .timeline-panel {
+        width: 100%;
+        min-width: 100%;
+        height: 50%;
+      }
+      .map-panel {
+        height: 50%;
+      }
+      .header-right .search-box input {
+        width: 120px;
+      }
+      .stats-pill {
+        display: none;
+      }
+    }
+
+    /* Image lightbox */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .lightbox-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Map controls overlay */
+    .map-overlay-info {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .map-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-stat strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">旅行日志</div>
+      <select id="tripSelector" class="trip-badge" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);font-size:12px;border-radius:20px;padding:4px 14px;cursor:pointer;outline:none;font-family:inherit;"></select>
+    </div>
+    <div class="header-right">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="搜索地点、活动..." />
+      </div>
+      <input type="date" class="date-filter" id="dateFilter" title="按日期筛选" />
+      <div class="stats-pill">
+        <span class="dot"></span>
+        <span id="statsText">旅途进行中</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="main-container">
+    <!-- Timeline -->
+    <div class="timeline-panel">
+      <div class="timeline-header">
+        <h2>行程时间线</h2>
+        <span class="timeline-count" id="timelineCount">0 条记录</span>
+      </div>
+      <div class="timeline-scroll" id="timelineScroll"></div>
+    </div>
+
+    <!-- Map -->
+    <div class="map-panel">
+      <div id="map"></div>
+      <div class="map-overlay-info" id="mapOverlay">
+        <div class="map-stat">途经 <strong id="statCities">0</strong> 个地点</div>
+        <div class="map-stat">行程 <strong id="statDays">0</strong> 天</div>
+        <div class="map-stat">约 <strong id="statDistance">0</strong> km</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent"></div>
+  </div>
+
+  <!-- Image Lightbox -->
+  <div class="lightbox-overlay" id="lightbox">
+    <img id="lightboxImg" src="" alt="" />
+  </div>
+
+  <script>
+    // ===== TRAVEL DATA =====
+    // Data loaded from API. Fallback to empty array.
+    let travelData = [];
+
+    // ===== APP STATE =====
+    let map, markers = [], routeLine, activeItemId = null;
+    let currentInfoWindow = null;
+
+    // ===== INITIALIZE MAP (Baidu) =====
+    function initMap() {
+      map = new BMap.Map('map', { enableMapClick: false });
+      map.centerAndZoom(new BMap.Point(100.5, 26.5), 7);
+      map.enableScrollWheelZoom(true);
+      map.addControl(new BMap.NavigationControl({ anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM }));
+
+      // Dark map style
+      map.setMapStyleV2({
+        styleId: '2d12tried0xoflkysrqv4ccbquzfgvho'
+      });
+
+      renderMapMarkers();
+      renderRoute();
+      fitMapBounds();
+    }
+
+    function createMarkerIcon(index) {
+      var canvas = document.createElement('canvas');
+      canvas.width = 36;
+      canvas.height = 46;
+      var ctx = canvas.getContext('2d');
+
+      // Draw pin shape
+      ctx.beginPath();
+      ctx.moveTo(18, 46);
+      ctx.bezierCurveTo(4, 30, 0, 22, 0, 14);
+      ctx.arc(18, 14, 18, Math.PI, 0, false);
+      ctx.bezierCurveTo(36, 22, 32, 30, 18, 46);
+      ctx.closePath();
+
+      var grad = ctx.createLinearGradient(0, 0, 36, 46);
+      grad.addColorStop(0, '#f0a050');
+      grad.addColorStop(1, '#e06060');
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // shadow
+      ctx.shadowColor = 'rgba(240, 160, 80, 0.4)';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Number
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(index + 1), 18, 15);
+
+      return new BMap.Icon(canvas.toDataURL(), new BMap.Size(36, 46), {
+        anchor: new BMap.Size(18, 46),
+        imageSize: new BMap.Size(36, 46)
+      });
+    }
+
+    function renderMapMarkers() {
+      // Remove old markers
+      markers.forEach(function(m) { map.removeOverlay(m); });
+      markers = [];
+      if (currentInfoWindow) { map.closeInfoWindow(); currentInfoWindow = null; }
+
+      var filtered = getFilteredData();
+      filtered.forEach(function(item, index) {
+        var point = new BMap.Point(item.lng, item.lat);
+        var marker = new BMap.Marker(point, { icon: createMarkerIcon(index) });
+        marker._travelItem = item;
+        marker._travelIndex = index;
+
+        marker.addEventListener('click', function() {
+          showInfoWindow(item, point);
+        });
+
+        map.addOverlay(marker);
+        markers.push(marker);
+      });
+    }
+
+    function showInfoWindow(item, point) {
+      var imgHtml = item.images && item.images[0]
+        ? '<img src="' + item.images[0] + '" style="width:100%;height:140px;object-fit:cover;border-radius:10px 10px 0 0;display:block;" />'
+        : '';
+      var html = '<div class="bmap-popup" style="width:280px;font-family:Inter,sans-serif;">'
+        + imgHtml
+        + '<div style="padding:12px;">'
+        + '<div style="font-size:11px;color:#f0a050;font-weight:500;margin-bottom:4px;">' + item.date + ' ' + item.time + '</div>'
+        + '<div style="font-size:14px;font-weight:600;color:#e8e6e3;margin-bottom:4px;">' + item.title + '</div>'
+        + '<div style="font-size:12px;color:#9a9a9a;line-height:1.4;margin-bottom:8px;">' + (item.description || '').substring(0, 80) + '...</div>'
+        + '<button onclick="openModal(' + item.id + ')" style="padding:6px 16px;background:linear-gradient(135deg,#f0a050,#e06060);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;">查看详情</button>'
+        + '</div></div>';
+
+      var infoWindow = new BMap.InfoWindow(html, {
+        width: 280,
+        offset: new BMap.Size(0, -20),
+        enableCloseOnClick: true
+      });
+      map.openInfoWindow(infoWindow, point);
+      currentInfoWindow = infoWindow;
+    }
+
+    function renderRoute() {
+      if (routeLine) { map.removeOverlay(routeLine); routeLine = null; }
+
+      var filtered = getFilteredData();
+      if (filtered.length < 2) return;
+
+      var points = filtered.map(function(item) { return new BMap.Point(item.lng, item.lat); });
+      routeLine = new BMap.Polyline(points, {
+        strokeColor: '#f0a050',
+        strokeWeight: 3,
+        strokeOpacity: 0.7,
+        strokeStyle: 'dashed'
+      });
+      map.addOverlay(routeLine);
+    }
+
+    function fitMapBounds() {
+      var filtered = getFilteredData();
+      if (filtered.length === 0) return;
+
+      var viewport = map.getViewport(
+        filtered.map(function(item) { return new BMap.Point(item.lng, item.lat); })
+      );
+      map.centerAndZoom(viewport.center, viewport.zoom);
+    }
+
+    // ===== TIMELINE =====
+    function renderTimeline() {
+      const container = document.getElementById('timelineScroll');
+      const filtered = getFilteredData();
+
+      document.getElementById('timelineCount').textContent = `${filtered.length} 条记录`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <p>没有找到匹配的记录</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by date
+      const grouped = {};
+      filtered.forEach(item => {
+        if (!grouped[item.date]) grouped[item.date] = [];
+        grouped[item.date].push(item);
+      });
+
+      let html = '';
+      const allDates = Object.keys(grouped).sort();
+
+      allDates.forEach((date, dayIdx) => {
+        const items = grouped[date];
+        const parts = date.split('-');
+        const label = '第' + (dayIdx + 1) + '天 - ' + parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
+
+        html += `<div class="day-group">`;
+        html += `<div class="day-label">${label}</div>`;
+
+        items.forEach(item => {
+          html += `
+            <div class="timeline-item ${item.id === activeItemId ? 'active' : ''}" data-id="${item.id}" onclick="handleTimelineClick(${item.id})">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <div class="timeline-time">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  ${item.time} &middot; ${item.location}
+                </div>
+                <div class="timeline-title">${item.title}</div>
+                <div class="timeline-desc">${item.description}</div>
+                <div class="timeline-tags">
+                  ${item.tags.map(t => `<span class="timeline-tag">${t}</span>`).join('')}
+                </div>
+                ${item.images[0] ? `<div class="timeline-thumb"><img src="${item.images[0]}" alt="${item.title}" loading="lazy" /></div>` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function handleTimelineClick(id) {
+      activeItemId = id;
+      const item = travelData.find(d => d.id === id);
+      if (!item) return;
+
+      // Update timeline active state
+      renderTimeline();
+
+      // Fly to marker
+      var point = new BMap.Point(item.lng, item.lat);
+      map.panTo(point);
+      map.setZoom(12);
+
+      // Open info window
+      renderMapMarkers();
+      setTimeout(function() {
+        showInfoWindow(item, point);
+      }, 300);
+    }
+
+    // ===== FILTERING =====
+    function getFilteredData() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const dateVal = document.getElementById('dateFilter').value;
+
+      return travelData.filter(item => {
+        let match = true;
+
+        if (search) {
+          match = item.title.toLowerCase().includes(search) ||
+                  item.location.toLowerCase().includes(search) ||
+                  item.description.toLowerCase().includes(search) ||
+                  item.tags.some(t => t.toLowerCase().includes(search)) ||
+                  item.time.includes(search) ||
+                  item.date.includes(search);
+        }
+
+        if (dateVal) {
+          match = match && item.date === dateVal;
+        }
+
+        return match;
+      });
+    }
+
+    function handleFilterChange() {
+      renderTimeline();
+      renderMapMarkers();
+      renderRoute();
+      fitMapBounds();
+      updateStats();
+    }
+
+    // ===== MODAL =====
+    function openModal(id) {
+      const item = travelData.find(d => d.id === id);
+      if (!item) return;
+
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        ${item.images[0] ? `<img class="modal-hero" src="${item.images[0]}" alt="${item.title}" />` : ''}
+        <div class="modal-body">
+          <div class="modal-meta">
+            <span class="modal-date">${item.date} ${item.time}</span>
+            <span class="modal-location">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${item.location} (${item.lat.toFixed(4)}, ${item.lng.toFixed(4)})
+            </span>
+          </div>
+          <h2 class="modal-title">${item.title}</h2>
+          <div class="modal-text">${item.fullText || item.description}</div>
+          ${item.video ? `<video class="modal-video" controls><source src="${item.video}" type="video/mp4">您的浏览器不支持视频播放</video>` : ''}
+          ${item.images.length > 1 ? `
+            <div class="modal-gallery">
+              ${item.images.map(img => `<img src="${img}" alt="${item.title}" onclick="openLightbox('${img}')" />`).join('')}
+            </div>
+          ` : ''}
+          <div class="modal-tags">
+            ${item.tags.map(t => `<span class="modal-tag">#${t}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    // ===== LIGHTBOX =====
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('show');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('show');
+    }
+
+    // ===== STATS =====
+    function updateStats() {
+      const filtered = getFilteredData();
+      const locations = new Set(filtered.map(d => d.location));
+      const dates = new Set(filtered.map(d => d.date));
+
+      document.getElementById('statCities').textContent = locations.size;
+      document.getElementById('statDays').textContent = dates.size;
+
+      // Estimate total distance
+      let totalDist = 0;
+      for (let i = 1; i < filtered.length; i++) {
+        totalDist += haversine(
+          filtered[i-1].lat, filtered[i-1].lng,
+          filtered[i].lat, filtered[i].lng
+        );
+      }
+      document.getElementById('statDistance').textContent = Math.round(totalDist);
+
+      document.getElementById('statsText').textContent =
+        `${dates.size} 天 ${locations.size} 地 ${filtered.length} 记录`;
+    }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // ===== EVENT LISTENERS =====
+    document.getElementById('searchInput').addEventListener('input', debounce(handleFilterChange, 300));
+    document.getElementById('dateFilter').addEventListener('change', handleFilterChange);
+
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeModal();
+      }
+    });
+
+    function debounce(fn, delay) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    // ===== DATA LOADING =====
+    const API_BASE = window.location.origin + '/api';
+    let allTrips = [];
+    let currentTripId = null;
+
+    async function loadTripsFromAPI() {
+      try {
+        const res = await fetch(API_BASE + '/trips');
+        if (!res.ok) throw new Error('API error');
+        allTrips = await res.json();
+      } catch (e) {
+        allTrips = [];
+      }
+      renderTripSelector();
+      if (allTrips.length > 0) {
+        selectTrip(allTrips[0].id);
+      } else {
+        travelData = [];
+        initMap();
+        renderTimeline();
+        updateStats();
+      }
+    }
+
+    function renderTripSelector() {
+      const sel = document.getElementById('tripSelector');
+      if (allTrips.length === 0) {
+        sel.innerHTML = '<option>暂无旅行</option>';
+        return;
+      }
+      sel.innerHTML = allTrips.map(t =>
+        '<option value="' + t.id + '">' + t.name + '</option>'
+      ).join('');
+      sel.onchange = function() { selectTrip(parseInt(sel.value)); };
+    }
+
+    function selectTrip(tripId) {
+      currentTripId = tripId;
+      const trip = allTrips.find(t => t.id === tripId);
+      if (!trip) return;
+      document.getElementById('tripSelector').value = tripId;
+      travelData = (trip.checkpoints || []).slice().sort((a, b) => {
+        return (a.date + ' ' + a.time).localeCompare(b.date + ' ' + b.time);
+      });
+      activeItemId = null;
+      if (!map) {
+        initMap();
+      } else {
+        renderMapMarkers();
+        renderRoute();
+        fitMapBounds();
+      }
+      renderTimeline();
+      updateStats();
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTripsFromAPI();
+    });
+  </script>
+</body>
+</html>

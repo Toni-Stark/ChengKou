@@ -25,6 +25,18 @@ services:
     depends_on:
       - mysql
 
+  # 旅行日志 (lovebeyonddays.com)
+  travel:
+    build: ./travel
+    ports:
+      - "8081:3002"
+    restart: always
+    networks:
+      - app-network
+    volumes:
+      - travel-data:/app/data
+      - travel-media:/app/public/media
+
   # MySQL数据库
   mysql:
     image: mysql:8.0
@@ -45,3 +57,5 @@ networks:
 
 volumes:
   mysql-data:
+  travel-data:
+  travel-media:
