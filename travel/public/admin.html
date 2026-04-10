@@ -223,6 +223,42 @@
     .confirm-box h4 { font-size: 16px; margin-bottom: 10px; }
     .confirm-box p { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
     .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+    .image-preview-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+    }
+    .image-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .image-preview-item .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(224, 80, 80, 0.9);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+      transition: all 0.2s;
+    }
+    .image-preview-item .remove-btn:hover {
+      background: var(--danger);
+      transform: scale(1.1);
+    }
     @media (max-width: 768px) {
       .trip-card { flex-direction: column; }
       .trip-cover, .trip-cover-placeholder { width: 100%; min-height: 120px; height: 120px; }
@@ -311,9 +347,13 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">封面图片 URL</label>
-          <input class="form-input" id="tripCover" placeholder="https://..." />
-          <div class="form-hint">粘贴图片链接地址</div>
+          <label class="form-label">封面图片</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="file" class="form-input" id="tripCoverFile" accept="image/*" style="flex: 1;" />
+            <button type="button" class="btn btn-sm" onclick="uploadTripCover()">上传</button>
+          </div>
+          <input type="hidden" id="tripCover" />
+          <div class="form-hint" id="tripCoverPreview" style="margin-top: 8px;"></div>
         </div>
       </div>
       <div class="modal-footer">
@@ -368,13 +408,23 @@
           <textarea class="form-textarea" id="cpFullText" rows="5" placeholder="点击详情后展示的完整日志内容..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">图片 URL</label>
-          <textarea class="form-textarea" id="cpImages" rows="2" placeholder="每行一个图片 URL"></textarea>
-          <div class="form-hint">每行一个图片链接，支持多张</div>
+          <label class="form-label">图片</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="file" class="form-input" id="cpImagesFile" accept="image/*" multiple style="flex: 1;" />
+            <button type="button" class="btn btn-sm" onclick="uploadCpImages()">上传</button>
+          </div>
+          <textarea class="form-textarea" id="cpImages" rows="2" placeholder="已上传的图片URL（自动填充）" readonly style="margin-top: 8px; display: none;"></textarea>
+          <div id="cpImagesPreview" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+          <div class="form-hint">可以选择多张图片一次上传</div>
         </div>
         <div class="form-group">
-          <label class="form-label">视频 URL</label>
-          <input class="form-input" id="cpVideo" placeholder="视频链接（可选）" />
+          <label class="form-label">视频</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="file" class="form-input" id="cpVideoFile" accept="video/*" style="flex: 1;" />
+            <button type="button" class="btn btn-sm" onclick="uploadCpVideo()">上传</button>
+          </div>
+          <input type="hidden" id="cpVideo" />
+          <div class="form-hint" id="cpVideoPreview" style="margin-top: 8px;"></div>
         </div>
         <div class="form-group">
           <label class="form-label">标签</label>
@@ -544,6 +594,14 @@
       document.getElementById('tripStartDate').value = trip ? (trip.startDate || '') : '';
       document.getElementById('tripEndDate').value = trip ? (trip.endDate || '') : '';
       document.getElementById('tripCover').value = trip ? (trip.coverImage || '') : '';
+      document.getElementById('tripCoverFile').value = '';
+      // Show existing cover image preview
+      var coverUrl = trip ? (trip.coverImage || '') : '';
+      if (coverUrl) {
+        document.getElementById('tripCoverPreview').innerHTML = '<img src="' + coverUrl + '" style="max-width: 200px; border-radius: 4px;" />';
+      } else {
+        document.getElementById('tripCoverPreview').innerHTML = '';
+      }
       document.getElementById('tripModal').classList.add('show');
     }
 
@@ -604,6 +662,18 @@
       document.getElementById('cpImages').value = cp && cp.images ? cp.images.join('\n') : '';
       document.getElementById('cpVideo').value = cp ? (cp.video || '') : '';
       document.getElementById('cpTags').value = cp && cp.tags ? cp.tags.join(', ') : '';
+      // Reset file inputs
+      document.getElementById('cpImagesFile').value = '';
+      document.getElementById('cpVideoFile').value = '';
+      // Show existing video preview
+      var videoUrl = cp ? (cp.video || '') : '';
+      if (videoUrl) {
+        var videoName = videoUrl.split('/').pop();
+        document.getElementById('cpVideoPreview').textContent = '已上传: ' + videoName;
+      } else {
+        document.getElementById('cpVideoPreview').textContent = '';
+      }
+      renderImagePreviews();
       document.getElementById('cpModal').classList.add('show');
     }
 
@@ -709,6 +779,118 @@
       var d = document.createElement('div');
       d.textContent = str;
       return d.innerHTML;
+    }
+
+    // Upload functions
+    async function uploadTripCover() {
+      var fileInput = document.getElementById('tripCoverFile');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        toast('请先选择图片文件', 'error');
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        var response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        var data = await response.json();
+        if (response.ok) {
+          document.getElementById('tripCover').value = data.url;
+          document.getElementById('tripCoverPreview').innerHTML = '<img src="' + data.url + '" style="max-width: 200px; border-radius: 4px;" />';
+          toast('封面图片上传成功');
+        } else {
+          toast(data.error || '上传失败', 'error');
+        }
+      } catch (error) {
+        toast('上传失败: ' + error.message, 'error');
+      }
+    }
+
+    async function uploadCpImages() {
+      var fileInput = document.getElementById('cpImagesFile');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        toast('请先选择图片文件', 'error');
+        return;
+      }
+
+      var formData = new FormData();
+      for (var i = 0; i < fileInput.files.length; i++) {
+        formData.append('files', fileInput.files[i]);
+      }
+
+      try {
+        var response = await fetch('/api/upload-multiple', {
+          method: 'POST',
+          body: formData
+        });
+        var data = await response.json();
+        if (response.ok) {
+          var currentUrls = document.getElementById('cpImages').value;
+          var newUrls = currentUrls ? currentUrls + '\n' + data.urls.join('\n') : data.urls.join('\n');
+          document.getElementById('cpImages').value = newUrls;
+          renderImagePreviews();
+          fileInput.value = '';
+          toast('图片上传成功（' + data.urls.length + '张）');
+        } else {
+          toast(data.error || '上传失败', 'error');
+        }
+      } catch (error) {
+        toast('上传失败: ' + error.message, 'error');
+      }
+    }
+
+    function renderImagePreviews() {
+      var urls = document.getElementById('cpImages').value.split('\n').filter(function(u) { return u.trim(); });
+      var container = document.getElementById('cpImagesPreview');
+      container.innerHTML = '';
+
+      for (var i = 0; i < urls.length; i++) {
+        var url = urls[i].trim();
+        var item = document.createElement('div');
+        item.className = 'image-preview-item';
+        item.innerHTML = '<img src="' + url + '" alt="预览" /><button class="remove-btn" onclick="removeImage(' + i + ')" title="删除">&times;</button>';
+        container.appendChild(item);
+      }
+    }
+
+    function removeImage(index) {
+      var urls = document.getElementById('cpImages').value.split('\n').filter(function(u) { return u.trim(); });
+      urls.splice(index, 1);
+      document.getElementById('cpImages').value = urls.join('\n');
+      renderImagePreviews();
+      toast('图片已删除');
+    }
+
+    async function uploadCpVideo() {
+      var fileInput = document.getElementById('cpVideoFile');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        toast('请先选择视频文件', 'error');
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        var response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        var data = await response.json();
+        if (response.ok) {
+          document.getElementById('cpVideo').value = data.url;
+          document.getElementById('cpVideoPreview').textContent = '已上传: ' + data.filename;
+          toast('视频上传成功');
+        } else {
+          toast(data.error || '上传失败', 'error');
+        }
+      } catch (error) {
+        toast('上传失败: ' + error.message, 'error');
+      }
     }
 
     loadTrips();

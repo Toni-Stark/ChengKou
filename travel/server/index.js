@@ -3,10 +3,44 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
 const DATA_FILE = path.join(__dirname, '../data/travels.json');
+const UPLOADS_DIR = path.join(__dirname, '../public/uploads');
+
+// Ensure uploads directory exists
+const fsSync = require('fs');
+if (!fsSync.existsSync(UPLOADS_DIR)) {
+  fsSync.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|mov|avi|webm/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('只支持图片和视频文件！'));
+    }
+  }
+});
 
 // Middleware
 app.use(cors());
@@ -37,6 +71,51 @@ async function readData() {
 async function writeData(data) {
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
+
+// ===== UPLOAD ROUTE =====
+
+// POST upload file (image or video)
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: '没有上传文件' });
+    }
+    const fileUrl = '/uploads/' + req.file.filename;
+    res.json({ url: fileUrl, filename: req.file.filename });
+  } catch (error) {
+    res.status(500).json({ error: '文件上传失败' });
+  }
+});
+
+// POST upload multiple files
+app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: '没有上传文件' });
+    }
+    const urls = req.files.map(file => '/uploads/' + file.filename);
+    res.json({ urls: urls });
+  } catch (error) {
+    res.status(500).json({ error: '文件上传失败' });
+  }
+});
+
+// Multer error handling middleware
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: '文件大小超过限制（最大50MB）' });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ error: '上传字段名不正确' });
+    }
+    return res.status(400).json({ error: '文件上传错误: ' + err.message });
+  }
+  if (err) {
+    return res.status(400).json({ error: err.message || '上传失败' });
+  }
+  next();
+});
 
 // ===== TRIP ROUTES =====
 
