@@ -368,69 +368,90 @@
       height: 100%;
     }
 
-    /* Custom Baidu Map Styles */
-    .BMap_pop div {border: none !important; }
-    .BMap_pop .BMap_top, .BMap_pop .BMap_center, .BMap_pop .BMap_bottom { display: none; }
-    .BMap_shadow { display: none !important; }
+    /* Custom Baidu Map - hide default InfoWindow */
+    .BMap_pop, .BMap_shadow, .BMap_bubble_pop, .BMap_bubble_title,
+    .BMap_bubble_close, .BMap_bubble_content, .BMap_pop img {
+      display: none !important;
+    }
 
-    .bmap-popup {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+    /* Custom map popup overlay */
+    .custom-popup-wrap {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      z-index: 999;
+      pointer-events: auto;
+      filter: drop-shadow(0 8px 32px rgba(0,0,0,0.55));
+    }
+    .custom-popup {
+      width: 280px;
+      background: #1a1a26;
+      border: 1px solid #2a2a3a;
       border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
       overflow: hidden;
+      font-family: 'Inter', 'Noto Serif SC', sans-serif;
     }
-
-    .popup-content {
-      width: 300px;
+    .custom-popup-arrow {
+      width: 0; height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #1a1a26;
+      margin: 0 auto;
+      position: relative;
+      top: -1px;
     }
-
-    .popup-img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 12px 12px 0 0;
+    .custom-popup-img {
+      width: 100%; height: 140px;
+      object-fit: cover; display: block;
     }
-
-    .popup-body {
-      padding: 14px;
+    .custom-popup-body { padding: 14px 16px; }
+    .custom-popup-time {
+      font-size: 11px; color: #f0a050; font-weight: 500;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
     }
-
-    .popup-time {
-      font-size: 11px;
-      color: var(--accent);
-      font-weight: 500;
-      margin-bottom: 6px;
+    .custom-popup-time::before {
+      content: ''; display: inline-block;
+      width: 5px; height: 5px; border-radius: 50%; background: #f0a050;
     }
-
-    .popup-title {
+    .custom-popup-title {
+      font-size: 15px; font-weight: 600; color: #e8e6e3;
+      margin-bottom: 6px; line-height: 1.4;
       font-family: 'Noto Serif SC', serif;
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 6px;
     }
-
-    .popup-desc {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.5;
+    .custom-popup-desc {
+      font-size: 12px; color: #9a9a9a; line-height: 1.5;
     }
-
-    .popup-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 6px 16px;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: #fff;
-      font-size: 12px;
-      font-weight: 500;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.3s;
+    .custom-popup-tags {
+      display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;
     }
-
-    .popup-btn:hover { opacity: 0.85; }
+    .custom-popup-tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 10px;
+      background: rgba(240,160,80,0.12); color: #ffc88a;
+      border: 1px solid rgba(240,160,80,0.18);
+    }
+    .custom-popup-footer {
+      margin-top: 12px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .custom-popup-btn {
+      padding: 7px 18px;
+      background: linear-gradient(135deg, #f0a050, #e06060);
+      color: #fff; border: none; border-radius: 8px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      font-family: inherit; transition: opacity 0.2s;
+    }
+    .custom-popup-btn:hover { opacity: 0.85; }
+    .custom-popup-coords {
+      font-size: 10px; color: #666;
+    }
+    .custom-popup-close {
+      position: absolute; top: 8px; right: 8px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(10,10,15,0.7); border: 1px solid rgba(255,255,255,0.1);
+      color: #9a9a9a; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2; transition: all 0.2s; line-height: 1;
+      backdrop-filter: blur(4px);
+    }
+    .custom-popup-close:hover { background: #e06060; color: #fff; border-color: #e06060; }
 
     /* Detail Modal */
     .modal-overlay {
@@ -876,7 +897,6 @@
 
     // ===== APP STATE =====
     let map, markers = [], routeLine, activeItemId = null;
-    let currentInfoWindow = null;
 
     // ===== INITIALIZE MAP (Baidu) =====
     function initMap() {
@@ -889,6 +909,9 @@
       map.setMapStyleV2({
         styleId: '2d12tried0xoflkysrqv4ccbquzfgvho'
       });
+
+      // Close popup when clicking map
+      map.addEventListener('click', function() { closeCustomPopup(); });
 
       renderMapMarkers();
       renderRoute();
@@ -938,7 +961,7 @@
       // Remove old markers
       markers.forEach(function(m) { map.removeOverlay(m); });
       markers = [];
-      if (currentInfoWindow) { map.closeInfoWindow(); currentInfoWindow = null; }
+      closeCustomPopup();
 
       var filtered = getFilteredData();
       filtered.forEach(function(item, index) {
@@ -956,26 +979,74 @@
       });
     }
 
-    function showInfoWindow(item, point) {
-      var imgHtml = item.images && item.images[0]
-        ? '<img src="' + item.images[0] + '" style="width:100%;height:140px;object-fit:cover;border-radius:10px 10px 0 0;display:block;" />'
-        : '';
-      var html = '<div class="bmap-popup" style="width:280px;font-family:Inter,sans-serif;">'
-        + imgHtml
-        + '<div style="padding:12px;">'
-        + '<div style="font-size:11px;color:#f0a050;font-weight:500;margin-bottom:4px;">' + item.date + ' ' + item.time + '</div>'
-        + '<div style="font-size:14px;font-weight:600;color:#e8e6e3;margin-bottom:4px;">' + item.title + '</div>'
-        + '<div style="font-size:12px;color:#9a9a9a;line-height:1.4;margin-bottom:8px;">' + (item.description || '').substring(0, 80) + '...</div>'
-        + '<button onclick="openModal(' + item.id + ')" style="padding:6px 16px;background:linear-gradient(135deg,#f0a050,#e06060);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;">查看详情</button>'
-        + '</div></div>';
+    // ===== CUSTOM POPUP OVERLAY =====
+    function CustomPopup(point, html) {
+      this._point = point;
+      this._html = html;
+    }
+    CustomPopup.prototype = new BMap.Overlay();
+    CustomPopup.prototype.initialize = function(map) {
+      this._map = map;
+      var wrap = document.createElement('div');
+      wrap.className = 'custom-popup-wrap';
+      wrap.innerHTML = this._html;
+      map.getPanes().floatPane.appendChild(wrap);
+      this._div = wrap;
+      return wrap;
+    };
+    CustomPopup.prototype.draw = function() {
+      var pixel = this._map.pointToOverlayPixel(this._point);
+      this._div.style.left = pixel.x + 'px';
+      this._div.style.top = (pixel.y - 16) + 'px';
+    };
+    CustomPopup.prototype.remove = function() {
+      if (this._div && this._div.parentNode) {
+        this._div.parentNode.removeChild(this._div);
+      }
+    };
 
-      var infoWindow = new BMap.InfoWindow(html, {
-        width: 280,
-        offset: new BMap.Size(0, -20),
-        enableCloseOnClick: true
-      });
-      map.openInfoWindow(infoWindow, point);
-      currentInfoWindow = infoWindow;
+    var currentPopup = null;
+
+    function closeCustomPopup() {
+      if (currentPopup) {
+        map.removeOverlay(currentPopup);
+        currentPopup = null;
+      }
+    }
+
+    function showInfoWindow(item, point) {
+      closeCustomPopup();
+
+      var imgHtml = item.images && item.images[0]
+        ? '<img class="custom-popup-img" src="' + item.images[0] + '" />'
+        : '';
+      var descText = (item.description || '');
+      if (descText.length > 60) descText = descText.substring(0, 60) + '...';
+      var tagsHtml = '';
+      if (item.tags && item.tags.length > 0) {
+        tagsHtml = '<div class="custom-popup-tags">';
+        for (var i = 0; i < Math.min(item.tags.length, 3); i++) {
+          tagsHtml += '<span class="custom-popup-tag">' + item.tags[i] + '</span>';
+        }
+        tagsHtml += '</div>';
+      }
+      var html = '<div class="custom-popup">'
+        + '<button class="custom-popup-close" onclick="closeCustomPopup()">&times;</button>'
+        + imgHtml
+        + '<div class="custom-popup-body">'
+        + '<div class="custom-popup-time">' + item.date + ' ' + item.time + ' · ' + (item.location || '') + '</div>'
+        + '<div class="custom-popup-title">' + item.title + '</div>'
+        + '<div class="custom-popup-desc">' + descText + '</div>'
+        + tagsHtml
+        + '<div class="custom-popup-footer">'
+        + '<button class="custom-popup-btn" onclick="openModal(' + item.id + ')">查看详情 →</button>'
+        + '<span class="custom-popup-coords">(' + (item.lat || 0).toFixed(2) + ', ' + (item.lng || 0).toFixed(2) + ')</span>'
+        + '</div>'
+        + '</div></div>'
+        + '<div class="custom-popup-arrow"></div>';
+
+      currentPopup = new CustomPopup(point, html);
+      map.addOverlay(currentPopup);
     }
 
     function renderRoute() {
