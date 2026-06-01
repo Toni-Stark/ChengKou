@@ -1,0 +1,26 @@
+<view class="swim-records-page">
+  <view class="checkin-card">
+    <view class="checkin-header">
+      <text class="checkin-title">今日打卡</text>
+      <text class="checkin-date">记录你的每一次入水</text>
+    </view>
+
+    <view class="checkin-status" wx:if="{{checkedIn}}">
+      <text class="checkin-icon">🏊</text>
+      <text class="checkin-text">今日已打卡</text>
+    </view>
+
+    <button
+      class="checkin-btn {{checkedIn ? 'disabled' : ''}}"
+      bindtap="doCheckIn"
+      disabled="{{checkedIn || checkInLoading}}">
+      {{checkedIn ? '已打卡' : '点击打卡'}}
+    </button>
+  </view>
+
+  <view class="chart-placeholder">
+    <text class="placeholder-icon">📊</text>
+    <text class="placeholder-title">游龙数据看板</text>
+    <text class="placeholder-desc">图表即将上线，敬请期待</text>
+  </view>
+</view>

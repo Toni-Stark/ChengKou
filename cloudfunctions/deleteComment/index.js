@@ -27,7 +27,7 @@ exports.main = async (event, context) => {
       .doc(commentId)
       .get();
 
-    if (!comment.data || comment.data.length === 0) {
+    if (!comment.data) {
       return {
         code: -1,
         message: '评论不存在',
@@ -35,7 +35,7 @@ exports.main = async (event, context) => {
       };
     }
 
-    if (comment.data[0]._openid !== wxContext.OPENID) {
+    if (comment.data._openid !== wxContext.OPENID) {
       return {
         code: -1,
         message: '无权删除此评论',

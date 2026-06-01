@@ -1,0 +1,91 @@
+<view class="stroke-detail-page" wx:if="{{stroke}}" style="--theme-color: {{stroke.color}}; --theme-light: {{stroke.colorLight}};">
+  <!-- Banner -->
+  <view class="stroke-banner" style="background: {{stroke.color}};">
+    <view class="banner-content">
+      <text class="banner-tag">{{stroke.tag}}</text>
+      <text class="banner-emoji">{{stroke.emoji}}</text>
+      <text class="banner-name">{{stroke.name}}</text>
+      <text class="banner-desc">{{stroke.suitable}}</text>
+    </view>
+  </view>
+
+  <!-- 课程介绍 -->
+  <view class="section-block">
+    <view class="section-header">
+      <text class="section-icon">📚</text>
+      <text class="section-title">课程介绍</text>
+    </view>
+    <view class="intro-card">
+      <text class="intro-text">{{stroke.summary}}</text>
+      <view class="intro-meta">
+        <text class="meta-item" style="color: {{stroke.color}};">👤 {{stroke.suitable}}</text>
+        <text class="meta-item" style="color: {{stroke.color}};">⏱ {{stroke.duration}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 教学视频 -->
+  <view class="section-block">
+    <view class="section-header">
+      <text class="section-icon">🎬</text>
+      <text class="section-title">教学视频</text>
+    </view>
+    <view class="video-card">
+      <view class="video-icon-area" style="background: {{stroke.colorLight}};">
+        <text class="video-icon" style="color: {{stroke.color}};">▶</text>
+      </view>
+      <text class="video-label">{{stroke.name}}标准动作示范</text>
+      <text class="video-hint">即将上线，敬请期待</text>
+    </view>
+  </view>
+
+  <!-- 分步练习 -->
+  <view class="section-block">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <text class="section-title">分步练习</text>
+      <text class="section-count">{{stroke.steps.length}}个步骤</text>
+    </view>
+    <view class="steps-list">
+      <view wx:for="{{stroke.steps}}" wx:key="title" class="step-card">
+        <view class="step-number" style="background: {{stroke.color}};">
+          <text>{{index + 1}}</text>
+        </view>
+        <view class="step-body">
+          <view class="step-header">
+            <text class="step-title">{{item.title}}</text>
+            <text class="step-time" style="color: {{stroke.color}};">⏱ {{item.time}}</text>
+          </view>
+          <text class="step-desc-expanded">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 进阶技巧 -->
+  <view class="section-block">
+    <view class="section-header">
+      <text class="section-icon">🚀</text>
+      <text class="section-title">进阶技巧</text>
+      <text class="section-count">{{stroke.advanced.length}}项</text>
+    </view>
+    <view class="advanced-list">
+      <view wx:for="{{stroke.advanced}}" wx:key="title" class="advanced-item">
+        <view class="advanced-dot" style="background: {{stroke.color}};"></view>
+        <view class="advanced-body">
+          <text class="advanced-title">{{item.title}}</text>
+          <text class="advanced-desc-expanded">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-note">
+    <text class="footer-text">更多教学内容持续更新中</text>
+  </view>
+</view>
+
+<view wx:else class="empty-page">
+  <text class="empty-icon">🏊</text>
+  <text class="empty-text">泳姿数据加载中...</text>
+</view>

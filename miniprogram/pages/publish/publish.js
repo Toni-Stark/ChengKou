@@ -17,21 +17,23 @@ Page({
     ]
   },
   async getGlobalConfig(){
-    const res = await wx.cloud.callFunction({
-      name: 'getGlobalConfig',
-      data: {
-        key: 'registration_form' // 获取报名表单配置
-      }
+    const cached = wx.getStorageSync('globalConfig_registration');
+    if (cached && Date.now() - cached.time < 5 * 60 * 1000) {
+      this.setData({ loading: cached.visible });
+      return;
+    }
+
+    const res = await request.callFunction('getGlobalConfig', {
+      key: 'registration_form'
+    }, {
+      showLoad: false,
+      showError: false
     });
 
-    console.log('数据库查询结果:', JSON.stringify(res, null, 2));
-    console.log('result.data:', res.data);
-    console.log('result.data 类型:', typeof res.data);
-    let visible = res?.result?.data?.visible;
-    if(visible){
-      this.setData({
-        loading: visible
-      })
+    let visible = res?.visible;
+    if (visible !== undefined) {
+      wx.setStorageSync('globalConfig_registration', { visible, time: Date.now() });
+      this.setData({ loading: visible });
     }
   },
   onLoad() {
@@ -41,7 +43,7 @@ Page({
     if (!userInfo || userInfo.is_show === false) {
       wx.showModal({
         title: '提示',
-        content: '您暂无发布动态的权限',
+        content: '您暂无发布游龙的权限',
         showCancel: false,
         success: () => {
           wx.navigateBack();
@@ -186,18 +188,13 @@ Page({
         uploadedImages = await request.uploadImages(images, 'dynamics');
       }
 
-      // 获取用户信息
-      const userInfo = wx.getStorageSync('userInfo');
-
-      // 发布动态
       await request.callFunction('publishDynamic', {
         displayType,
         content: content.trim(),
         title: title.trim(),
         subtitle: subtitle.trim(),
         images: uploadedImages,
-        location,
-        userInfo
+        location
       }, {
         showLoad: true,
         loadText: '发布中...'
@@ -205,7 +202,8 @@ Page({
 
       request.showToast('发布成功', 'success');
 
-      // 返回上一页或跳转到动态页
+      wx.setStorageSync('_needRefresh', true);
+
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);

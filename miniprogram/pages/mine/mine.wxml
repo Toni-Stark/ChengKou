@@ -20,12 +20,8 @@
         <text class="stat-label text-xs text-secondary">粉丝</text>
       </view>
       <view class="stat-item text-center">
-        <text class="stat-value font-bold">{{userInfo.stats.followingCount || 0}}</text>
-        <text class="stat-label text-xs text-secondary">关注</text>
-      </view>
-      <view class="stat-item text-center">
-        <text class="stat-value font-bold">{{userInfo.stats.likesCount || 0}}</text>
-        <text class="stat-label text-xs text-secondary">获赞</text>
+        <text class="stat-value font-bold">{{userInfo.stats.subscriptionsCount || 0}}</text>
+        <text class="stat-label text-xs text-secondary">订阅</text>
       </view>
     </view>
 
@@ -33,7 +29,7 @@
       <button wx:if="{{!userInfo._openid}}" class="btn btn-primary btn-block" bindtap="goToLogin">立即登录</button>
       <block wx:else>
         <button class="btn btn-primary flex-1 mr-sm" bindtap="editProfile">编辑资料</button>
-        <button class="btn btn-secondary" bindtap="logout">退出登录</button>
+        <button class="btn btn-success" bindtap="goToSwimRecords">今日打卡</button>
       </block>
     </view>
   </view>
@@ -44,8 +40,8 @@
       <text class="menu-title">我的游龙</text>
       <text class="menu-arrow">→</text>
     </view>
-    <view class="menu-item card flex-between align-center" bindtap="goToMyLikes">
-      <text class="menu-title">我的点赞</text>
+    <view class="menu-item card flex-between align-center" bindtap="goToMySubscriptions">
+      <text class="menu-title">管理订阅</text>
       <text class="menu-arrow">→</text>
     </view>
     <view class="menu-item card flex-between align-center" bindtap="goToSettings">

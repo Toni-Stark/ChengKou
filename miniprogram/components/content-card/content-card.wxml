@@ -9,12 +9,15 @@
   <view class="card-images" wx:if="{{item.images && item.images.length > 0}}">
     <image
       wx:for="{{item.images}}"
-      wx:key="index"
+      wx:for-item="imageUrl"
+      wx:for-index="imgIndex"
+      wx:key="imgIndex"
       class="card-image"
-      src="{{item}}"
+      src="{{imageUrl}}"
       mode="aspectFill"
+      lazy-load="{{true}}"
       bindtap="onImageTap"
-      data-index="{{index}}"
+      data-index="{{imgIndex}}"
       data-images="{{item.images}}">
     </image>
   </view>
@@ -22,7 +25,7 @@
   <!-- 底部信息 -->
   <view class="card-footer flex-between mt-base">
     <view class="card-meta flex-row align-center">
-      <text class="meta-item text-xs text-placeholder">{{item.publishTime}}</text>
+      <text class="meta-item text-xs text-placeholder">{{item.displayTime || item.publishTime}}</text>
       <text class="meta-item text-xs text-placeholder">浏览 {{item.views || 0}}</text>
     </view>
 

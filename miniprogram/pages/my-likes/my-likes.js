@@ -3,18 +3,16 @@ const auth = require('../../utils/auth.js');
 
 Page({
   data: {
-    likesList: [],
+    subscriptionsList: [],
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
     hasMore: true,
     loading: false,
     isEmpty: false,
-    userInfo: null,
-    isShow: true
+    userInfo: null
   },
 
   onLoad() {
-    // 检查登录状态
     if (!auth.checkLogin()) {
       wx.showModal({
         title: '提示',
@@ -28,18 +26,14 @@ Page({
     }
 
     this.loadUserInfo();
-    this.loadMyLikes();
+    this.loadSubscriptions();
   },
 
-  // 加载用户信息
   loadUserInfo() {
     try {
       const userInfo = wx.getStorageSync('userInfo');
       if (userInfo) {
-        this.setData({
-          userInfo: userInfo,
-          isShow: userInfo.is_show !== false
-        });
+        this.setData({ userInfo: userInfo });
       }
     } catch (error) {
       console.error('加载用户信息失败:', error);
@@ -47,7 +41,7 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.refreshLikes();
+    this.refreshSubscriptions();
   },
 
   onReachBottom() {
@@ -55,22 +49,20 @@ Page({
       this.setData({
         page: this.data.page + 1
       });
-      this.loadMyLikes(true);
+      this.loadSubscriptions(true);
     }
   },
 
-  // 刷新点赞列表
-  refreshLikes() {
+  refreshSubscriptions() {
     this.setData({
       page: 1,
-      likesList: [],
+      subscriptionsList: [],
       hasMore: true
     });
-    this.loadMyLikes(false, true);
+    this.loadSubscriptions(false, true);
   },
 
-  // 加载我的点赞
-  async loadMyLikes(isLoadMore = false, isPullRefresh = false) {
+  async loadSubscriptions(isLoadMore = false, isPullRefresh = false) {
     if (this.data.loading) return;
 
     this.setData({ loading: true });
@@ -78,32 +70,24 @@ Page({
     try {
       const stored = auth.getStoredUserInfo();
 
-      // 检查云开发是否可用
       if (!wx.cloud || !wx.cloud.callFunction) {
-        console.warn('云开发未配置');
-        wx.showToast({
-          title: '云开发未配置',
-          icon: 'none'
-        });
+        wx.showToast({ title: '云开发未配置', icon: 'none' });
         this.setData({ loading: false });
         return;
       }
 
-      const result = await request.callFunction('getMyLikes', {
-        userId: stored.openid,
+      const result = await request.callFunction('getMySubscriptions', {
         page: this.data.page,
         pageSize: this.data.pageSize
       }, {
         showLoad: !isLoadMore && !isPullRefresh
       });
 
-      // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
-      const processedList = await request.processDynamicsImages(result.list);
-
-      const newList = this.data.page === 1 ? processedList : [...this.data.likesList, ...processedList];
+      const processedList = result.list || [];
+      const newList = this.data.page === 1 ? processedList : [...this.data.subscriptionsList, ...processedList];
 
       this.setData({
-        likesList: newList,
+        subscriptionsList: newList,
         hasMore: result.hasMore,
         loading: false,
         isEmpty: newList.length === 0
@@ -113,10 +97,10 @@ Page({
         wx.stopPullDownRefresh();
       }
     } catch (error) {
-      console.error('加载我的点赞失败:', error);
+      console.error('加载订阅列表失败:', error);
       this.setData({
         loading: false,
-        isEmpty: this.data.likesList.length === 0
+        isEmpty: this.data.subscriptionsList.length === 0
       });
 
       if (isPullRefresh) {
@@ -125,46 +109,32 @@ Page({
     }
   },
 
-  // 查看动态详情
-  onDynamicTap(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/dynamic-detail/dynamic-detail?id=${id}`
-    });
-  },
+  async onUnsubscribe(e) {
+    const targetOpenid = e.currentTarget.dataset.openid;
 
-  // 点赞
-  onDynamicLike(e) {
-    const { id, isLiked, likesCount } = e.detail;
+    wx.showModal({
+      title: '提示',
+      content: '确定取消订阅该用户吗？',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            await request.callFunction('subscribeUser', {
+              targetOpenid: targetOpenid
+            }, { showLoad: true });
 
-    // 如果取消点赞，从列表中移除
-    if (!isLiked) {
-      const newList = this.data.likesList.filter(item => item._id !== id);
-      this.setData({
-        likesList: newList,
-        isEmpty: newList.length === 0
-      });
-    } else {
-      // 更新点赞数
-      const index = this.data.likesList.findIndex(item => item._id === id);
-      if (index !== -1) {
-        this.setData({
-          [`likesList[${index}].isLiked`]: isLiked,
-          [`likesList[${index}].likesCount`]: likesCount
-        });
+            const newList = this.data.subscriptionsList.filter(item => item._openid !== targetOpenid);
+            this.setData({
+              subscriptionsList: newList,
+              isEmpty: newList.length === 0
+            });
+          } catch (error) {
+            console.error('取消订阅失败:', error);
+          }
+        }
       }
-    }
-  },
-
-  // 评论
-  onDynamicComment(e) {
-    const id = e.detail.id;
-    wx.navigateTo({
-      url: `/pages/dynamic-detail/dynamic-detail?id=${id}`
     });
   },
 
-  // 前往动态页
   goToDynamics() {
     wx.switchTab({
       url: '/pages/dynamics/dynamics'

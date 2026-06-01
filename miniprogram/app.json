@@ -11,7 +11,11 @@
     "pages/my-dynamics/my-dynamics",
     "pages/my-likes/my-likes",
     "pages/settings/settings",
-    "pages/get-openid/get-openid"
+    "pages/get-openid/get-openid",
+    "pages/swim-records/swim-records",
+    "pages/stroke-detail/stroke-detail",
+    "pages/coach-detail/coach-detail",
+    "pages/lifeguard-detail/lifeguard-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -34,7 +38,7 @@
       },
       {
         "pagePath": "pages/dynamics/dynamics",
-        "text": "动态",
+        "text": "游龙",
         "iconPath": "/static/tabbar/3456.png",
         "selectedIconPath": "/static/tabbar/456.png"
       },

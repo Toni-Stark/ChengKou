@@ -3,7 +3,10 @@
  */
 
 const request = require('./request.js');
-const app = getApp();
+
+function getAppIns() {
+  return getApp();
+}
 
 /**
  * 检查登录状态
@@ -41,12 +44,12 @@ function getUserProfile() {
  * @param {string} openid - 用户openid
  */
 function saveUserInfo(userInfo, openid) {
-  // 添加openid到userInfo中，方便判断登录状态
   const fullUserInfo = {
     ...userInfo,
     _openid: openid
   };
 
+  const app = getAppIns();
   if (app && app.saveUserInfo) {
     app.saveUserInfo(fullUserInfo, openid);
   } else {
@@ -70,6 +73,7 @@ function getStoredUserInfo() {
  * 清除用户信息（退出登录）
  */
 function clearUserInfo() {
+  const app = getAppIns();
   if (app && app.clearUserInfo) {
     app.clearUserInfo();
   } else {
@@ -112,8 +116,8 @@ function logout() {
     success: res => {
       if (res.confirm) {
         clearUserInfo();
-        wx.reLaunch({
-          url: '/pages/login/login'
+        wx.switchTab({
+          url: '/pages/index/index'
         });
       }
     }
@@ -160,7 +164,7 @@ async function silentLogin() {
       };
     }
   } catch (error) {
-    console.error('静默登录失败:', error);
+    console.warn('静默登录跳过:', error.errMsg || error.message || '云函数未部署');
     return {
       success: false,
       isRegistered: false

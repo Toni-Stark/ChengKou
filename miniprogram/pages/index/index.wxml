@@ -1,36 +1,74 @@
 <view class="index-page page">
-  <!-- 最新游龙卡片 -->
+  <!-- 顶部Banner -->
   <view class="featured-card-wrapper container">
     <view class="featured-card" bindtap="onFeaturedCardTap">
       <image
         class="featured-image"
-        src="{{featuredDynamic.image || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'}}"
-        mode="aspectFill"
-        lazy-load="{{false}}"
-        show-menu-by-longpress="{{true}}">
+        src="{{featuredDynamic.image}}"
+        mode="aspectFill">
       </image>
       <view class="featured-overlay">
-        <text class="featured-title">{{featuredDynamic.title || '最新游龙'}}</text>
+        <text class="featured-tag">最新活动</text>
+        <text class="featured-title">{{featuredDynamic.title || '欢迎来到游泳教学平台'}}</text>
         <text class="featured-desc">{{featuredDynamic.desc || '点击查看详情'}}</text>
       </view>
     </view>
   </view>
 
-  <!-- Tab区域 -->
-  <view class="tab-section container">
-    <view class="tab-buttons flex-row">
-      <view class="tab-button" bindtap="onVideoTabTap">
-        <view class="tab-icon">📹</view>
-        <text class="tab-text">游泳教学视频</text>
-      </view>
-      <view class="tab-button" bindtap="onCertificationTabTap">
-        <view class="tab-icon">🏊</view>
-        <text class="tab-text">教练认证</text>
+  <!-- 四种泳姿 -->
+  <view class="section-container container">
+    <view class="strokes-grid">
+      <view
+        wx:for="{{strokes}}"
+        wx:key="id"
+        class="stroke-card"
+        style="background: {{item.colorLight}};"
+        bindtap="onStrokeTap"
+        data-id="{{item.id}}">
+        <view class="stroke-icon-wrapper" style="background: {{item.color}};">
+          <text class="stroke-card-icon">{{item.emoji}}</text>
+        </view>
+        <text class="stroke-card-name">{{item.name}}</text>
+        <text class="stroke-card-tag" style="color: {{item.color}}; background: {{item.colorLight}};">{{item.tag}}</text>
+        <view class="stroke-card-summary">
+          <text class="stroke-summary-text">{{item.suitable}}</text>
+        </view>
+        <view class="stroke-card-action" style="border-top-color: {{item.colorLight}};">
+          <text class="action-label" style="color: {{item.color}};">查看完整课程 →</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 联系方式区域 -->
+  <!-- 教练认证 -->
+  <view class="section-container container">
+    <view class="info-card" bindtap="onCoachTap">
+      <view class="info-card-header" style="background: linear-gradient(135deg, #ff9800, #f57c00);">
+        <text class="info-card-icon">🏅</text>
+        <view class="info-card-title-group">
+          <text class="info-card-title">教练认证</text>
+          <text class="info-card-subtitle">专业资质 · 标准考核</text>
+        </view>
+        <text class="info-card-arrow">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 救生员标准 -->
+  <view class="section-container container">
+    <view class="info-card" bindtap="onLifeguardTap">
+      <view class="info-card-header" style="background: linear-gradient(135deg, #e53935, #c62828);">
+        <text class="info-card-icon">🛟</text>
+        <view class="info-card-title-group">
+          <text class="info-card-title">救生员标准</text>
+          <text class="info-card-subtitle">安全第一 · 生命至上</text>
+        </view>
+        <text class="info-card-arrow">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系我们 -->
   <view class="contact-section container">
     <view class="contact-card bg-white">
       <view class="contact-title">联系我们</view>

@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "我的动态",
+  "navigationBarTitleText": "我的游龙",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "dynamic-item": "/components/dynamic-item/dynamic-item"

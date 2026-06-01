@@ -99,6 +99,44 @@
   line-height: 1;
 }
 
+// ======== 筛选按钮 ========
+.filter-btn {
+  position: fixed;
+  right: @space-lg;
+  bottom: calc(@space-3xl + 50px + 112rpx + @space-base);
+  width: 96rpx;
+  height: 96rpx;
+  background: #fff;
+  border-radius: @radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: all 0.3s ease;
+  border: 2rpx solid rgba(30, 136, 229, 0.2);
+
+  .filter-icon {
+    font-size: 48rpx;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+
+  &.active {
+    background: @ocean-gradient;
+    border-color: transparent;
+    box-shadow: 0 4rpx 20rpx rgba(30, 136, 229, 0.3);
+
+    .filter-icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
 // ======== 动态列表 ========
 .dynamics-list {
   padding-top: @space-base;

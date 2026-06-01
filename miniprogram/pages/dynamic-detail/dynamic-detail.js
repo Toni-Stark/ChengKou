@@ -51,14 +51,12 @@ Page({
     }
   },
 
-  // 尝试静默登录
   async trySilentLogin() {
     try {
-      const loginResult = await auth.silentLogin();
-
-      if (loginResult.isRegistered) {
-        console.log('静默登录成功，用户:', loginResult.userInfo.nickName);
-        // 静默登录成功后，可以刷新页面数据以显示点赞等状态
+      const userInfo = wx.getStorageSync('userInfo');
+      const openid = wx.getStorageSync('openid');
+      if (userInfo && openid) {
+        console.log('静默登录成功，用户:', userInfo.nickName);
         if (this.data.dynamicId) {
           this.loadDynamic();
           this.loadComments();
@@ -67,8 +65,7 @@ Page({
         console.log('用户未注册，以游客身份浏览');
       }
     } catch (error) {
-      console.error('静默登录失败:', error);
-      // 即使失败也继续展示内容
+      console.warn('静默登录跳过:', error);
     }
   },
 
@@ -81,7 +78,6 @@ Page({
         this.loadMockDynamic();
         return;
       }
-      let openid = wx.getStorageSync('openid')
       const result = await request.callFunction('getDynamicDetail', {
         dynamicId: this.data.dynamicId
       }, {
@@ -93,7 +89,7 @@ Page({
       const processedDynamic = result ? (await request.processDynamicsImages([result]))[0] : {};
 
       this.setData({
-        dynamic: openid ? processedDynamic : {}
+        dynamic: processedDynamic
       });
     } catch (error) {
       console.error('加载动态失败:', error);
@@ -104,10 +100,9 @@ Page({
   // 加载模拟动态数据
   loadMockDynamic() {
     const mockDynamic = {}
-    let openid = wx.getStorageSync('openid')
 
     this.setData({
-      dynamic: openid?mockDynamic:{}
+      dynamic: mockDynamic
     });
   },
 
@@ -135,10 +130,9 @@ Page({
       const newList = loadMore
         ? [...this.data.commentsList, ...result.list]
         : result.list;
-      let openid = wx.getStorageSync('openid')
 
       this.setData({
-        commentsList: openid?newList:[],
+        commentsList: newList,
         hasMore: result.hasMore,
         loading: false
       });
@@ -215,13 +209,9 @@ Page({
         return;
       }
 
-      // 获取用户信息
-      const userInfo = wx.getStorageSync('userInfo');
-
       await request.callFunction('addComment', {
         dynamicId: this.data.dynamicId,
-        content: content,
-        userInfo: userInfo
+        content: content
       }, {
         showLoad: true
       });
@@ -279,13 +269,10 @@ Page({
     }
   },
 
-  onDynamicLike(e) {
-    console.log('动态点赞:', e.detail);
-    // 更新动态的点赞状态
+  onDynamicSubscribe(e) {
     if (this.data.dynamic) {
       this.setData({
-        'dynamic.isLiked': e.detail.isLiked,
-        'dynamic.likesCount': e.detail.likesCount
+        'dynamic.isSubscribed': e.detail.isSubscribed
       });
     }
   },
@@ -303,7 +290,7 @@ Page({
 
     if (!dynamic) {
       return {
-        title: '查看动态详情',
+        title: '查看游龙详情',
         path: '/pages/dynamics/dynamics'
       };
     }
@@ -317,10 +304,9 @@ Page({
         ? dynamic.content.substring(0, 30) + '...'
         : dynamic.content;
     } else {
-      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的动态`;
+      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的游龙`;
     }
 
-    // 获取分享图片
     let shareImageUrl = '';
     if (dynamic.images && dynamic.images.length > 0) {
       shareImageUrl = dynamic.images[0];
@@ -329,6 +315,44 @@ Page({
     const shareData = {
       title: shareTitle,
       path: `/pages/dynamic-detail/dynamic-detail?id=${this.data.dynamicId}&from=share`
+    };
+
+    if (shareImageUrl) {
+      shareData.imageUrl = shareImageUrl;
+    }
+
+    return shareData;
+  },
+
+  onShareTimeline() {
+    const dynamic = this.data.dynamic;
+
+    if (!dynamic) {
+      return {
+        title: '查看游龙详情'
+      };
+    }
+
+    let shareTitle = '';
+
+    if (dynamic.title) {
+      shareTitle = dynamic.title;
+    } else if (dynamic.content) {
+      shareTitle = dynamic.content.length > 30
+        ? dynamic.content.substring(0, 30) + '...'
+        : dynamic.content;
+    } else {
+      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的游龙`;
+    }
+
+    let shareImageUrl = '';
+    if (dynamic.images && dynamic.images.length > 0) {
+      shareImageUrl = dynamic.images[0];
+    }
+
+    const shareData2 = {
+      title: shareTitle,
+      query: `id=${this.data.dynamicId}&from=share`
     };
 
     if (shareImageUrl) {

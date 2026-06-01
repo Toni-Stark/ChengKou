@@ -63,6 +63,14 @@ exports.main = async (event, context) => {
       })
       .remove();
 
+    await db.collection('users')
+      .where({ _openid: wxContext.OPENID })
+      .update({
+        data: {
+          'stats.dynamicsCount': db.command.inc(-1)
+        }
+      });
+
     return {
       code: 0,
       message: '删除成功',

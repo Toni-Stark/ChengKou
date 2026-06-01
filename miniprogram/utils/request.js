@@ -4,6 +4,9 @@
 
 let loadingCount = 0;
 
+const _urlCache = {};
+const CACHE_TTL = 5 * 60 * 1000;
+
 /**
  * 显示加载提示
  * @param {string} title - 加载提示文字
@@ -182,48 +185,47 @@ async function uploadImages(tempFilePaths, folder = 'images') {
  */
 async function getTempFileURL(fileList) {
   try {
-    // 统一处理为数组
     const isArray = Array.isArray(fileList);
     const files = isArray ? fileList : [fileList];
 
-    // 过滤掉空值和已经是HTTP链接的
     const cloudFiles = files.filter(file => {
       return file && typeof file === 'string' && file.startsWith('cloud://');
     });
 
-    // 如果没有需要转换的，直接返回原值
     if (cloudFiles.length === 0) {
       return isArray ? files : files[0];
     }
 
-    const res = await wx.cloud.getTempFileURL({
-      fileList: cloudFiles
+    const now = Date.now();
+    const uncached = cloudFiles.filter(file => {
+      const entry = _urlCache[file];
+      return !entry || (now - entry.time > CACHE_TTL);
     });
 
-    if (res.fileList && res.fileList.length > 0) {
-      // 创建映射表
-      const urlMap = {};
-      res.fileList.forEach(item => {
-        if (item.tempFileURL) {
-          urlMap[item.fileID] = item.tempFileURL;
-        }
+    if (uncached.length > 0) {
+      const res = await wx.cloud.getTempFileURL({
+        fileList: uncached
       });
 
-      // 替换原数组中的URL
-      const result = files.map(file => {
-        if (file && urlMap[file]) {
-          return urlMap[file];
-        }
-        return file;
-      });
-
-      return isArray ? result : result[0];
+      if (res.fileList && res.fileList.length > 0) {
+        res.fileList.forEach(item => {
+          if (item.tempFileURL) {
+            _urlCache[item.fileID] = { url: item.tempFileURL, time: now };
+          }
+        });
+      }
     }
 
-    return fileList;
+    const result = files.map(file => {
+      if (file && _urlCache[file]) {
+        return _urlCache[file].url;
+      }
+      return file;
+    });
+
+    return isArray ? result : result[0];
   } catch (error) {
     console.error('获取临时链接失败:', error);
-    // 失败时返回原值，让系统尝试使用cloud://协议
     return fileList;
   }
 }
@@ -289,6 +291,10 @@ async function processDynamicsImages(dynamics) {
   }
 }
 
+function clearUrlCache() {
+  Object.keys(_urlCache).forEach(k => delete _urlCache[k]);
+}
+
 module.exports = {
   showLoading,
   hideLoading,
@@ -298,5 +304,6 @@ module.exports = {
   uploadFile,
   uploadImages,
   getTempFileURL,
-  processDynamicsImages
+  processDynamicsImages,
+  clearUrlCache
 };

@@ -9,9 +9,10 @@ Page({
     hasMore: true,
     openid: null,
     loading: false,
-    shareInfo: null, // 保存当前要分享的动态信息
-    userInfo: null, // 当前用户信息 
-    isShow: false // 当前用户的 is_show 权限
+    shareInfo: null,
+    userInfo: null,
+    isShow: false,
+    filterSubscribed: false
   },
 
   onLoad(options){
@@ -43,31 +44,28 @@ Page({
     }
   },
 
-  // 尝试静默登录
   async trySilentLogin() {
     try {
-      const loginResult = await auth.silentLogin();
-
-      if (loginResult.isRegistered) {
-        console.log('静默登录成功，用户:', loginResult.userInfo.nickName);
-        // 刷新动态列表以显示点赞等状态
+      const userInfo = wx.getStorageSync('userInfo');
+      const openid = wx.getStorageSync('openid');
+      if (userInfo && openid) {
+        console.log('静默登录成功，用户:', userInfo.nickName);
+        this.setData({ openid });
         this.refreshDynamics();
       } else {
         console.log('用户未注册，以游客身份浏览');
       }
     } catch (error) {
-      console.error('静默登录失败:', error);
+      console.warn('静默登录跳过:', error);
     }
   },
 
   onShow() {
-    // 重新加载用户信息，确保权限是最新的
     this.loadUserInfo();
 
-    // 从发布页面返回时刷新列表
-    if (this.data.shouldRefresh) {
+    if (wx.getStorageSync('_needRefresh')) {
+      wx.removeStorageSync('_needRefresh');
       this.refreshDynamics();
-      this.setData({ shouldRefresh: false });
     }
   },
 
@@ -97,8 +95,8 @@ Page({
   // 加载动态列表
   async loadDynamics(isPullRefresh = false) {
     if (this.data.loading) return;
-    let openid = wx.getStorageSync('openid')
-    this.setData({ loading: true,openid });
+    const openid = wx.getStorageSync('openid');
+    this.setData({ loading: true, openid });
 
     try {
       // 检查云开发是否可用
@@ -111,7 +109,8 @@ Page({
       // 查询所有动态，按时间倒序
       const params = {
         page: this.data.page,
-        pageSize: this.data.pageSize
+        pageSize: this.data.pageSize,
+        subscribedOnly: this.data.filterSubscribed
       };
 
       const result = await request.callFunction('getUserDynamics', params, {
@@ -124,7 +123,7 @@ Page({
       const newList = this.data.page === 1 ? processedList : [...this.data.dynamicsList, ...processedList];
 
       this.setData({
-        dynamicsList: openid?newList:[],
+        dynamicsList: newList,
         hasMore: result.hasMore,
         loading: false
       });
@@ -176,10 +175,17 @@ Page({
     });
   },
 
-  // 点赞
-  onLike(e) {
-    console.log('点赞状态已更新:', e.detail);
-    // 点赞功能已在组件内部实现，这里只是接收事件
+  // 订阅
+  onSubscribe(e) {
+    console.log('订阅状态已更新:', e.detail);
+  },
+
+  // 切换筛选
+  toggleFilter() {
+    this.setData({
+      filterSubscribed: !this.data.filterSubscribed
+    });
+    this.refreshDynamics();
   },
 
   // 评论
@@ -227,8 +233,7 @@ Page({
     try {
       wx.showLoading({ title: '删除中...' });
 
-      // TODO: 调用云函数删除动态
-      // await request.callFunction('deleteDynamic', { id });
+      await request.callFunction('deleteDynamic', { id });
 
       // 暂时只更新UI
       const newList = this.data.dynamicsList.filter(item => item._id !== id);
@@ -257,7 +262,7 @@ Page({
 
     if (!dynamic) {
       return {
-        title: '发现精彩动态',
+        title: '发现精彩游龙',
         path: '/pages/dynamics/dynamics?from=share'
       };
     }
@@ -271,7 +276,7 @@ Page({
         ? dynamic.content.substring(0, 30) + '...'
         : dynamic.content;
     } else {
-      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的动态`;
+      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的游龙`;
     }
 
     // 获取分享图片
@@ -303,7 +308,7 @@ Page({
 
     if (!dynamic) {
       return {
-        title: '发现精彩动态'
+        title: '发现精彩游龙'
       };
     }
 
@@ -316,22 +321,22 @@ Page({
         ? dynamic.content.substring(0, 30) + '...'
         : dynamic.content;
     } else {
-      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的动态`;
+      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的游龙`;
     }
 
     // 获取分享图片
-    let shareImageUrl = '';
+    let shareImageUrl2 = '';
     if (dynamic.images && dynamic.images.length > 0) {
-      shareImageUrl = dynamic.images[0];
+      shareImageUrl2 = dynamic.images[0];
     }
 
-    const shareData = {
+    const shareData2 = {
       title: shareTitle,
       query: `id=${dynamic._id}&from=share`
     };
 
-    if (shareImageUrl) {
-      shareData.imageUrl = shareImageUrl;
+    if (shareImageUrl2) {
+      shareData2.imageUrl = shareImageUrl2;
     }
 
     // 清空分享信息
@@ -339,6 +344,6 @@ Page({
       this.setData({ shareInfo: null });
     }, 100);
 
-    return shareData;
+    return shareData2;
   }
 });

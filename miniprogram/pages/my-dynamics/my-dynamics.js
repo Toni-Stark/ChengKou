@@ -161,15 +161,13 @@ Page({
     });
   },
 
-  // 点赞
-  onDynamicLike(e) {
-    const { id, isLiked, likesCount } = e.detail;
+  onDynamicSubscribe(e) {
+    const { id, isSubscribed } = e.detail;
     const index = this.data.dynamicsList.findIndex(item => item._id === id);
 
     if (index !== -1) {
       this.setData({
-        [`dynamicsList[${index}].isLiked`]: isLiked,
-        [`dynamicsList[${index}].likesCount`]: likesCount
+        [`dynamicsList[${index}].isSubscribed`]: isSubscribed
       });
     }
   },

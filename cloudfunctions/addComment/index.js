@@ -22,20 +22,23 @@ exports.main = async (event, context) => {
   }
 
   try {
-    // 获取用户信息
-    const userInfo = await cloud.getWXContext();
+    const userResult = await db.collection('users')
+      .where({ _openid: wxContext.OPENID })
+      .get();
+    const dbUser = (userResult.data && userResult.data.length > 0) ? userResult.data[0] : null;
 
-    // 添加评论
+    const userInfo = {
+      nickName: dbUser?.nickName || '微信用户',
+      avatarUrl: dbUser?.avatarUrl || ''
+    };
+
     const result = await db.collection('comments').add({
       data: {
         dynamicId: dynamicId,
         content: content.trim(),
         replyTo: replyTo || null,
         replyToUser: replyToUser || null,
-        userInfo: {
-          nickName: event.userInfo?.nickName || '微信用户',
-          avatarUrl: event.userInfo?.avatarUrl || ''
-        },
+        userInfo: userInfo,
         likesCount: 0,
         createTime: db.serverDate()
       }

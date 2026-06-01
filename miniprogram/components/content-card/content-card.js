@@ -7,9 +7,12 @@ Component({
       value: {},
       observer(newVal) {
         if (newVal && newVal.publishTime) {
-          this.setData({
-            'item.publishTime': util.formatRelativeTime(newVal.publishTime)
-          });
+          if (this._lastRawTime !== newVal.publishTime) {
+            this._lastRawTime = newVal.publishTime;
+            this.setData({
+              'item.displayTime': util.formatRelativeTime(newVal.publishTime)
+            });
+          }
         }
       }
     },

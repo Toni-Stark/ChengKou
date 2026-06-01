@@ -16,8 +16,7 @@ exports.main = async (event, context) => {
     title,
     subtitle,
     images,
-    location,
-    userInfo
+    location
   } = event;
 
   // 验证必填字段
@@ -57,6 +56,15 @@ exports.main = async (event, context) => {
   }
 
   try {
+    const userResult = await db.collection('users')
+      .where({ _openid: wxContext.OPENID })
+      .get();
+    const dbUser = (userResult.data && userResult.data.length > 0) ? userResult.data[0] : null;
+
+    const userInfo = {
+      nickName: dbUser?.nickName || '微信用户',
+      avatarUrl: dbUser?.avatarUrl || ''
+    };
     // 获取当前时间戳
     const now = new Date();
     const timestamp = now.getTime();
@@ -69,10 +77,7 @@ exports.main = async (event, context) => {
       subtitle: subtitle || '',
       images: images || [],
       location: location || null,
-      userInfo: userInfo || {
-        nickName: '微信用户',
-        avatarUrl: ''
-      },
+      userInfo: userInfo,
       likesCount: 0,
       commentsCount: 0,
       sharesCount: 0,
@@ -86,6 +91,14 @@ exports.main = async (event, context) => {
     const result = await db.collection('user_dynamics').add({
       data: dynamicData
     });
+
+    await db.collection('users')
+      .where({ _openid: wxContext.OPENID })
+      .update({
+        data: {
+          'stats.dynamicsCount': db.command.inc(1)
+        }
+      });
 
     return {
       code: 0,

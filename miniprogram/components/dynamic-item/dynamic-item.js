@@ -8,9 +8,12 @@ Component({
       value: {},
       observer(newVal) {
         if (newVal && newVal.createTime) {
-          this.setData({
-            'item.createTime': util.formatRelativeTime(newVal.createTime)
-          });
+          if (this._lastRawTime !== newVal.createTime) {
+            this._lastRawTime = newVal.createTime;
+            this.setData({
+              'item.displayTime': util.formatRelativeTime(newVal.createTime)
+            });
+          }
         }
       }
     },
@@ -40,44 +43,37 @@ Component({
       });
     },
 
-    async onLike(e) {
-      const id = e.currentTarget.dataset.id;
+    async onSubscribe(e) {
       const item = this.data.item;
+      const targetOpenid = item._openid;
 
-      // 防止重复点击
-      if (this.data.liking) return;
-
-      this.setData({ liking: true });
+      if (this.data.subscribing) return;
+      this.setData({ subscribing: true });
 
       try {
-        const result = await request.callFunction('toggleLike', {
-          targetType: 'dynamic',
-          targetId: id
+        const result = await request.callFunction('subscribeUser', {
+          targetOpenid: targetOpenid
         }, {
           showLoad: false,
           showError: true
         });
 
-        // 更新UI
-        const newIsLiked = result.isLiked;
-        const likesChange = newIsLiked ? 1 : -1;
+        const isSubscribed = result.isSubscribed;
 
         this.setData({
-          'item.isLiked': newIsLiked,
-          'item.likesCount': (item.likesCount || 0) + likesChange
+          'item.isSubscribed': isSubscribed
         });
 
-        // 触发事件通知父组件
-        this.triggerEvent('like', {
-          id,
-          isLiked: newIsLiked,
-          likesCount: this.data.item.likesCount
+        this.triggerEvent('subscribe', {
+          id: item._id,
+          isSubscribed: isSubscribed,
+          targetOpenid: targetOpenid
         });
 
       } catch (error) {
-        console.error('点赞失败:', error);
+        console.error('订阅失败:', error);
       } finally {
-        this.setData({ liking: false });
+        this.setData({ subscribing: false });
       }
     },
 

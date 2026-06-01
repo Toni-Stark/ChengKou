@@ -21,8 +21,17 @@ Page({
     this.loadUserInfo();
   },
 
-  async loadUserInfo() {
-    // 先检查是否已登录
+  async loadUserInfo(forceRefresh = false) {
+    const app = getApp();
+
+    if (!forceRefresh && app.globalData.userInfo) {
+      this.setData({
+        userInfo: app.globalData.userInfo,
+        isLogin: true
+      });
+      return;
+    }
+
     const stored = auth.getStoredUserInfo();
 
     if (stored.userInfo && stored.openid) {
@@ -67,8 +76,7 @@ Page({
           stats: {
             dynamicsCount: 0,
             followersCount: 0,
-            followingCount: 0,
-            likesCount: 0
+            subscriptionsCount: 0
           }
         },
         isLogin: false
@@ -104,7 +112,7 @@ Page({
     });
   },
 
-  goToMyLikes() {
+  goToMySubscriptions() {
     if (!this.data.isLogin) {
       request.showToast('请先登录');
       return;
@@ -121,8 +129,10 @@ Page({
     });
   },
 
-  logout() {
-    auth.logout();
+  goToSwimRecords() {
+    wx.navigateTo({
+      url: '/pages/swim-records/swim-records'
+    });
   },
 
   onShareAppMessage() {

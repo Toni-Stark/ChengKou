@@ -2,5 +2,6 @@
   "usingComponents": {},
   "navigationBarTitleText": "首页",
   "enablePullDownRefresh": false,
-  "backgroundTextStyle": "dark"
+  "backgroundTextStyle": "dark",
+  "enableShareAppMessage": true
 }

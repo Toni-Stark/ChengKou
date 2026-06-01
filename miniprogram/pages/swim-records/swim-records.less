@@ -1,0 +1,94 @@
+@import "../../styles/variables.less";
+
+.swim-records-page {
+  min-height: 100vh;
+  background-color: @bg-gray;
+  padding: @space-lg;
+}
+
+.checkin-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: @space-xl;
+  text-align: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: @space-lg;
+}
+
+.checkin-header {
+  margin-bottom: @space-xl;
+}
+
+.checkin-title {
+  display: block;
+  font-size: @font-xl;
+  font-weight: bold;
+  color: @text-color;
+  margin-bottom: @space-xs;
+}
+
+.checkin-date {
+  font-size: @font-sm;
+  color: @text-placeholder;
+}
+
+.checkin-status {
+  margin: @space-lg 0;
+
+  .checkin-icon {
+    display: block;
+    font-size: 96rpx;
+    margin-bottom: @space-base;
+  }
+
+  .checkin-text {
+    font-size: @font-lg;
+    color: @primary-color;
+    font-weight: bold;
+  }
+}
+
+.checkin-btn {
+  width: 360rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: @ocean-gradient;
+  color: #fff;
+  border-radius: @radius-round;
+  font-size: @font-base;
+  font-weight: bold;
+  border: none;
+  margin: @space-lg auto 0;
+
+  &.disabled {
+    background: @bg-gray;
+    color: @text-placeholder;
+  }
+}
+
+.chart-placeholder {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: @space-3xl @space-lg;
+  text-align: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+
+  .placeholder-icon {
+    display: block;
+    font-size: 120rpx;
+    margin-bottom: @space-base;
+  }
+
+  .placeholder-title {
+    display: block;
+    font-size: @font-lg;
+    font-weight: bold;
+    color: @text-color;
+    margin-bottom: @space-sm;
+  }
+
+  .placeholder-desc {
+    font-size: @font-sm;
+    color: @text-placeholder;
+  }
+}

@@ -4,7 +4,7 @@
     <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
     <view class="user-info flex-1 ml-base">
       <text class="user-name text-base font-bold">{{item.userInfo.nickName}}</text>
-      <text class="dynamic-time text-xs text-placeholder">{{item.createTime}}</text>
+      <text class="dynamic-time text-xs text-placeholder">{{item.displayTime || item.createTime}}</text>
     </view> 
   </view>
 
@@ -17,6 +17,7 @@
         class="large-image"
         src="{{item.images[0]}}"
         mode="aspectFill"
+        lazy-load="{{true}}"
         bindtap="onImageTap"
         data-index="0"
         data-images="{{item.images}}">
@@ -71,9 +72,9 @@
 
   <!-- 操作栏 - 需要 is_show 权限才显示 -->
   <view wx:if="{{isShow}}" class="dynamic-actions flex-between mt-lg pt-base border-top">
-    <view class="action-btn {{item.isLiked ? 'liked' : ''}}" catch:tap="onLike" data-id="{{item._id}}">
-      <text class="action-icon">{{item.isLiked ? '❤' : '♡'}}</text>
-      <text class="action-text text-sm">{{item.likesCount || 0}}</text>
+    <view class="action-btn {{item.isSubscribed ? 'subscribed' : ''}}" catch:tap="onSubscribe">
+      <text class="action-icon">{{item.isSubscribed ? '🔔' : '🔕'}}</text>
+      <text class="action-text text-sm">{{item.isSubscribed ? '已订阅' : '订阅'}}</text>
     </view>
     <view class="action-btn" bindtap="onComment" data-id="{{item._id}}">
       <text class="action-icon">💬</text>

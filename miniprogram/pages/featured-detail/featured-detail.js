@@ -13,6 +13,7 @@ Page({
     mediaList: [],
     // 轮播图自动播放
     autoplay: true,
+    submitting: false,
     // 当前播放的视频索引
     currentVideoIndex: -1,
     // 表单数据
@@ -41,54 +42,27 @@ Page({
     }
   },
 
-  // 加载全局配置
   async loadGlobalConfig() {
     try {
-      console.log('===== 开始加载全局配置 =====');
-      console.log('请求参数 key:', 'registration_form');
-
-      const res = await wx.cloud.callFunction({
-        name: 'getGlobalConfig',
-        data: {
-          key: 'registration_form' // 获取报名表单配置
-        }
-      });
-
-      console.log('云函数完整返回结果:', JSON.stringify(res, null, 2));
-      console.log('res.result:', res.result);
-      console.log('res.result.code:', res.result ? res.result.code : 'undefined');
-      console.log('res.result.data:', res.result ? res.result.data : 'undefined');
-
-      if (res.result && res.result.code === 0 && res.result.data) {
-        // 更新报名表单显示状态
-        console.log('✓ 配置获取成功');
-        console.log('visible 字段值:', res.result.data.visible);
-        console.log('visible 字段类型:', typeof res.result.data.visible);
-
-        this.setData({
-          registrationVisible: res.result.data.visible !== false // 默认为 true
-        });
-        console.log('最终设置 registrationVisible 为:', res.result.data.visible !== false);
-      } else {
-        // 如果配置不存在，默认显示
-        console.log('✗ 全局配置不存在，使用默认值（显示）');
-        console.log('判断失败原因:');
-        console.log('  - res.result 存在?', !!res.result);
-        console.log('  - res.result.code === 0?', res.result ? res.result.code === 0 : false);
-        console.log('  - res.result.data 存在?', res.result ? !!res.result.data : false);
-
-        this.setData({
-          registrationVisible: true
-        });
+      const cached = wx.getStorageSync('globalConfig_registration');
+      if (cached && Date.now() - cached.time < 5 * 60 * 1000) {
+        this.setData({ registrationVisible: cached.visible !== false });
+        return;
       }
-      console.log('===== 全局配置加载完成 =====');
-    } catch (error) {
-      console.error('✗ 加载全局配置失败:', error);
-      console.error('错误详情:', JSON.stringify(error, null, 2));
-      // 出错时默认显示报名表单
-      this.setData({
-        registrationVisible: true
+
+      const res = await request.callFunction('getGlobalConfig', {
+        key: 'registration_form'
+      }, {
+        showLoad: false,
+        showError: false
       });
+
+      const visible = res?.visible !== false;
+      wx.setStorageSync('globalConfig_registration', { visible: res?.visible, time: Date.now() });
+      this.setData({ registrationVisible: visible });
+    } catch (error) {
+      console.error('加载全局配置失败:', error);
+      this.setData({ registrationVisible: true });
     }
   },
 
@@ -278,30 +252,29 @@ Page({
 
   // 提交报名信息
   submitRegistration() {
+    if (this.data.submitting) return;
     const { name, phone, remark } = this.data.formData
 
+    this.setData({ submitting: true });
     wx.showLoading({ title: '提交中...' })
 
-    // 调用云函数提交报名信息
-    wx.cloud.callFunction({
-      name: 'submitRegistration',
-      data: {
-        name: name.trim(),
-        phone: phone.trim(),
-        remark: remark.trim(),
-        contentId: this.data.contentData.id || '',
-        contentTitle: this.data.contentData.title || '游泳培训课程'
-      }
+    request.callFunction('submitRegistration', {
+      name: name.trim(),
+      phone: phone.trim(),
+      remark: remark.trim(),
+      contentId: this.data.contentData.id || '',
+      contentTitle: this.data.contentData.title || '游泳培训课程'
+    }, {
+      showLoad: false
     }).then(res => {
       wx.hideLoading()
 
-      if (res.result.code === 0) {
+      if (res.code === 0) {
         wx.showModal({
           title: '提交成功',
           content: '我们将尽快与您联系，请保持手机畅通',
           showCancel: false,
           success: () => {
-            // 清空表单
             this.setData({
               formData: { name: '', phone: '', remark: '' }
             })
@@ -309,7 +282,7 @@ Page({
         })
       } else {
         wx.showToast({
-          title: res.result.message || '提交失败',
+          title: res.message || '提交失败',
           icon: 'none'
         })
       }
@@ -320,6 +293,8 @@ Page({
         title: '提交失败，请重试',
         icon: 'none'
       })
+    }).finally(() => {
+      this.setData({ submitting: false });
     })
   },
 

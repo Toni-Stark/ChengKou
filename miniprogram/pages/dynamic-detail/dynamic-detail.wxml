@@ -4,7 +4,7 @@
     <dynamic-item
       item="{{dynamic}}"
       isShow="{{isShow}}"
-      bind:like="onDynamicLike"
+      bind:subscribe="onDynamicSubscribe"
       bind:comment="onComment"
       bind:share="onShare">
     </dynamic-item>

@@ -10,7 +10,7 @@
         item="{{item}}"
         showDelete="{{true}}"
         isShow="{{isShow}}"
-        bind:like="onDynamicLike"
+        bind:subscribe="onDynamicSubscribe"
         bind:comment="onDynamicComment"
         bind:delete="onDeleteDynamic">
       </dynamic-item>

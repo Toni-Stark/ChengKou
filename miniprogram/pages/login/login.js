@@ -2,20 +2,23 @@ const auth = require('../../utils/auth.js');
 
 Page({
   data: {
-    loading: false
+    loading: false,
+    redirectUrl: ''
   },
 
   onLoad(options) {
-    // 检查是否已登录
     if (auth.checkLogin()) {
-      // 已登录，跳转到首页
       wx.switchTab({
         url: '/pages/index/index'
       });
+      return;
+    }
+
+    if (options.redirect) {
+      this.setData({ redirectUrl: decodeURIComponent(options.redirect) });
     }
   },
 
-  // 处理登录
   async handleLogin() {
     if (this.data.loading) {
       return;
@@ -24,7 +27,6 @@ Page({
     this.setData({ loading: true });
 
     try {
-      // 检查云开发是否初始化
       if (!wx.cloud) {
         wx.showModal({
           title: '提示',
@@ -35,15 +37,12 @@ Page({
         return;
       }
 
-      // 获取用户信息
       const userInfo = await auth.getUserProfile();
       console.log('获取到用户信息:', userInfo);
 
-      // 执行登录
       const result = await auth.doLogin(userInfo);
       console.log('登录成功:', result);
 
-      // 登录成功，跳转到首页
       wx.showToast({
         title: '登录成功',
         icon: 'success',
@@ -51,15 +50,21 @@ Page({
       });
 
       setTimeout(() => {
-        wx.switchTab({
-          url: '/pages/index/index'
-        });
+        const redirectUrl = this.data.redirectUrl;
+        if (redirectUrl) {
+          wx.redirectTo({ url: redirectUrl });
+        } else {
+          wx.navigateBack({
+            fail: () => {
+              wx.switchTab({ url: '/pages/index/index' });
+            }
+          });
+        }
       }, 1500);
 
     } catch (error) {
       console.error('登录失败:', error);
 
-      // 显示详细错误信息
       const errorMsg = error.message || error.errMsg || '登录失败';
       wx.showModal({
         title: '登录失败',

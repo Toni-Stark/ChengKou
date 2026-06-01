@@ -41,52 +41,26 @@ exports.main = async (event, context) => {
       })
       .count();
 
-    // 统计用户的粉丝数（有多少人关注了我）
-    const followersCount = await db.collection('follows')
+    // 统计用户的粉丝数（有多少人订阅了我）
+    const followersCount = await db.collection('subscriptions')
       .where({
-        followingOpenid: targetOpenid
+        targetOpenid: targetOpenid
       })
       .count();
 
-    // 统计用户的关注数（我关注了多少人）
-    const followingCount = await db.collection('follows')
+    // 统计用户的订阅数（我订阅了多少人）
+    const subscriptionsCount = await db.collection('subscriptions')
       .where({
-        _openid: targetOpenid
+        subscriberOpenid: targetOpenid
       })
       .count();
 
-    // 统计用户获得的总点赞数（动态被点赞的次数）
-    const dynamicIds = await db.collection('user_dynamics')
-      .where({
-        _openid: targetOpenid,
-        status: 'published'
-      })
-      .field({
-        _id: true
-      })
-      .get();
-
-    let likesCount = 0;
-    if (dynamicIds.data.length > 0) {
-      const ids = dynamicIds.data.map(item => item._id);
-      const likesResult = await db.collection('likes')
-        .where({
-          targetType: 'dynamic',
-          targetId: db.command.in(ids)
-        })
-        .count();
-
-      likesCount = likesResult.total;
-    }
-
-    // 组装返回数据
     const fullUserInfo = {
       ...userInfo,
       stats: {
         dynamicsCount: dynamicsCount.total,
         followersCount: followersCount.total,
-        followingCount: followingCount.total,
-        likesCount: likesCount
+        subscriptionsCount: subscriptionsCount.total
       }
     };
 

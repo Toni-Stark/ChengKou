@@ -13,10 +13,6 @@ Page({
     this.calculateCacheSize();
   },
 
-  onShow() {
-    this.checkLogin();
-  },
-
   // 检查登录状态
   checkLogin() {
     this.setData({
@@ -112,7 +108,7 @@ Page({
   showAbout() {
     wx.showModal({
       title: '关于我们',
-      content: '这是一个基于微信小程序的社交平台，用户可以发布动态、点赞评论、关注其他用户。\n\n技术栈：\n- 小程序云开发\n- 微信云数据库\n- 微信云函数\n- 微信云存储',
+      content: '这是一个基于微信小程序的社交平台，用户可以发布游龙、评论、订阅其他用户。\n\n技术栈：\n- 小程序云开发\n- 微信云数据库\n- 微信云函数\n- 微信云存储',
       showCancel: false,
       confirmText: '知道了'
     });
@@ -122,7 +118,7 @@ Page({
   showVersion() {
     wx.showModal({
       title: '版本信息',
-      content: `当前版本：${this.data.version}\n\n更新日志：\n- 支持发布动态\n- 支持点赞评论\n- 支持关注用户\n- 支持编辑资料\n- 支持查看我的动态\n- 支持查看我的点赞`,
+      content: `当前版本：${this.data.version}\n\n更新日志：\n- 支持发布游龙\n- 支持订阅用户\n- 支持评论互动\n- 支持编辑资料\n- 支持查看我的游龙\n- 支持管理订阅\n- 支持今日打卡`,
       showCancel: false,
       confirmText: '知道了'
     });

@@ -78,37 +78,17 @@ exports.main = async (event, context) => {
       likedMap[like.targetId] = true;
     });
 
-    // 查询每个动态的点赞数和评论数
-    const dynamicsWithStats = await Promise.all(
-      dynamicsResult.data.map(async (dynamic) => {
-        // 点赞数
-        const likesCount = await db.collection('likes')
-          .where({
-            targetType: 'dynamic',
-            targetId: dynamic._id
-          })
-          .count();
-
-        // 评论数
-        const commentsCount = await db.collection('comments')
-          .where({
-            targetType: 'dynamic',
-            targetId: dynamic._id
-          })
-          .count();
-
-        return {
-          ...dynamic,
-          author: usersMap[dynamic._openid] || {
-            nickName: '未知用户',
-            avatarUrl: ''
-          },
-          likesCount: likesCount.total,
-          commentsCount: commentsCount.total,
-          isLiked: likedMap[dynamic._id] || false
-        };
-      })
-    );
+    // 组装数据，使用文档中存储的计数
+    const dynamicsWithStats = dynamicsResult.data.map(dynamic => ({
+      ...dynamic,
+      author: usersMap[dynamic._openid] || {
+        nickName: '未知用户',
+        avatarUrl: ''
+      },
+      likesCount: dynamic.likesCount || 0,
+      commentsCount: dynamic.commentsCount || 0,
+      isLiked: likedMap[dynamic._id] || false
+    }));
 
     // 按照点赞时间排序（根据原始likesResult的顺序）
     const sortedList = dynamicIds.map(id =>

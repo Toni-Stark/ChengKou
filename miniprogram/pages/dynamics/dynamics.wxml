@@ -1,17 +1,20 @@
 <view class="dynamics-page page">
-  <!-- 发布按钮 - 需要登录且有 is_show 权限 -->
+  <!-- 发布按钮 -->
   <view wx:if="{{openid && isShow}}" class="publish-btn" bindtap="goToPublish">
     <text class="publish-icon">+</text>
   </view>
 
-  <!-- 游龙列表 - 瀑布流布局 -->
+  <!-- 筛选按钮 -->
+  <view wx:if="{{openid}}" class="filter-btn {{filterSubscribed ? 'active' : ''}}" bindtap="toggleFilter">
+    <text class="filter-icon">⚓</text>
+  </view>
+
+  <!-- 游龙列表 -->
   <view class="dynamics-list container">
-    <!-- 加载中状态 -->
     <view class="loading-state" wx:if="{{loading && dynamicsList.length === 0}}">
       <text class="loading-text">加载中...</text>
     </view>
 
-    <!-- 游龙卡片列表 -->
     <block wx:else>
       <dynamic-item
         wx:for="{{dynamicsList}}"
@@ -19,19 +22,17 @@
         item="{{item}}"
         isShow="{{isShow}}"
         bind:userTap="onUserTap"
-        bind:like="onLike"
+        bind:subscribe="onSubscribe"
         bind:comment="onComment"
         bind:share="onShare"
         bind:delete="onDelete">
       </dynamic-item>
 
-      <!-- 空状态 -->
       <view class="empty-state" wx:if="{{dynamicsList.length === 0 && !loading}}">
         <image class="empty-image" src="cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png" mode="aspectFit"></image>
         <text class="empty-text">暂无游龙</text>
       </view>
 
-      <!-- 加载更多 -->
       <view class="load-more" wx:if="{{dynamicsList.length > 0}}">
         <text class="load-more-text">{{hasMore ? '上拉加载更多' : '没有更多了'}}</text>
       </view>
