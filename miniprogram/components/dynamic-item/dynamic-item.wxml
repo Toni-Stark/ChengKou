@@ -1,11 +1,11 @@
 <view class="dynamic-item card">
   <!-- 用户信息 -->
-  <view class="dynamic-header flex-row align-center" bindtap="onUserTap">
+  <view class="dynamic-header" style="display:flex; flex-direction:row; align-items:center; padding:0 0 20rpx 0;" bindtap="onComment" data-id="{{item._id}}">
     <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
-    <view class="user-info flex-1 ml-base">
-      <text class="user-name text-base font-bold">{{item.userInfo.nickName}}</text>
-      <text class="dynamic-time text-xs text-placeholder">{{item.displayTime || item.createTime}}</text>
-    </view> 
+    <view style="flex:1; margin-left:16rpx; display:flex; flex-direction:column;">
+      <text style="font-size:30rpx; font-weight:bold; color:#1a1a1a; margin-bottom:6rpx;">{{item.userInfo.nickName}}</text>
+      <text style="font-size:22rpx; color:#999;">{{item.displayTime || item.createTime}}</text>
+    </view>
   </view>
 
   <!-- 游龙内容 - 根据 displayType 展示不同样式 -->
@@ -26,6 +26,18 @@
     <view class="large-content mt-base">
       <text class="large-title text-lg font-bold">{{item.title}}</text>
       <text class="large-subtitle text-sm text-secondary mt-xs" wx:if="{{item.subtitle}}">{{item.subtitle}}</text>
+      <text class="content-text mt-sm" wx:if="{{item.content}}">{{item.content}}</text>
+    </view>
+  </view>
+
+  <!-- 视频模式 (video) -->
+  <view wx:elif="{{item.displayType === 'video'}}" class="dynamic-video-mode">
+    <view class="video-wrapper mt-base" wx:if="{{item.video}}">
+      <video class="feed-video" style="width: 100%;border-radius: 25rpx;" src="{{item.video}}" controls show-center-play-btn="{{true}}" show-fullscreen-btn="{{true}}" object-fit="fill" direction="{{0}}"></video>
+    </view>
+    <view class="video-content mt-base">
+      <text class="video-title text-lg font-bold" wx:if="{{item.title}}">{{item.title}}</text>
+      <text class="video-subtitle text-sm text-secondary mt-xs" wx:if="{{item.subtitle}}">{{item.subtitle}}</text>
       <text class="content-text mt-sm" wx:if="{{item.content}}">{{item.content}}</text>
     </view>
   </view>
@@ -65,7 +77,7 @@
   </view>
 
   <!-- 位置信息 -->
-  <view class="dynamic-location flex-row align-center mt-base" wx:if="{{item.location}}">
+  <view class="dynamic-location flex-row align-center mt-base" bindtap="onComment" data-id="{{item._id}}" wx:if="{{item.location}}">
     <text class="location-icon text-sm">📍</text>
     <text class="location-text text-sm text-secondary">{{item.location.name}}</text>
   </view>
@@ -76,7 +88,7 @@
       <text class="action-icon">{{item.isSubscribed ? '🔔' : '🔕'}}</text>
       <text class="action-text text-sm">{{item.isSubscribed ? '已订阅' : '订阅'}}</text>
     </view>
-    <view class="action-btn" bindtap="onComment" data-id="{{item._id}}">
+    <view class="action-btn">
       <text class="action-icon">💬</text>
       <text class="action-text text-sm">{{item.commentsCount || 0}}</text>
     </view>
@@ -84,6 +96,10 @@
       <text class="action-icon">↗</text>
       <text class="action-text text-sm">分享</text>
     </button>
+    <view class="action-btn" wx:if="{{showEdit}}" catch:tap="onEdit" data-id="{{item._id}}">
+      <text class="action-icon">✏</text>
+      <text class="action-text text-sm">编辑</text>
+    </view>
     <view class="action-btn" wx:if="{{showDelete}}" catch:tap="onDelete" data-id="{{item._id}}">
       <text class="action-icon">🗑</text>
       <text class="action-text text-sm">删除</text>

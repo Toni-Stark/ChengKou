@@ -9,40 +9,30 @@ Page({
     hasMore: true,
     loading: false,
     isEmpty: false,
+    errorType: '',
     userInfo: null,
-    isShow: true // 我的动态页面默认显示操作按钮
+    isShow: true
   },
 
   onLoad() {
-    // 检查登录状态
     if (!auth.checkLogin()) {
       wx.showModal({
         title: '提示',
         content: '请先登录',
         showCancel: false,
-        success: () => {
-          wx.navigateBack();
-        }
+        success: () => wx.navigateBack()
       });
       return;
     }
 
     this.loadUserInfo();
-    this.loadMyDynamics();
+    this.loadDynamics();
   },
 
-  // 加载用户信息
-  loadUserInfo() {
-    try {
-      const userInfo = wx.getStorageSync('userInfo');
-      if (userInfo) {
-        this.setData({
-          userInfo: userInfo,
-          isShow: userInfo.is_show !== false
-        });
-      }
-    } catch (error) {
-      console.error('加载用户信息失败:', error);
+  onShow() {
+    if (wx.getStorageSync('_needRefresh')) {
+      wx.removeStorageSync('_needRefresh');
+      this.refreshDynamics();
     }
   },
 
@@ -52,106 +42,100 @@ Page({
 
   onReachBottom() {
     if (this.data.hasMore && !this.data.loading) {
-      this.setData({
-        page: this.data.page + 1
-      });
-      this.loadMyDynamics(true);
+      this.setData({ page: this.data.page + 1 });
+      this.loadDynamics(true);
     }
   },
 
-  // 刷新动态列表
-  refreshDynamics() {
-    this.setData({
-      page: 1,
-      dynamicsList: [],
-      hasMore: true
-    });
-    this.loadMyDynamics(false, true);
+  loadUserInfo() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        this.setData({
+          userInfo,
+          isShow: userInfo.is_show !== false
+        });
+      }
+    } catch (error) {
+      console.error('加载用户信息失败:', error);
+    }
   },
 
-  // 加载我的动态
-  async loadMyDynamics(isLoadMore = false, isPullRefresh = false) {
-    if (this.data.loading) return;
+  refreshDynamics() {
+    this.setData({ page: 1, dynamicsList: [], hasMore: true });
+    this.loadDynamics(false, true);
+  },
 
-    this.setData({ loading: true });
+  async loadDynamics(isLoadMore = false, isPullRefresh = false) {
+    if (this.data.loading) return;
+    this.setData({ loading: true, errorType: '' });
 
     try {
-      const stored = auth.getStoredUserInfo();
-
-      // 检查云开发是否可用
       if (!wx.cloud || !wx.cloud.callFunction) {
         console.warn('云开发未配置');
-        wx.showToast({
-          title: '云开发未配置',
-          icon: 'none'
+        this.setData({
+          loading: false,
+          isEmpty: this.data.dynamicsList.length === 0,
+          errorType: 'cloud'
         });
-        this.setData({ loading: false });
         return;
       }
 
       const result = await request.callFunction('getUserDynamics', {
-        userId: stored.openid,
+        myOwn: true,
         page: this.data.page,
         pageSize: this.data.pageSize
       }, {
         showLoad: !isLoadMore && !isPullRefresh
       });
 
-      // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
       const processedList = await request.processDynamicsImages(result.list);
-
-      const newList = this.data.page === 1 ? processedList : [...this.data.dynamicsList, ...processedList];
+      const newList = this.data.page === 1
+        ? processedList
+        : [...this.data.dynamicsList, ...processedList];
 
       this.setData({
         dynamicsList: newList,
         hasMore: result.hasMore,
         loading: false,
-        isEmpty: newList.length === 0
+        isEmpty: newList.length === 0,
+        errorType: ''
       });
-
-      if (isPullRefresh) {
-        wx.stopPullDownRefresh();
-      }
     } catch (error) {
       console.error('加载我的动态失败:', error);
       this.setData({
         loading: false,
-        isEmpty: this.data.dynamicsList.length === 0
+        isEmpty: this.data.dynamicsList.length === 0,
+        errorType: 'network'
       });
-
+    } finally {
       if (isPullRefresh) {
         wx.stopPullDownRefresh();
       }
     }
   },
 
-  // 查看动态详情
   onDynamicTap(e) {
-    const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/dynamic-detail/dynamic-detail?id=${id}`
+      url: `/pages/dynamic-detail/dynamic-detail?id=${e.currentTarget.dataset.id}`
     });
   },
 
-  // 删除动态
-  onDeleteDynamic(e) {
-    const id = e.detail.id;
+  onEditDynamic(e) {
+    wx.navigateTo({
+      url: `/pages/edit-dynamic/edit-dynamic?id=${e.detail.id}`
+    });
+  },
 
+  onDeleteDynamic(e) {
     wx.showModal({
       title: '提示',
-      content: '确定要删除这条动态吗？',
+      content: '确定要删除这条游龙吗？',
       success: async (res) => {
         if (res.confirm) {
           try {
-            await request.callFunction('deleteDynamic', {
-              dynamicId: id
-            }, {
-              showLoad: true
-            });
-
+            await request.callFunction('deleteDynamic', { dynamicId: e.detail.id }, { showLoad: true });
             request.showToast('删除成功', 'success');
-
-            // 刷新列表
             this.refreshDynamics();
           } catch (error) {
             console.error('删除动态失败:', error);
@@ -164,26 +148,18 @@ Page({
   onDynamicSubscribe(e) {
     const { id, isSubscribed } = e.detail;
     const index = this.data.dynamicsList.findIndex(item => item._id === id);
-
     if (index !== -1) {
-      this.setData({
-        [`dynamicsList[${index}].isSubscribed`]: isSubscribed
-      });
+      this.setData({ [`dynamicsList[${index}].isSubscribed`]: isSubscribed });
     }
   },
 
-  // 评论
   onDynamicComment(e) {
-    const id = e.detail.id;
     wx.navigateTo({
-      url: `/pages/dynamic-detail/dynamic-detail?id=${id}`
+      url: `/pages/dynamic-detail/dynamic-detail?id=${e.detail.id}`
     });
   },
 
-  // 前往发布页
   goToPublish() {
-    wx.navigateTo({
-      url: '/pages/publish/publish'
-    });
+    wx.navigateTo({ url: '/pages/publish/publish' });
   }
 });

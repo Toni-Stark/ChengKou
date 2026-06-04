@@ -1,17 +1,28 @@
 <view class="my-dynamics-page page">
+  <!-- 发布按钮 -->
+  <view class="publish-btn" bindtap="goToPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
   <!-- 游龙列表 -->
   <view class="dynamics-list" wx:if="{{!isEmpty}}">
+    <!-- 初始加载态 -->
+    <view class="loading-state" wx:if="{{loading && dynamicsList.length === 0}}">
+      <text>加载中...</text>
+    </view>
+
+    <block wx:else>
     <view
       wx:for="{{dynamicsList}}"
-      wx:key="_id"
-      bindtap="onDynamicTap"
-      data-id="{{item._id}}">
+      wx:key="_id">
       <dynamic-item
         item="{{item}}"
         showDelete="{{true}}"
+        showEdit="{{true}}"
         isShow="{{isShow}}"
         bind:subscribe="onDynamicSubscribe"
         bind:comment="onDynamicComment"
+        bind:edit="onEditDynamic"
         bind:delete="onDeleteDynamic">
       </dynamic-item>
     </view>
@@ -24,12 +35,25 @@
     <view class="load-more" wx:if="{{!hasMore && dynamicsList.length > 0}}">
       <text class="text-secondary text-sm">没有更多了</text>
     </view>
+    </block>
   </view>
 
   <!-- 空状态 -->
   <view class="empty-state" wx:if="{{isEmpty && !loading}}">
-    <text class="empty-icon">📝</text>
-    <text class="empty-text text-secondary">还没有发布游龙</text>
-    <button class="btn btn-primary mt-lg" bindtap="goToPublish">发布游龙</button>
+    <block wx:if="{{errorType === 'cloud'}}">
+      <text class="empty-icon">⚠</text>
+      <text class="empty-text text-secondary">云开发未配置，请检查环境</text>
+      <button class="btn btn-primary mt-lg" bindtap="loadDynamics">重试</button>
+    </block>
+    <block wx:elif="{{errorType === 'network'}}">
+      <text class="empty-icon">⚠</text>
+      <text class="empty-text text-secondary">加载失败，请检查网络</text>
+      <button class="btn btn-primary mt-lg" bindtap="loadDynamics">重试</button>
+    </block>
+    <block wx:else>
+      <text class="empty-icon">📝</text>
+      <text class="empty-text text-secondary">还没有发布游龙</text>
+      <button class="btn btn-primary mt-lg" bindtap="goToPublish">发布游龙</button>
+    </block>
   </view>
 </view>

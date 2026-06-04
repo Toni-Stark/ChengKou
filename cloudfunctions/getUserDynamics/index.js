@@ -10,7 +10,7 @@ const db = cloud.database();
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
-  const { page = 1, pageSize = 10, userId, subscribedOnly = false } = event;
+  const { page = 1, pageSize = 10, userId, myOwn = false, subscribedOnly = false } = event;
 
   try {
     const _ = db.command;
@@ -21,7 +21,10 @@ exports.main = async (event, context) => {
       isPrivate: false
     };
 
-    if (userId) {
+    if (myOwn && wxContext.OPENID) {
+      where._openid = wxContext.OPENID;
+      console.log('[getUserDynamics] myOwn mode, OPENID:', wxContext.OPENID);
+    } else if (userId) {
       where._openid = userId;
     } else if (subscribedOnly && wxContext.OPENID) {
       const subResult = await db.collection('subscriptions')

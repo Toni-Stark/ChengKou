@@ -4,6 +4,8 @@
 
 let loadingCount = 0;
 
+const QINIU_BASE = 'http://tg00h6qkg.hn-bkt.clouddn.com';
+
 const _urlCache = {};
 const CACHE_TTL = 5 * 60 * 1000;
 
@@ -240,54 +242,62 @@ async function processDynamicsImages(dynamics) {
     return dynamics;
   }
 
-  try {
-    // 收集所有需要转换的图片URL
-    const allImageUrls = [];
-    dynamics.forEach(item => {
-      if (item.images && Array.isArray(item.images)) {
-        allImageUrls.push(...item.images);
-      }
-      // 处理用户头像
-      if (item.userInfo && item.userInfo.avatarUrl) {
-        allImageUrls.push(item.userInfo.avatarUrl);
-      }
-    });
-
-    // 批量转换
-    const convertedUrls = await getTempFileURL(allImageUrls);
-
-    // 创建URL映射表
-    const urlMap = {};
-    allImageUrls.forEach((url, index) => {
-      if (Array.isArray(convertedUrls)) {
-        urlMap[url] = convertedUrls[index];
-      }
-    });
-
-    // 更新动态列表中的URL
-    const processedDynamics = dynamics.map(item => {
-      const newItem = { ...item };
-
-      // 更新图片URL
-      if (newItem.images && Array.isArray(newItem.images)) {
-        newItem.images = newItem.images.map(img => urlMap[img] || img);
-      }
-
-      // 更新头像URL
-      if (newItem.userInfo && newItem.userInfo.avatarUrl) {
+  const processedDynamics = dynamics.map(item => {
+    const newItem = { ...item };
+    if (newItem.userInfo && newItem.userInfo.avatarUrl) {
+      const avatar = newItem.userInfo.avatarUrl;
+      if (avatar && avatar.startsWith('cloud://')) {
         newItem.userInfo = {
           ...newItem.userInfo,
-          avatarUrl: urlMap[newItem.userInfo.avatarUrl] || newItem.userInfo.avatarUrl
+          avatarUrl: QINIU_BASE + '/common/default-avatar.png'
         };
       }
+    }
+    return newItem;
+  });
 
-      return newItem;
+  return processedDynamics;
+}
+
+async function uploadToQiniu(filePath, folder = 'dynamics') {
+  try {
+    const tokenRes = await callFunction('getQiniuToken', {}, {
+      showLoad: false,
+      showError: false
     });
+    const token = tokenRes.token;
 
-    return processedDynamics;
-  } catch (error) {
-    console.error('处理动态图片失败:', error);
-    return dynamics;
+    const ext = filePath.split('.').pop() || 'jpg';
+    const key = `${folder}/${Date.now()}_${Math.floor(Math.random() * 10000)}.${ext}`;
+
+    return new Promise((resolve, reject) => {
+      wx.uploadFile({
+        url: 'https://upload-z2.qiniup.com',
+        filePath,
+        name: 'file',
+        formData: { token, key },
+        success(res) {
+          try {
+            console.log('[uploadToQiniu] statusCode:', res.statusCode);
+            console.log('[uploadToQiniu] raw data:', res.data);
+            const data = JSON.parse(res.data);
+            const resultKey = data.key || key;
+            console.log('[uploadToQiniu] key:', resultKey);
+            resolve(`${QINIU_BASE}/${resultKey}`);
+          } catch (parseErr) {
+            console.error('[uploadToQiniu] parse failed:', parseErr, 'raw:', res.data);
+            resolve(`${QINIU_BASE}/${key}`);
+          }
+        },
+        fail(err) {
+          console.error('[uploadToQiniu] upload failed:', err);
+          reject(err);
+        }
+      });
+    });
+  } catch (e) {
+    console.error('[uploadToQiniu] error:', e);
+    throw e;
   }
 }
 
@@ -303,6 +313,7 @@ module.exports = {
   callFunction,
   uploadFile,
   uploadImages,
+  uploadToQiniu,
   getTempFileURL,
   processDynamicsImages,
   clearUrlCache
