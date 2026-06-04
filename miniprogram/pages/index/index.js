@@ -20,22 +20,13 @@ Page({
   },
 
   async loadFeaturedDynamic() {
-    const mockData = {
-      title: '2026游泳春训班开始报名',
-      desc: '专业教练团队，小班教学',
-      image: ''
-    };
-
-    try {
-      const convertedImage = await request.getTempFileURL(
-        'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
-      );
-      mockData.image = convertedImage;
-    } catch (error) {
-      console.error('转换图片URL失败:', error);
-    }
-
-    this.setData({ featuredDynamic: mockData });
+    this.setData({
+      featuredDynamic: {
+        title: '2026游泳春训班开始报名',
+        desc: '专业教练团队，小班教学',
+        image: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
+      }
+    });
   },
 
   onFeaturedCardTap() {

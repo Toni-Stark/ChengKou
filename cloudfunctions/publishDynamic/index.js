@@ -16,6 +16,7 @@ exports.main = async (event, context) => {
     title,
     subtitle,
     images,
+    video,
     location
   } = event;
 
@@ -53,6 +54,14 @@ exports.main = async (event, context) => {
         data: null
       };
     }
+  } else if (displayType === 'video') {
+    if (!video) {
+      return {
+        code: -1,
+        message: '请选择视频',
+        data: null
+      };
+    }
   }
 
   try {
@@ -71,11 +80,13 @@ exports.main = async (event, context) => {
 
     // 构建动态数据
     const dynamicData = {
+      _openid: wxContext.OPENID,
       displayType: displayType,
       content: content || '',
       title: title || '',
       subtitle: subtitle || '',
       images: images || [],
+      video: video || '',
       location: location || null,
       userInfo: userInfo,
       likesCount: 0,

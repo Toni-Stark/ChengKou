@@ -1,26 +1,82 @@
-<view class="swim-records-page">
-  <view class="checkin-card">
-    <view class="checkin-header">
-      <text class="checkin-title">今日打卡</text>
-      <text class="checkin-date">记录你的每一次入水</text>
+<view class="swim-page">
+  <!-- 打卡区 -->
+  <view class="checkin-bar">
+    <view class="checkin-info">
+      <text class="checkin-emoji">{{checkedToday && todayDistance > 0 ? '✅' : '🏊'}}</text>
+      <view class="checkin-text-group">
+        <text class="checkin-label">{{checkedToday ? '今日已打卡' : '今日打卡'}}</text>
+        <text class="checkin-sub" wx:if="{{checkedToday && todayDistance > 0}}">游了 {{todayDistance}}m</text>
+      </view>
     </view>
-
-    <view class="checkin-status" wx:if="{{checkedIn}}">
-      <text class="checkin-icon">🏊</text>
-      <text class="checkin-text">今日已打卡</text>
+    <view class="checkin-btn {{checkedToday ? 'done' : ''}}" bindtap="doCheckIn">
+      <text>{{checkedToday && todayDistance > 0 ? '✓ 已打卡' : (checkedToday ? '设距离' : '打卡')}}</text>
     </view>
-
-    <button
-      class="checkin-btn {{checkedIn ? 'disabled' : ''}}"
-      bindtap="doCheckIn"
-      disabled="{{checkedIn || checkInLoading}}">
-      {{checkedIn ? '已打卡' : '点击打卡'}}
-    </button>
   </view>
 
-  <view class="chart-placeholder">
-    <text class="placeholder-icon">📊</text>
-    <text class="placeholder-title">游龙数据看板</text>
-    <text class="placeholder-desc">图表即将上线，敬请期待</text>
+  <!-- 统计面板 -->
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-val">{{monthlyTotal}}</text>
+      <text class="stat-unit">m</text>
+      <text class="stat-label">本月共游</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-val">{{weeklyTotal}}</text>
+      <text class="stat-unit">m</text>
+      <text class="stat-label">本周共游</text>
+    </view>
+    <view class="stat-card highlight">
+      <text class="stat-val">{{rankPercent}}%</text>
+      <text class="stat-label">超越全国泳者</text>
+    </view>
+  </view>
+
+  <!-- 日历 -->
+  <view class="calendar-card">
+    <view class="cal-header">
+      <view class="cal-arrow" bindtap="prevMonth">◀</view>
+      <text class="cal-month">{{year}}年 {{month}}月</text>
+      <view class="cal-arrow" bindtap="nextMonth">▶</view>
+    </view>
+
+    <view class="cal-weekdays">
+      <text class="wd-item" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="cal-grid">
+      <view
+        wx:for="{{calendar}}"
+        wx:key="index"
+        class="cal-day {{item.type}}"
+        data-day="{{item.day}}"
+        bindtap="onDayTap">
+        <text class="day-num">{{item.day || ''}}</text>
+        <view class="day-record" wx:if="{{item.hasRecord && item.distance > 0}}">
+          <text class="day-meters">{{item.distance}}m</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 距离弹窗 -->
+<view class="modal-mask" wx:if="{{showModal}}" catchtap="closeModal">
+  <view class="modal-panel" catchtap="">
+    <text class="modal-title">📅 {{year}}年{{month}}月{{modalDay}}日</text>
+    <view class="modal-input-row">
+      <input
+        class="modal-input"
+        type="digit"
+        placeholder="游了多少米？"
+        placeholder-class="input-place"
+        value="{{modalDistance}}"
+        bindinput="onModalInput"
+        focus="{{true}}" />
+      <text class="modal-unit">m</text>
+    </view>
+    <view class="modal-actions">
+      <button class="modal-cancel" bindtap="closeModal">取消</button>
+      <button class="modal-save" bindtap="saveDistance">保存</button>
+    </view>
   </view>
 </view>

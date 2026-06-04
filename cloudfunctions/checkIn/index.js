@@ -5,47 +5,70 @@ cloud.init({
 });
 
 const db = cloud.database();
+const _ = db.command;
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
+  const { distance, date } = event;
 
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const targetDate = date ? new Date(date) : new Date();
+    targetDate.setHours(0, 0, 0, 0);
+    const nextDay = new Date(targetDate);
+    nextDay.setDate(nextDay.getDate() + 1);
 
     const existing = await db.collection('check_ins')
       .where({
         _openid: wxContext.OPENID,
-        date: db.command.gte(today).and(db.command.lt(tomorrow))
+        date: _.gte(targetDate).and(_.lt(nextDay))
       })
       .get();
 
     if (existing.data.length > 0) {
+      const record = existing.data[0];
+      const updateData = {
+        updateTime: db.serverDate()
+      };
+      if (distance !== undefined) {
+        updateData.distance = Number(distance);
+      }
+
+      await db.collection('check_ins').doc(record._id).update({
+        data: updateData
+      });
+
       return {
         code: 0,
-        message: '今日已打卡',
+        message: '已更新',
         data: {
+          _id: record._id,
           checkedIn: true,
-          checkInTime: existing.data[0].createTime
+          distance: Number(distance) || record.distance || 0,
+          checkInTime: record.createTime
         }
       };
     }
 
-    await db.collection('check_ins').add({
-      data: {
-        _openid: wxContext.OPENID,
-        date: db.serverDate(),
-        createTime: db.serverDate()
-      }
+    const addData = {
+      _openid: wxContext.OPENID,
+      date: db.serverDate(),
+      createTime: db.serverDate()
+    };
+    if (distance !== undefined) {
+      addData.distance = Number(distance);
+    }
+
+    const result = await db.collection('check_ins').add({
+      data: addData
     });
 
     return {
       code: 0,
       message: '打卡成功',
       data: {
+        _id: result._id,
         checkedIn: true,
+        distance: Number(distance) || 0,
         checkInTime: new Date()
       }
     };

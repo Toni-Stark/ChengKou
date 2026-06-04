@@ -192,7 +192,7 @@ Page({
           _openid: 'current_user',
           userInfo: {
             nickName: '我',
-            avatarUrl: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+            avatarUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
           },
           content: content,
           likesCount: 0,

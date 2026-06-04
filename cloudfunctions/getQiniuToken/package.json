@@ -1,0 +1,10 @@
+{
+  "name": "getQiniuToken",
+  "version": "1.0.0",
+  "description": "七牛云上传凭证签发",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "qiniu": "^7.14.0"
+  }
+}

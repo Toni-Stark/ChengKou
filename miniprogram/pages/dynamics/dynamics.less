@@ -169,6 +169,59 @@
   min-height: 60vh;
 }
 
+.empty-art {
+  width: 320rpx;
+  height: 320rpx;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: @space-lg;
+}
+
+.art-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 4rpx solid;
+
+  &.c1 {
+    width: 320rpx;
+    height: 320rpx;
+    border-color: rgba(30, 136, 229, 0.12);
+    animation: ripple 3s ease-in-out infinite;
+  }
+
+  &.c2 {
+    width: 240rpx;
+    height: 240rpx;
+    border-color: rgba(0, 188, 212, 0.16);
+    animation: ripple 3s ease-in-out 0.5s infinite;
+  }
+
+  &.c3 {
+    width: 160rpx;
+    height: 160rpx;
+    border-color: rgba(30, 136, 229, 0.2);
+    animation: ripple 3s ease-in-out 1s infinite;
+  }
+}
+
+@keyframes ripple {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+.art-emoji {
+  font-size: 80rpx;
+  z-index: 2;
+  animation: swimBob 2s ease-in-out infinite;
+}
+
+@keyframes swimBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
+}
+
 .empty-image {
   width: 400rpx;
   height: 300rpx;

@@ -1,0 +1,73 @@
+<view class="edit-page">
+  <scroll-view class="scroll" scroll-y="true">
+    <view class="section">
+      <view class="section-title">选择展示方式</view>
+      <radio-group bindchange="onDisplayTypeChange">
+        <view class="dt-list">
+          <view class="dt-item" wx:for="{{displayTypes}}" wx:key="value">
+            <radio value="{{item.value}}" checked="{{displayType === item.value}}" color="#07c160"/>
+            <text class="dt-label">{{item.label}}</text>
+          </view>
+        </view>
+      </radio-group>
+    </view>
+
+    <!-- 视频 -->
+    <view class="section" wx:if="{{displayType === 'video'}}">
+      <view class="video-thumb-row" wx:if="{{video}}">
+        <image class="video-thumb" src="{{thumbnail}}" mode="aspectFill"></image>
+        <view class="play-mask"><text class="play-icon">▶</text></view>
+        <view class="v-info">
+          <text class="v-name">视频已选择</text>
+          <text class="v-action" bindtap="chooseVideo">更换</text>
+        </view>
+        <view class="v-close" bindtap="deleteVideo"><text>×</text></view>
+      </view>
+      <view class="upload-box" bindtap="chooseVideo" wx:else>
+        <text class="u-icon">🎬</text>
+        <text class="u-text">点击选择视频</text>
+      </view>
+      <view class="mt"><text>描述</text></view>
+      <textarea class="ta" placeholder="描述..." value="{{content}}" bindinput="onContentInput" maxlength="500" auto-height></textarea>
+    </view>
+
+    <!-- 九宫格 -->
+    <view class="section" wx:if="{{displayType === 'grid9'}}">
+      <textarea class="ta" placeholder="分享新鲜事..." value="{{content}}" bindinput="onContentInput" maxlength="500" auto-height></textarea>
+      <view class="mt"><text>图片(最多9张)</text></view>
+      <view class="img-grid">
+        <view class="img-wrap" wx:for="{{images}}" wx:key="index">
+          <image class="img-item" src="{{item}}" mode="aspectFill"></image>
+          <view class="img-del" catchtap="deleteImage" data-index="{{index}}"><text>×</text></view>
+        </view>
+        <view class="img-add" bindtap="chooseImages" wx:if="{{images.length < 9}}"><text class="add-icon">+</text></view>
+      </view>
+    </view>
+
+    <!-- 大图 -->
+    <view class="section" wx:if="{{displayType === 'large'}}">
+      <input class="inp" placeholder="标题" value="{{title}}" bindinput="onTitleInput" maxlength="50"/>
+      <view class="mt"><text>封面图</text></view>
+      <view class="img-grid">
+        <view class="img-wrap" wx:if="{{images.length > 0}}">
+          <image class="img-item" src="{{images[0]}}" mode="aspectFill"></image>
+          <view class="img-del" catchtap="deleteImage" data-index="0"><text>×</text></view>
+        </view>
+        <view class="img-add" bindtap="chooseImages" wx:else><text class="add-icon">+</text></view>
+      </view>
+      <view class="mt"><text>描述</text></view>
+      <textarea class="ta" placeholder="描述..." value="{{content}}" bindinput="onContentInput" maxlength="500" auto-height></textarea>
+    </view>
+
+    <!-- 纯文本 -->
+    <view class="section" wx:if="{{displayType === 'text'}}">
+      <textarea class="ta large" placeholder="写下想法..." value="{{content}}" bindinput="onContentInput" maxlength="1000" auto-height></textarea>
+    </view>
+
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
+
+  <view class="save-bar">
+    <button class="save-btn" type="primary" disabled="{{submitting}}" bindtap="save">{{submitting ? '保存中...' : '保存修改'}}</button>
+  </view>
+</view>

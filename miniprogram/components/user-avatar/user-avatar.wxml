@@ -1,7 +1,7 @@
 <view class="user-avatar avatar-{{size}} avatar-{{shape}}" bindtap="onTap">
   <image
     class="avatar-image"
-    src="{{src || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'}}"
+    src="{{src || 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'}}"
     mode="aspectFill"
     lazy-load="{{true}}"
     binderror="onImageError">

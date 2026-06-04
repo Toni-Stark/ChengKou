@@ -1,0 +1,60 @@
+<view class="profile-page">
+  <!-- Banner -->
+  <view class="profile-banner">
+    <view class="banner-decor"></view>
+    <view class="profile-header" wx:if="{{userInfo}}">
+      <user-avatar src="{{userInfo.avatarUrl}}" size="large" shape="circle"></user-avatar>
+      <text class="profile-name">{{userInfo.nickName || '未知用户'}}</text>
+      <text class="profile-sig">{{userInfo.signature || '这个人很懒，什么都没留下'}}</text>
+    </view>
+
+    <!-- 统计 -->
+    <view class="profile-stats" wx:if="{{userInfo}}">
+      <view class="pstat-item">
+        <text class="pstat-val">{{userInfo.stats.dynamicsCount || 0}}</text>
+        <text class="pstat-label">游龙</text>
+      </view>
+      <view class="pstat-item">
+        <text class="pstat-val">{{userInfo.stats.followersCount || 0}}</text>
+        <text class="pstat-label">粉丝</text>
+      </view>
+      <view class="pstat-item">
+        <text class="pstat-val">{{userInfo.stats.subscriptionsCount || 0}}</text>
+        <text class="pstat-label">订阅</text>
+      </view>
+    </view>
+
+    <!-- 订阅按钮 -->
+    <view class="subscribe-bar" wx:if="{{!isSelf && userInfo}}">
+      <view class="sub-btn {{isSubscribed ? 'active' : ''}}" bindtap="onSubscribe">
+        <text>{{isSubscribed ? '已订阅' : '+ 订阅'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游龙列表 -->
+  <view class="dynamics-section" wx:if="{{!isEmpty}}">
+    <view class="section-title-bar">
+      <text class="section-title">他的游龙</text>
+    </view>
+    <view wx:for="{{dynamicsList}}" wx:key="_id" bindtap="onDynamicTap" data-id="{{item._id}}">
+      <dynamic-item
+        item="{{item}}"
+        bind:subscribe="onSubscribeEvent"
+        bind:comment="onComment">
+      </dynamic-item>
+    </view>
+
+    <view class="load-more" wx:if="{{loading}}">
+      <text class="text-secondary text-sm">加载中...</text>
+    </view>
+    <view class="load-more" wx:if="{{!hasMore && dynamicsList.length > 0}}">
+      <text class="text-secondary text-sm">没有更多了</text>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{isEmpty && !loading}}">
+    <text class="empty-icon">📝</text>
+    <text class="empty-text">还没有发布游龙</text>
+  </view>
+</view>

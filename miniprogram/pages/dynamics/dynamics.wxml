@@ -29,7 +29,12 @@
       </dynamic-item>
 
       <view class="empty-state" wx:if="{{dynamicsList.length === 0 && !loading}}">
-        <image class="empty-image" src="cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png" mode="aspectFit"></image>
+        <view class="empty-art">
+          <view class="art-circle c1"></view>
+          <view class="art-circle c2"></view>
+          <view class="art-circle c3"></view>
+          <text class="art-emoji">🏊</text>
+        </view>
         <text class="empty-text">暂无游龙</text>
       </view>
 

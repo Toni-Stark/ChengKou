@@ -2,7 +2,7 @@
   <view class="login-container">
     <!-- Logo区域 -->
     <view class="logo-section">
-      <image class="logo" src="cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png" mode="aspectFill"></image>
+      <image class="logo" src="http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png" mode="aspectFill"></image>
       <text class="app-name">小程序</text>
     </view>
 

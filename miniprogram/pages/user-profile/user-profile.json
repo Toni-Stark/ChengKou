@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "用户主页",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "dynamic-item": "/components/dynamic-item/dynamic-item",
+    "user-avatar": "/components/user-avatar/user-avatar"
+  }
+}

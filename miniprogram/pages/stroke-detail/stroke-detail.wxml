@@ -1,6 +1,8 @@
 <view class="stroke-detail-page" wx:if="{{stroke}}" style="--theme-color: {{stroke.color}}; --theme-light: {{stroke.colorLight}};">
   <!-- Banner -->
-  <view class="stroke-banner" style="background: {{stroke.color}};">
+  <view class="stroke-banner">
+    <image class="banner-image" src="{{stroke.imageUrl}}" mode="aspectFill" lazy-load="{{false}}"></image>
+    <view class="banner-mask"></view>
     <view class="banner-content">
       <text class="banner-tag">{{stroke.tag}}</text>
       <text class="banner-emoji">{{stroke.emoji}}</text>

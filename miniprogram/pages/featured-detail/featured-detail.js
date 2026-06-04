@@ -97,15 +97,15 @@ Page({
     const mediaList = [
       {
         type: 'image',
-        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+        url: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
       },
       {
         type: 'image',
-        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png'
+        url: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
       },
       {
         type: 'video',
-        url: 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/videos/sample.mp4'
+        url: 'http://tg00h6qkg.hn-bkt.clouddn.com/videos/sample.mp4'
       }
     ];
 

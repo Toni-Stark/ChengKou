@@ -34,6 +34,7 @@ exports.main = async (event, context) => {
 
     const result = await db.collection('comments').add({
       data: {
+        _openid: wxContext.OPENID,
         dynamicId: dynamicId,
         content: content.trim(),
         replyTo: replyTo || null,

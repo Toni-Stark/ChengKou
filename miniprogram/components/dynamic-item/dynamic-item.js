@@ -21,6 +21,10 @@ Component({
       type: Boolean,
       value: false
     },
+    showEdit: {
+      type: Boolean,
+      value: false
+    },
     isShow: {
       type: Boolean,
       value: true // 默认显示操作栏
@@ -94,6 +98,11 @@ Component({
     onDelete(e) {
       const id = e.currentTarget.dataset.id;
       this.triggerEvent('delete', { id });
+    },
+
+    onEdit(e) {
+      const id = e.currentTarget.dataset.id;
+      this.triggerEvent('edit', { id });
     }
   }
 });

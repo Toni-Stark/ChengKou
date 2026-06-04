@@ -117,7 +117,6 @@ Page({
         showLoad: !isPullRefresh
       });
 
-      // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
       const processedList = await request.processDynamicsImages(result.list);
 
       const newList = this.data.page === 1 ? processedList : [...this.data.dynamicsList, ...processedList];
@@ -138,12 +137,7 @@ Page({
     }
   },
 
-  // 加载模拟数据（用于开发测试）
   loadMockData(isPullRefresh = false) {
-    // 统一的占位图
-    const placeholderImage = 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png';
-
-    // 全部动态数据（按时间倒序）
     const mockData = [];
 
     this.setData({
@@ -164,14 +158,10 @@ Page({
     });
   },
 
-  // 点击用户头像
   onUserTap(e) {
     const userId = e.detail.userId;
-    console.log('查看用户:', userId);
-    // TODO: 跳转到用户主页
-    wx.showToast({
-      title: '用户主页开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: `/pages/user-profile/user-profile?id=${userId}`
     });
   },
 

@@ -1,5 +1,5 @@
-const auth = require('../../utils/auth.js');
-const request = require('../../utils/request.js');
+const QINIU_BASE = 'http://tg00h6qkg.hn-bkt.clouddn.com';
+const DEFAULT_AVATAR = QINIU_BASE + '/common/default-avatar.png';
 
 Page({
   data: {
@@ -24,12 +24,12 @@ Page({
       const userInfo = stored.userInfo;
       this.setData({
         form: {
-          avatarUrl: userInfo.avatarUrl || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png',
+          avatarUrl: userInfo.avatarUrl || DEFAULT_AVATAR,
           nickName: userInfo.nickName || '',
           signature: userInfo.signature || ''
         },
         originalData: {
-          avatarUrl: userInfo.avatarUrl || 'cloud://cloud1-8g5xgr7v7d7daeb3.636c-cloud1-8g5xgr7v7d7daeb3-1300466999/dynamics/1767776497389_2711_5.png',
+          avatarUrl: userInfo.avatarUrl || DEFAULT_AVATAR,
           nickName: userInfo.nickName || '',
           signature: userInfo.signature || ''
         }
@@ -47,47 +47,14 @@ Page({
       success: (res) => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
 
-        wx.showLoading({
-          title: '上传中...',
-          mask: true
-        });
+        wx.showLoading({ title: '上传中...', mask: true });
 
-        // 上传到云存储
-        const cloudPath = `avatars/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
-
-        wx.cloud.uploadFile({
-          cloudPath: cloudPath,
-          filePath: tempFilePath,
-          success: uploadRes => {
-            console.log('上传成功:', uploadRes.fileID);
-
-            // 获取临时链接
-            wx.cloud.getTempFileURL({
-              fileList: [uploadRes.fileID],
-              success: urlRes => {
-                wx.hideLoading();
-
-                if (urlRes.fileList && urlRes.fileList.length > 0) {
-                  this.setData({
-                    'form.avatarUrl': urlRes.fileList[0].tempFileURL
-                  });
-
-                  // 保存云文件ID，以便后续使用
-                  this.cloudFileID = uploadRes.fileID;
-                }
-              },
-              fail: err => {
-                wx.hideLoading();
-                console.error('获取临时链接失败:', err);
-                request.showToast('头像上传失败');
-              }
-            });
-          },
-          fail: err => {
-            wx.hideLoading();
-            console.error('上传失败:', err);
-            request.showToast('头像上传失败');
-          }
+        request.uploadToQiniu(tempFilePath, 'avatars').then(qiniuUrl => {
+          wx.hideLoading();
+          this.setData({ 'form.avatarUrl': qiniuUrl });
+        }).catch(() => {
+          wx.hideLoading();
+          request.showToast('头像上传失败');
         });
       },
       fail: err => {
@@ -143,9 +110,7 @@ Page({
       };
 
       // 如果上传了新头像，使用云文件ID
-      if (this.cloudFileID) {
-        updateData.avatarUrl = this.cloudFileID;
-      }
+      updateData.avatarUrl = form.avatarUrl;
 
       console.log(updateData, 'form')
       const result = await request.callFunction('updateUserInfo', updateData, {

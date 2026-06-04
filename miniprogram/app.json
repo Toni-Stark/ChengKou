@@ -15,7 +15,9 @@
     "pages/swim-records/swim-records",
     "pages/stroke-detail/stroke-detail",
     "pages/coach-detail/coach-detail",
-    "pages/lifeguard-detail/lifeguard-detail"
+    "pages/lifeguard-detail/lifeguard-detail",
+    "pages/user-profile/user-profile",
+    "pages/edit-dynamic/edit-dynamic"
   ],
   "window": {
     "backgroundTextStyle": "light",

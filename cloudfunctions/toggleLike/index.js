@@ -60,6 +60,7 @@ exports.main = async (event, context) => {
       // 添加点赞
       await db.collection('likes').add({
         data: {
+          _openid: wxContext.OPENID,
           targetType: targetType,
           targetId: targetId,
           createTime: db.serverDate()

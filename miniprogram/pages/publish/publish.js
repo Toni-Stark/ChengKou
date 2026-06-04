@@ -2,48 +2,28 @@ const request = require('../../utils/request.js');
 
 Page({
   data: {
-    displayType: 'grid9', // grid9 | large | text
+    displayType: 'grid9',
     content: '',
     title: '',
+    video: '',
     subtitle: '',
     images: [],
     location: null,
     submitting: false,
-    loading: false,
     displayTypes: [
       { value: 'grid9', label: '九宫格', desc: '适合分享多张图片和文字' },
       { value: 'large', label: '大图模式', desc: '适合展示精美图片和标题' },
+      { value: 'video', label: '视频', desc: '分享精彩泳姿视频' },
       { value: 'text', label: '纯文本', desc: '只分享文字内容' }
     ]
   },
-  async getGlobalConfig(){
-    const cached = wx.getStorageSync('globalConfig_registration');
-    if (cached && Date.now() - cached.time < 5 * 60 * 1000) {
-      this.setData({ loading: cached.visible });
-      return;
-    }
-
-    const res = await request.callFunction('getGlobalConfig', {
-      key: 'registration_form'
-    }, {
-      showLoad: false,
-      showError: false
-    });
-
-    let visible = res?.visible;
-    if (visible !== undefined) {
-      wx.setStorageSync('globalConfig_registration', { visible, time: Date.now() });
-      this.setData({ loading: visible });
-    }
-  },
   onLoad() {
-    this.getGlobalConfig()
-    // 检查用户的 is_show 权限
     const userInfo = wx.getStorageSync('userInfo');
-    if (!userInfo || userInfo.is_show === false) {
+    const openid = wx.getStorageSync('openid');
+    if (!userInfo || !openid) {
       wx.showModal({
         title: '提示',
-        content: '您暂无发布游龙的权限',
+        content: '请先登录后再发布游龙',
         showCancel: false,
         success: () => {
           wx.navigateBack();
@@ -98,11 +78,45 @@ Page({
     });
   },
 
+  chooseVideo() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['video'],
+      sourceType: ['album', 'camera'],
+      maxDuration: 60,
+      camera: 'back',
+      success: (res) => {
+        const file = res.tempFiles[0];
+        this.setData({
+          video: file.tempFilePath,
+          thumbnail: file.thumbTempFilePath || ''
+        });
+      }
+    });
+  },
+
+  previewVideo() {
+    if (!this.data.video) return;
+    wx.previewMedia({
+      sources: [{ url: this.data.video, type: 'video' }],
+      current: 0
+    });
+  },
+
   deleteImage(e) {
     const index = e.currentTarget.dataset.index;
     const images = this.data.images;
     images.splice(index, 1);
     this.setData({ images });
+  },
+
+  deleteVideo() {
+    this.setData({ video: '', thumbnail: '' });
+  },
+
+  onVideoError(e) {
+    console.error('视频加载失败:', e.detail);
+    wx.showToast({ title: '视频加载失败，请重试', icon: 'none' });
   },
 
   chooseLocation() {
@@ -140,10 +154,14 @@ Page({
   },
 
   async publish() {
-    const { displayType, content, title, subtitle, images, location } = this.data;
+    const { displayType, content, title, subtitle, video, images, location } = this.data;
 
-    // 验证
-    if (displayType === 'large') {
+    if (displayType === 'video') {
+      if (!video) {
+        request.showToast('请选择视频');
+        return;
+      }
+    } else if (displayType === 'large') {
       if (!title.trim()) {
         request.showToast('请输入标题');
         return;
@@ -185,14 +203,23 @@ Page({
       // 上传图片到云存储
       let uploadedImages = [];
       if (images.length > 0) {
-        uploadedImages = await request.uploadImages(images, 'dynamics');
+        const qiniuImages = await Promise.all(
+          images.map(img => request.uploadToQiniu(img, 'dynamics'))
+        );
+        uploadedImages = qiniuImages;
+      }
+
+      let uploadedVideo = '';
+      if (video) {
+        uploadedVideo = await request.uploadToQiniu(video, 'videos');
       }
 
       await request.callFunction('publishDynamic', {
         displayType,
         content: content.trim(),
         title: title.trim(),
-        subtitle: subtitle.trim(),
+        subtitle: (subtitle || '').trim(),
+        video: uploadedVideo,
         images: uploadedImages,
         location
       }, {
@@ -210,6 +237,12 @@ Page({
 
     } catch (error) {
       console.error('发布失败:', error);
+      const msg = error.errMsg || error.message || '';
+      if (msg.includes('FUNCTION_NOT_FOUND')) {
+        wx.showModal({ title: '发布失败', content: 'publishDynamic 云函数未部署，请在开发者工具中右键 cloudfunctions/publishDynamic → 上传并部署', showCancel: false });
+      } else {
+        wx.showToast({ title: '发布失败，请重试', icon: 'none' });
+      }
     } finally {
       this.setData({ submitting: false });
     }
