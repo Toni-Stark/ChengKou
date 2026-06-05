@@ -1,10 +1,13 @@
 <view class="dynamic-item card">
   <!-- 用户信息 -->
-  <view class="dynamic-header" style="display:flex; flex-direction:row; align-items:center; padding:0 0 20rpx 0;" bindtap="onComment" data-id="{{item._id}}">
+  <view class="dynamic-header" style="display:flex; flex-direction:row; align-items:center; padding:0 0 20rpx 0;">
     <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
     <view style="flex:1; margin-left:16rpx; display:flex; flex-direction:column;">
       <text style="font-size:30rpx; font-weight:bold; color:#1a1a1a; margin-bottom:6rpx;">{{item.userInfo.nickName}}</text>
       <text style="font-size:22rpx; color:#999;">{{item.displayTime || item.createTime}}</text>
+    </view>
+    <view class="header-actions">
+      <text wx:if="{{showEdit}}" class="header-action-icon" catch:tap="onEdit" data-id="{{item._id}}">编辑</text>
     </view>
   </view>
 
@@ -96,13 +99,5 @@
       <text class="action-icon">↗</text>
       <text class="action-text text-sm">分享</text>
     </button>
-    <view class="action-btn" wx:if="{{showEdit}}" catch:tap="onEdit" data-id="{{item._id}}">
-      <text class="action-icon">✏</text>
-      <text class="action-text text-sm">编辑</text>
-    </view>
-    <view class="action-btn" wx:if="{{showDelete}}" catch:tap="onDelete" data-id="{{item._id}}">
-      <text class="action-icon">🗑</text>
-      <text class="action-text text-sm">删除</text>
-    </view>
   </view>
 </view>

@@ -15,13 +15,15 @@
     <!-- 视频 -->
     <view class="section" wx:if="{{displayType === 'video'}}">
       <view class="video-thumb-row" wx:if="{{video}}">
+      <view class="video-img">
         <image class="video-thumb" src="{{thumbnail}}" mode="aspectFill"></image>
         <view class="play-mask"><text class="play-icon">▶</text></view>
+      </view>
         <view class="v-info">
           <text class="v-name">视频已选择</text>
           <text class="v-action" bindtap="chooseVideo">更换</text>
         </view>
-        <view class="v-close" bindtap="deleteVideo"><text>×</text></view>
+        <view class="v-close" bindtap="deleteVideo"><text>X</text></view>
       </view>
       <view class="upload-box" bindtap="chooseVideo" wx:else>
         <text class="u-icon">🎬</text>

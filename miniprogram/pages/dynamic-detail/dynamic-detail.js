@@ -12,9 +12,10 @@ Page({
     loading: false,
     commentContent: '',
     submitting: false,
-    fromShare: false, // 标记是否从分享进入
+    fromShare: false,
     userInfo: null,
-    isShow: false
+    isShow: false,
+    isOwner: false
   },
 
   onLoad(options) {
@@ -40,10 +41,12 @@ Page({
   loadUserInfo() {
     try {
       const userInfo = wx.getStorageSync('userInfo');
+      const openid = wx.getStorageSync('openid');
       if (userInfo) {
         this.setData({
           userInfo: userInfo,
-          isShow: userInfo.is_show != false
+          isShow: true,
+          storedOpenid: openid
         });
       }
     } catch (error) {
@@ -89,7 +92,8 @@ Page({
       const processedDynamic = result ? (await request.processDynamicsImages([result]))[0] : {};
 
       this.setData({
-        dynamic: processedDynamic
+        dynamic: processedDynamic,
+        isOwner: processedDynamic._openid === this.data.storedOpenid
       });
     } catch (error) {
       console.error('加载动态失败:', error);
@@ -275,6 +279,28 @@ Page({
         'dynamic.isSubscribed': e.detail.isSubscribed
       });
     }
+  },
+
+  onDeleteDynamic() {
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条游龙吗？删除后不可恢复',
+      confirmColor: '#ff4d4f',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            await request.callFunction('deleteDynamic', {
+              dynamicId: this.data.dynamicId
+            }, { showLoad: true });
+            request.showToast('删除成功', 'success');
+            wx.setStorageSync('_needRefresh', true);
+            setTimeout(() => wx.navigateBack(), 1500);
+          } catch (error) {
+            console.error('删除失败:', error);
+          }
+        }
+      }
+    });
   },
 
   // 处理分享事件

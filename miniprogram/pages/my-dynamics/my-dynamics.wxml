@@ -17,13 +17,11 @@
       wx:key="_id">
       <dynamic-item
         item="{{item}}"
-        showDelete="{{true}}"
         showEdit="{{true}}"
         isShow="{{isShow}}"
         bind:subscribe="onDynamicSubscribe"
         bind:comment="onDynamicComment"
-        bind:edit="onEditDynamic"
-        bind:delete="onDeleteDynamic">
+        bind:edit="onEditDynamic">
       </dynamic-item>
     </view>
 

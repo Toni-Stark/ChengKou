@@ -51,10 +51,7 @@ Page({
     try {
       const userInfo = wx.getStorageSync('userInfo');
       if (userInfo) {
-        this.setData({
-          userInfo,
-          isShow: userInfo.is_show !== false
-        });
+        this.setData({ userInfo, isShow: true });
       }
     } catch (error) {
       console.error('加载用户信息失败:', error);
@@ -124,24 +121,6 @@ Page({
   onEditDynamic(e) {
     wx.navigateTo({
       url: `/pages/edit-dynamic/edit-dynamic?id=${e.detail.id}`
-    });
-  },
-
-  onDeleteDynamic(e) {
-    wx.showModal({
-      title: '提示',
-      content: '确定要删除这条游龙吗？',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            await request.callFunction('deleteDynamic', { dynamicId: e.detail.id }, { showLoad: true });
-            request.showToast('删除成功', 'success');
-            this.refreshDynamics();
-          } catch (error) {
-            console.error('删除动态失败:', error);
-          }
-        }
-      }
     });
   },
 

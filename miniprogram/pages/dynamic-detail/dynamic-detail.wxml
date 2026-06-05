@@ -1,6 +1,10 @@
 <view class="container">
   <!-- 游龙内容 -->
   <view class="dynamic-section" wx:if="{{dynamic}}">
+    <view class="detail-header" wx:if="{{isOwner}}">
+      <view class="flex-1"></view>
+      <text class="delete-btn" bindtap="onDeleteDynamic">删除</text>
+    </view>
     <dynamic-item
       item="{{dynamic}}"
       isShow="{{isShow}}"
