@@ -67,27 +67,26 @@
     font-weight: bold;
   }
 
+  &:active { transform: scale(0.94); }
+
   &.done {
     background: #c8e6c9;
-
-    text {
-      color: #2e7d32;
-    }
+    text { color: #2e7d32; }
   }
 }
 
-// ======== 统计面板 ========
-.stats-row {
-  display: flex;
+// ======== 统计面板 - 2x2 grid ========
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: @space-base;
   margin-bottom: @space-lg;
 }
 
 .stat-card {
-  flex: 1;
   background: #fff;
   border-radius: 20rpx;
-  padding: @space-base @space-lg;
+  padding: @space-lg @space-base;
   text-align: center;
   box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.08);
   display: flex;
@@ -98,6 +97,9 @@
 
   &.highlight {
     background: linear-gradient(135deg, #667eea, #764ba2);
+    flex-direction: column;
+    align-items: center;
+    gap: 6rpx;
   }
 }
 
@@ -113,11 +115,6 @@
   font-weight: 500;
 }
 
-.highlight .stat-val,
-.highlight .stat-unit {
-  color: #fff;
-}
-
 .stat-label {
   display: block;
   width: 100%;
@@ -126,16 +123,98 @@
   margin-top: 2rpx;
 }
 
+.highlight .stat-val,
+.highlight .stat-unit,
 .highlight .stat-label {
-  color: rgba(255, 255, 255, 0.7);
+  color: #fff;
+}
+
+// 进度条
+.stat-bar {
+  width: 80%;
+  height: 8rpx;
+  background: rgba(255,255,255,0.25);
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin-top: 4rpx;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  border-radius: 4rpx;
+  transition: width 0.6s ease;
+}
+
+// ======== 本周摘要 ========
+.week-strip {
+  display: flex;
+  align-items: center;
+  gap: @space-base;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: @space-lg;
+  margin-bottom: @space-lg;
+  box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.06);
+}
+
+.week-label {
+  font-size: 24rpx;
+  color: #999;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.week-dots {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8rpx;
+}
+
+.week-dot {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f5;
+  transition: all 0.25s;
+
+  &.today {
+    background: #e8f0fe;
+    border: 2rpx solid #667eea;
+  }
+
+  &.done {
+    background: linear-gradient(135deg, #a5d6a7, #81c784);
+  }
+}
+
+.week-dot-text {
+  font-size: 20rpx;
+  color: #aaa;
+  font-weight: 600;
+
+  .today & { color: #667eea; }
+  .done & { color: #fff; }
+}
+
+.week-total {
+  font-size: 24rpx;
+  color: #5c6bc0;
+  font-weight: bold;
+  flex-shrink: 0;
 }
 
 // ======== 日历 ========
 .calendar-card {
   background: #fff;
   border-radius: 28rpx;
-  padding: @space-xl @space-lg;
+  padding: @space-xl @space-lg @space-lg;
   box-shadow: 0 8rpx 32rpx rgba(149, 157, 224, 0.1);
+  position: relative;
 }
 
 .cal-header {
@@ -160,6 +239,11 @@
   &:active {
     background: #667eea;
     color: #fff;
+  }
+
+  &.disabled {
+    opacity: 0.3;
+    pointer-events: none;
   }
 }
 
@@ -204,24 +288,28 @@
   &.empty { visibility: hidden; }
   &.future { opacity: 0.3; }
   &.normal { background: transparent; }
-  &.checked { background: #f5f5f5; }
+  &.checked { background: #f8f8fb; }
 
   &.today {
     background: linear-gradient(135deg, #ffe0e6, #ffd4e0);
-
-    .day-num {
-      color: #e91e63;
-      font-weight: bold;
-    }
+    .day-num { color: #e91e63; font-weight: bold; }
   }
 
   &.record {
-    background: linear-gradient(135deg, #e8f0fe, #d0ddfb);
-
-    .day-num {
-      color: #3949ab;
-      font-weight: 700;
-      font-size: 32rpx;
+    &.intensity-1 {
+      background: #e8f0fe;
+      .day-num { color: #3949ab; font-weight: 700; }
+      .day-dist { color: #5c6bc0; }
+    }
+    &.intensity-2 {
+      background: linear-gradient(135deg, #d0ddfb, #c5d5fb);
+      .day-num { color: #3949ab; font-weight: 700; }
+      .day-dist { color: #3949ab; }
+    }
+    &.intensity-3 {
+      background: linear-gradient(135deg, #b3c9f7, #5c6bc0);
+      .day-num { color: #fff; font-weight: 700; }
+      .day-dist { color: rgba(255,255,255,0.85); }
     }
   }
 
@@ -237,22 +325,35 @@
   transition: all 0.2s;
 }
 
-.day-record {
+.day-dist {
   position: absolute;
-  bottom: 8rpx;
+  bottom: 6rpx;
   left: 50%;
   transform: translateX(-50%);
+  font-size: 18rpx;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.2s;
 }
 
-.day-meters {
-  font-size: 20rpx;
+// 回到今天
+.cal-back-today {
+  display: flex;
+  justify-content: center;
+  margin-top: @space-lg;
+  padding: 14rpx 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 28rpx;
+  font-size: 26rpx;
   color: #fff;
-  font-weight: 700;
-  background: linear-gradient(135deg, #5c6bc0, #7986cb);
-  padding: 4rpx 14rpx;
-  border-radius: 14rpx;
-  white-space: nowrap;
-  letter-spacing: 0.5rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  transition: all 0.2s;
+
+  &:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
 }
 
 // ======== 弹窗 ========

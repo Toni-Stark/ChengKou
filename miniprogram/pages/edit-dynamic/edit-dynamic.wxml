@@ -66,6 +66,19 @@
       <textarea class="ta large" placeholder="写下想法..." value="{{content}}" bindinput="onContentInput" maxlength="1000" auto-height></textarea>
     </view>
 
+    <!-- 位置信息 -->
+    <view class="section">
+      <view class="location-section" wx:if="{{!location}}" bindtap="chooseLocation">
+        <text class="location-icon">📍</text>
+        <text class="location-text">添加位置</text>
+      </view>
+      <view class="location-section selected" wx:if="{{location}}">
+        <text class="location-icon">📍</text>
+        <text class="location-text">{{location.address || location.name}}</text>
+        <text class="remove-location" bindtap="removeLocation"> X</text>
+      </view>
+    </view>
+
     <view style="height: 120rpx;"></view>
   </scroll-view>
 

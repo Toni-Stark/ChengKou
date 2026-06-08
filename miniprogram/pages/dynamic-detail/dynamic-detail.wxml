@@ -1,9 +1,11 @@
-<view class="container">
-  <!-- 游龙内容 -->
-  <view class="dynamic-section" wx:if="{{dynamic}}">
-    <view class="detail-header" wx:if="{{isOwner}}">
-      <view class="flex-1"></view>
-      <text class="delete-btn" bindtap="onDeleteDynamic">删除</text>
+<view class="detail-page">
+  <!-- 动态内容 -->
+  <view class="post-section {{isOwner ? 'has-delete' : ''}}" wx:if="{{dynamic}}">
+    <view class="post-header-bar" wx:if="{{isOwner}}">
+      <view class="delete-btn" bindtap="onDeleteDynamic">
+        <text class="delete-icon">🗑</text>
+        <text>删除</text>
+      </view>
     </view>
     <dynamic-item
       item="{{dynamic}}"
@@ -14,69 +16,68 @@
     </dynamic-item>
   </view>
 
-  <!-- 评论列表 -->
+  <!-- 评论区 -->
   <view class="comments-section">
     <view class="section-title">
-      <text class="title-text">玛卡巴卡 {{dynamic.commentsCount || 0}}</text>
+      <text class="title-icon">💬</text>
+      <text class="title-text">玛卡巴卡</text>
+      <text class="title-count">{{dynamic.commentsCount || 0}}</text>
     </view>
 
     <view class="comments-list">
       <view
-        class="comment-item"
+        class="comment-card"
         wx:for="{{commentsList}}"
         wx:key="_id">
-        <view class="comment-header flex-row">
-          <user-avatar src="{{item.userInfo.avatarUrl}}" size="small"></user-avatar>
-          <view class="comment-info flex-1 ml-sm">
-            <text class="comment-author text-sm font-bold">{{item.userInfo.nickName}}</text>
-            <text class="comment-time text-xs text-placeholder ml-sm">{{item.createTime}}</text>
+        <view class="comment-top">
+          <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
+          <view class="comment-body">
+            <view class="comment-meta">
+              <text class="comment-author">{{item.userInfo.nickName}}</text>
+              <text class="comment-time">{{item.displayTime || item.createTime}}</text>
+            </view>
+            <view class="comment-content">
+              <text class="comment-text">{{item.content}}</text>
+            </view>
+            <view class="comment-reply-to" wx:if="{{item.replyToUser}}">
+              <text class="reply-prefix">回复</text>
+              <text class="reply-name">{{item.replyToUser.nickName}}</text>
+            </view>
           </view>
           <view
             wx:if="{{isShow}}"
-            class="comment-like-btn {{item.isLiked ? 'liked' : ''}}"
+            class="like-btn {{item.isLiked ? 'liked' : ''}}"
             bindtap="onCommentLike"
             data-id="{{item._id}}"
             data-index="{{index}}">
-            <text class="like-icon">{{item.isLiked ? '❤' : '♡'}}</text>
-            <text class="like-count text-xs" wx:if="{{item.likesCount > 0}}">{{item.likesCount}}</text>
+            <text class="heart-icon">{{item.isLiked ? '❤️' : '🤍'}}</text>
+            <text class="like-count" wx:if="{{item.likesCount > 0}}">{{item.likesCount}}</text>
           </view>
-        </view>
-
-        <view class="comment-content mt-sm">
-          <text class="comment-text">{{item.content}}</text>
-        </view>
-
-        <view class="comment-reply mt-xs" wx:if="{{item.replyToUser}}">
-          <text class="reply-text text-xs text-secondary">吾西迪西 {{item.replyToUser.nickName}}</text>
         </view>
       </view>
 
-      <view class="empty-state" wx:if="{{commentsList.length === 0 && !loading}}">
-        <text class="empty-text text-secondary">暂无玛卡巴卡，快来抢沙发吧</text>
+      <view class="comments-empty" wx:if="{{commentsList.length === 0 && !loading}}">
+        <text class="empty-emoji">🐉</text>
+        <text class="empty-title">还没有人说话</text>
+        <text class="empty-sub">快来抢个沙发吧 ~</text>
       </view>
     </view>
   </view>
 </view>
 
-<!-- 评论输入框 - 需要 is_show 权限 -->
-<view wx:if="{{isShow}}" class="comment-input-bar">
-  <view class="input-wrapper">
+<!-- 评论输入栏 -->
+<view wx:if="{{isShow}}" class="input-bar">
+  <view class="input-row">
     <input
-      class="comment-input"
+      class="input-pill"
       type="text"
-      placeholder="说点什么..."
+      placeholder="和游龙们说点什么..."
+      placeholder-class="text-placeholder"
       value="{{commentContent}}"
       bindinput="onCommentInput"
       confirm-type="send"
       bindconfirm="submitComment">
     </input>
-    <button
-      class="submit-btn"
-      size="mini"
-      type="primary"
-
-      bindtap="submitComment">
-      叮一下
-    </button>
+    <button class="send-btn" bindtap="submitComment">叮一下</button>
   </view>
 </view>

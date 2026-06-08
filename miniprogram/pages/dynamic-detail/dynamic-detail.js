@@ -1,5 +1,6 @@
 const request = require('../../utils/request.js');
 const auth = require('../../utils/auth.js');
+const util = require('../../utils/util.js');
 
 Page({
   data: {
@@ -91,6 +92,10 @@ Page({
       // 处理图片URL - 将cloud://转换为临时HTTP链接，解决iOS显示问题
       const processedDynamic = result ? (await request.processDynamicsImages([result]))[0] : {};
 
+      if (processedDynamic && processedDynamic.createTime) {
+        processedDynamic.displayTime = util.formatRelativeTime(processedDynamic.createTime);
+      }
+
       this.setData({
         dynamic: processedDynamic,
         isOwner: processedDynamic._openid === this.data.storedOpenid
@@ -131,9 +136,14 @@ Page({
         showLoad: !loadMore
       });
 
+      const processedList = result.list.map(comment => ({
+        ...comment,
+        displayTime: util.formatRelativeTime(comment.createTime)
+      }));
+
       const newList = loadMore
-        ? [...this.data.commentsList, ...result.list]
-        : result.list;
+        ? [...this.data.commentsList, ...processedList]
+        : processedList;
 
       this.setData({
         commentsList: newList,

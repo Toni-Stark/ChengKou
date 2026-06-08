@@ -42,14 +42,16 @@ function formatRelativeTime(date) {
   let dateObj;
 
   if (typeof date === 'string') {
-    // 处理字符串格式的时间
-    // 替换空格为 T，使其符合 ISO 格式
-    const isoString = date.replace(' ', 'T');
-    dateObj = new Date(isoString);
-
-    // 如果转换失败，尝试直接解析
-    if (isNaN(dateObj.getTime())) {
-      dateObj = new Date(date);
+    const trimmed = date.trim();
+    const asNumber = Number(trimmed);
+    if (!isNaN(asNumber) && asNumber > 0 && trimmed.length >= 10) {
+      dateObj = new Date(asNumber);
+    } else {
+      const isoString = trimmed.replace(' ', 'T');
+      dateObj = new Date(isoString);
+      if (isNaN(dateObj.getTime())) {
+        dateObj = new Date(trimmed);
+      }
     }
   } else if (typeof date === 'number') {
     dateObj = new Date(date);

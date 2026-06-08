@@ -82,7 +82,7 @@
   <!-- 位置信息 -->
   <view class="dynamic-location flex-row align-center mt-base" bindtap="onComment" data-id="{{item._id}}" wx:if="{{item.location}}">
     <text class="location-icon text-sm">📍</text>
-    <text class="location-text text-sm text-secondary">{{item.location.name}}</text>
+    <text class="location-text text-sm text-secondary">{{item.location.address || item.location.name}}</text>
   </view>
 
   <!-- 操作栏 - 需要 is_show 权限才显示 -->

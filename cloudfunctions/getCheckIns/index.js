@@ -7,6 +7,10 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
   const { year, month } = event;
@@ -16,26 +20,52 @@ exports.main = async (event, context) => {
   }
 
   try {
+    // 字符串查询（新格式）
+    const startStr = `${year}-${pad(month)}-01`;
+    const nextYear = month === 12 ? year + 1 : year;
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const endStr = `${nextYear}-${pad(nextMonth)}-01`;
+
+    // Date 查询（兼容旧数据）
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 1);
 
-    const result = await db.collection('check_ins')
-      .where({
-        _openid: wxContext.OPENID,
-        date: _.gte(startDate).and(_.lt(endDate))
-      })
-      .get();
+    const [strResult, dateResult] = await Promise.all([
+      db.collection('check_ins')
+        .where({
+          _openid: wxContext.OPENID,
+          date: _.gte(startStr).and(_.lt(endStr))
+        })
+        .get(),
+      db.collection('check_ins')
+        .where({
+          _openid: wxContext.OPENID,
+          date: _.gte(startDate).and(_.lt(endDate))
+        })
+        .get()
+    ]);
 
+    const seen = new Set();
     const records = {};
-    result.data.forEach(item => {
-      const d = new Date(item.date);
-      const day = d.getDate();
+
+    function addRecord(item) {
+      if (seen.has(item._id)) return;
+      seen.add(item._id);
+      let day;
+      if (typeof item.date === 'string') {
+        day = parseInt(item.date.split('-')[2], 10);
+      } else {
+        day = new Date(item.date).getDate();
+      }
       records[day] = {
         _id: item._id,
         distance: item.distance || 0,
         createTime: item.createTime
       };
-    });
+    }
+
+    dateResult.data.forEach(addRecord);
+    strResult.data.forEach(addRecord);
 
     return {
       code: 0,

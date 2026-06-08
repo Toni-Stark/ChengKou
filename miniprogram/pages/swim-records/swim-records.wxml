@@ -6,6 +6,7 @@
       <view class="checkin-text-group">
         <text class="checkin-label">{{checkedToday ? '今日已打卡' : '今日打卡'}}</text>
         <text class="checkin-sub" wx:if="{{checkedToday && todayDistance > 0}}">游了 {{todayDistance}}m</text>
+        <text class="checkin-sub" wx:elif="{{!checkedToday}}">今天还没下水哦</text>
       </view>
     </view>
     <view class="checkin-btn {{checkedToday ? 'done' : ''}}" bindtap="doCheckIn">
@@ -14,29 +15,53 @@
   </view>
 
   <!-- 统计面板 -->
-  <view class="stats-row">
+  <view class="stats-grid">
     <view class="stat-card">
       <text class="stat-val">{{monthlyTotal}}</text>
       <text class="stat-unit">m</text>
       <text class="stat-label">本月共游</text>
     </view>
     <view class="stat-card">
-      <text class="stat-val">{{weeklyTotal}}</text>
-      <text class="stat-unit">m</text>
-      <text class="stat-label">本周共游</text>
+      <text class="stat-val">{{activeDays}}</text>
+      <text class="stat-unit">天</text>
+      <text class="stat-label">活跃天数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-val">{{streakDays}}</text>
+      <text class="stat-unit">天</text>
+      <text class="stat-label">连续打卡</text>
     </view>
     <view class="stat-card highlight">
       <text class="stat-val">{{rankPercent}}%</text>
       <text class="stat-label">超越全国泳者</text>
+      <view class="stat-bar"><view class="stat-bar-fill" style="width: {{rankPercent}}"></view></view>
     </view>
   </view>
 
+  <!-- 本周摘要 -->
+  <view class="week-strip">
+    <text class="week-label">本周</text>
+    <view class="week-dots">
+      <view
+        wx:for="{{weekDays}}"
+        wx:key="index"
+        class="week-dot {{item.isToday ? 'today' : ''}} {{item.distance > 0 ? 'done' : ''}}">
+        <text class="week-dot-text">{{item.label}}</text>
+      </view>
+    </view>
+    <text class="week-total" wx:if="{{weeklyTotal > 0}}">{{weeklyTotal}}m</text>
+  </view>
+
   <!-- 日历 -->
-  <view class="calendar-card">
+  <view
+    class="calendar-card"
+    bindtouchstart="onCalTouchStart"
+    bindtouchend="onCalTouchEnd">
+
     <view class="cal-header">
       <view class="cal-arrow" bindtap="prevMonth">◀</view>
       <text class="cal-month">{{year}}年 {{month}}月</text>
-      <view class="cal-arrow" bindtap="nextMonth">▶</view>
+      <view class="cal-arrow {{isCurrentMonth ? 'disabled' : ''}}" bindtap="nextMonth">▶</view>
     </view>
 
     <view class="cal-weekdays">
@@ -47,21 +72,23 @@
       <view
         wx:for="{{calendar}}"
         wx:key="index"
-        class="cal-day {{item.type}}"
+        class="cal-day {{item.type}} {{item.intensity ? 'intensity-' + item.intensity : ''}}"
         data-day="{{item.day}}"
         bindtap="onDayTap">
         <text class="day-num">{{item.day || ''}}</text>
-        <view class="day-record" wx:if="{{item.hasRecord && item.distance > 0}}">
-          <text class="day-meters">{{item.distance}}m</text>
-        </view>
+        <text class="day-dist" wx:if="{{item.hasRecord && item.distance > 0}}">{{item.distance}}m</text>
       </view>
+    </view>
+
+    <view class="cal-back-today" wx:if="{{!isCurrentMonth}}" bindtap="goToToday">
+      <text>回到今天</text>
     </view>
   </view>
 </view>
 
 <!-- 距离弹窗 -->
 <view class="modal-mask" wx:if="{{showModal}}" catchtap="closeModal">
-  <view class="modal-panel" catchtap="">
+  <view class="modal-panel" catchtap="noclose">
     <text class="modal-title">📅 {{year}}年{{month}}月{{modalDay}}日</text>
     <view class="modal-input-row">
       <input

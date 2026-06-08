@@ -124,7 +124,8 @@ Page({
       success: (res) => {
         this.setData({
           location: {
-            name: res.name || res.address,
+            name: res.name,
+            address: res.address,
             latitude: res.latitude,
             longitude: res.longitude
           }

@@ -1,21 +1,10 @@
-const util = require('../../utils/util.js');
 const request = require('../../utils/request.js');
 
 Component({
   properties: {
     item: {
       type: Object,
-      value: {},
-      observer(newVal) {
-        if (newVal && newVal.createTime) {
-          if (this._lastRawTime !== newVal.createTime) {
-            this._lastRawTime = newVal.createTime;
-            this.setData({
-              'item.displayTime': util.formatRelativeTime(newVal.createTime)
-            });
-          }
-        }
-      }
+      value: {}
     },
     showDelete: {
       type: Boolean,

@@ -17,7 +17,11 @@ Page({
     monthlyTotal: 0,
     weeklyTotal: 0,
     rankPercent: 0,
-    activeDays: 0
+    activeDays: 0,
+    streakDays: 0,
+    weekDays: [],
+    isCurrentMonth: true,
+    calTouchStartX: 0
   },
 
   onLoad() {
@@ -30,20 +34,27 @@ Page({
     this.loadData();
   },
 
+  onShow() {
+    this.loadData();
+  },
+
   async loadData() {
     try {
+      const now = new Date();
+      const today = now.getDate();
+      const isCurrentMonth = now.getFullYear() === this.data.year && (now.getMonth() + 1) === this.data.month;
+
       const result = await request.callFunction('getCheckIns', {
         year: this.data.year,
         month: this.data.month
       }, { showLoad: false, showError: false });
 
       const records = result?.records || {};
-      const today = this.data.today;
-      const now = new Date();
-      const isCurrentMonth = now.getFullYear() === this.data.year && (now.getMonth() + 1) === this.data.month;
 
       this.setData({
+        today,
         records,
+        isCurrentMonth,
         checkedToday: isCurrentMonth && !!records[today],
         todayDistance: records[today]?.distance || 0
       });
@@ -53,6 +64,13 @@ Page({
       console.warn('加载打卡数据失败:', e);
       this.buildCalendar();
     }
+  },
+
+  getIntensity(distance) {
+    if (!distance || distance <= 0) return 0;
+    if (distance < 500) return 1;
+    if (distance < 1000) return 2;
+    return 3;
   },
 
   buildCalendar() {
@@ -73,20 +91,21 @@ Page({
       const distance = records[d]?.distance || 0;
       const isToday = isCurrentMonth && d === today;
       const isFuture = isCurrentMonth && d > today;
+      const intensity = this.getIntensity(distance);
       let type = 'normal';
       if (isToday) type = 'today';
       else if (isFuture) type = 'future';
       else if (hasRecord && distance > 0) type = 'record';
       else if (hasRecord) type = 'checked';
 
-      calendar.push({ day: d, type, hasRecord: hasRecord && distance > 0, distance, isToday });
+      calendar.push({ day: d, type, hasRecord, distance, isToday, intensity });
     }
 
     this.setData({ calendar });
   },
 
   computeStats() {
-    const { records, year, month, today } = this.data;
+    const { records, year, month } = this.data;
     const now = new Date();
 
     let monthlyTotal = 0;
@@ -101,32 +120,69 @@ Page({
       }
     });
 
+    let streakDays = 0;
+    const today = now.getDate();
+    const isCurrentMonth = now.getFullYear() === year && (now.getMonth() + 1) === month;
+    if (isCurrentMonth) {
+      for (let d = today; d >= 1; d--) {
+        const dist = records[d]?.distance || 0;
+        if (dist > 0) {
+          streakDays++;
+        } else {
+          break;
+        }
+      }
+    }
+
     let weeklyTotal = 0;
     const dayOfWeek = now.getDay();
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - dayOfWeek);
     weekStart.setHours(0, 0, 0, 0);
 
+    const weekDays = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(weekStart);
       d.setDate(weekStart.getDate() + i);
       const key = d.getDate();
-      if (d.getMonth() + 1 === month && d.getFullYear() === year && records[key]?.distance) {
-        weeklyTotal += records[key].distance;
-      }
+      const dist = d.getMonth() + 1 === month && d.getFullYear() === year && records[key]?.distance || 0;
+      if (dist > 0) weeklyTotal += dist;
+      const labels = ['日', '一', '二', '三', '四', '五', '六'];
+      weekDays.push({
+        label: labels[i],
+        distance: dist,
+        isToday: d.getDate() === today && d.getMonth() === now.getMonth()
+      });
     }
 
     const dailyAvg = activeDays > 0 ? monthlyTotal / activeDays : 0;
     let rankPercent = 0;
-    if (dailyAvg >= 2000) rankPercent = 95;
-    else if (dailyAvg >= 1500) rankPercent = 85;
-    else if (dailyAvg >= 1000) rankPercent = 70;
-    else if (dailyAvg >= 500) rankPercent = 50;
-    else if (dailyAvg >= 200) rankPercent = 30;
-    else if (dailyAvg > 0) rankPercent = 15;
-    else rankPercent = 0;
+    if (dailyAvg >= 2000) rankPercent = '95%';
+    else if (dailyAvg >= 1500) rankPercent = '85%';
+    else if (dailyAvg >= 1000) rankPercent = '70%';
+    else if (dailyAvg >= 500) rankPercent = '50%';
+    else if (dailyAvg >= 200) rankPercent = '30%';
+    else if (dailyAvg > 0) rankPercent = '15%';
+    else rankPercent = '0%';
 
-    this.setData({ monthlyTotal, weeklyTotal, rankPercent, activeDays });
+    this.setData({ monthlyTotal, weeklyTotal, rankPercent, activeDays, streakDays, weekDays });
+  },
+
+  // 滑动切月
+  onCalTouchStart(e) {
+    this.setData({ calTouchStartX: e.touches[0].clientX });
+  },
+
+  onCalTouchEnd(e) {
+    const dx = e.changedTouches[0].clientX - this.data.calTouchStartX;
+    if (Math.abs(dx) < 50) return;
+    if (dx > 0) {
+      this.prevMonth();
+    } else {
+      const now = new Date();
+      const isCurrentMonth = now.getFullYear() === this.data.year && (now.getMonth() + 1) === this.data.month;
+      if (!isCurrentMonth) this.nextMonth();
+    }
   },
 
   prevMonth() {
@@ -145,6 +201,16 @@ Page({
     this.loadData();
   },
 
+  goToToday() {
+    const now = new Date();
+    this.setData({
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      today: now.getDate()
+    });
+    this.loadData();
+  },
+
   onDayTap(e) {
     const day = e.currentTarget.dataset.day;
     if (!day) return;
@@ -157,7 +223,7 @@ Page({
     this.setData({
       showModal: true,
       modalDay: day,
-      modalIsToday: false,
+      modalIsToday: isCurrentMonth && day === now.getDate(),
       modalDistance: record ? String(record.distance) : ''
     });
   },
@@ -180,15 +246,16 @@ Page({
       const records = { ...this.data.records };
       records[modalDay] = { distance };
 
-      const today = this.data.today;
       const now = new Date();
+      const today = now.getDate();
       const isCurrentMonth = now.getFullYear() === year && (now.getMonth() + 1) === month;
+      const isToday = modalIsToday || (isCurrentMonth && modalDay === today);
 
       this.setData({
         showModal: false,
         records,
-        checkedToday: isCurrentMonth && (modalDay === today || !!records[today]),
-        todayDistance: modalDay === today ? distance : (records[today]?.distance || 0)
+        checkedToday: isCurrentMonth && (isToday || !!records[today]),
+        todayDistance: isToday ? distance : (records[today]?.distance || 0)
       });
       this.buildCalendar();
       this.computeStats();
@@ -196,22 +263,25 @@ Page({
       wx.showToast({ title: '保存失败', icon: 'none' });
     }
   },
+  noclose(){
 
+  },
   closeModal() {
     this.setData({ showModal: false });
   },
 
   async doCheckIn() {
-    if (this.data.checkInLoading || this.data.checkedToday && this.data.todayDistance > 0) return;
+    if (this.data.checkInLoading) return;
     this.setData({ checkInLoading: true });
 
     try {
-      const { today } = this.data;
-      const record = this.data.records[today];
+      const realToday = new Date().getDate();
+      const record = this.data.records[realToday];
 
       this.setData({
         showModal: true,
-        modalDay: today,
+        modalDay: realToday,
+        modalIsToday: true,
         modalDistance: record ? String(record.distance) : '',
         checkInLoading: false
       });

@@ -92,6 +92,35 @@ Page({
 
   deleteVideo() { this.setData({ video: '', thumbnail: '' }); },
 
+  chooseLocation() {
+    wx.chooseLocation({
+      success: (res) => {
+        this.setData({
+          location: {
+            name: res.name,
+            address: res.address,
+            latitude: res.latitude,
+            longitude: res.longitude
+          }
+        });
+      },
+      fail: (err) => {
+        if (err.errMsg.includes('auth deny')) {
+          wx.showModal({
+            title: '提示',
+            content: '需要位置权限才能选择位置',
+            confirmText: '去设置',
+            success: (mRes) => { if (mRes.confirm) wx.openSetting(); }
+          });
+        }
+      }
+    });
+  },
+
+  removeLocation() {
+    this.setData({ location: null });
+  },
+
   async save() {
     const { displayType, content, title, video, images } = this.data;
 
@@ -125,7 +154,8 @@ Page({
         content: content.trim(),
         title: title.trim(),
         video: uploadedVideo,
-        images: uploadedImages
+        images: uploadedImages,
+        location: this.data.location
       }, { showLoad: true, loadText: '保存中...' });
 
       wx.showToast({ title: '修改成功', icon: 'success' });

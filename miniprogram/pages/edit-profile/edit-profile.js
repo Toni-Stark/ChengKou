@@ -1,3 +1,6 @@
+const auth = require('../../utils/auth.js');
+const request = require('../../utils/request.js');
+
 const QINIU_BASE = 'http://tg00h6qkg.hn-bkt.clouddn.com';
 const DEFAULT_AVATAR = QINIU_BASE + '/common/default-avatar.png';
 

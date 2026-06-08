@@ -4,7 +4,7 @@ const db = cloud.database();
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
-  const { dynamicId, displayType, content, title, video, images } = event;
+  const { dynamicId, displayType, content, title, video, images, location } = event;
 
   if (!dynamicId) return { code: -1, message: '参数错误', data: null };
 
@@ -19,6 +19,7 @@ exports.main = async (event, context) => {
     if (title !== undefined) updateData.title = title;
     if (video !== undefined) updateData.video = video;
     if (images !== undefined) updateData.images = images;
+    if (location !== undefined) updateData.location = location;
 
     await db.collection('user_dynamics').doc(dynamicId).update({ data: updateData });
 

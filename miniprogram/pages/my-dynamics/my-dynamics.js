@@ -1,5 +1,6 @@
 const request = require('../../utils/request.js');
 const auth = require('../../utils/auth.js');
+const util = require('../../utils/util.js');
 
 Page({
   data: {
@@ -87,9 +88,13 @@ Page({
       });
 
       const processedList = await request.processDynamicsImages(result.list);
+      const formattedList = processedList.map(item => ({
+        ...item,
+        displayTime: util.formatRelativeTime(item.createTime)
+      }));
       const newList = this.data.page === 1
-        ? processedList
-        : [...this.data.dynamicsList, ...processedList];
+        ? formattedList
+        : [...this.data.dynamicsList, ...formattedList];
 
       this.setData({
         dynamicsList: newList,

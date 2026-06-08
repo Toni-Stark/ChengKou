@@ -5,79 +5,84 @@ Page({
   data: {
     userInfo: {},
     isLogin: false,
-    height: 0
+    todayChecked: false,
+    todayDistance: 0,
+    monthActiveDays: 0,
+    monthDistance: 0
   },
-  getScreenHeight(){ 
-    let res = wx.getWindowInfo() 
-    const btn = wx.getMenuButtonBoundingClientRect(); 
-    console.log('TabBar高度:', res, btn); 
-    let nav_bar_height = ((btn.top-res.safeArea.top)+3)+res.safeArea.top + btn.height; 
-    this.setData({height: nav_bar_height})
-  },
-  onLoad(){
-    this.getScreenHeight()
-  },
+
+  onLoad() {},
+
   onShow() {
     this.loadUserInfo();
+    this.loadSwimStats();
+  },
+
+  async loadSwimStats() {
+    const stored = auth.getStoredUserInfo();
+    if (!stored.openid) return;
+
+    try {
+      if (!wx.cloud || !wx.cloud.callFunction) return;
+      const now = new Date();
+      const result = await request.callFunction('getCheckIns', {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1
+      }, { showLoad: false, showError: false });
+
+      const records = result?.records || {};
+      const today = now.getDate();
+      let activeDays = 0;
+      let totalDist = 0;
+      Object.keys(records).forEach(d => {
+        const dist = records[d]?.distance || 0;
+        if (dist > 0) { activeDays++; totalDist += dist; }
+      });
+
+      let streak = 0;
+      for (let d = today; d >= 1; d--) {
+        if ((records[d]?.distance || 0) > 0) streak++; else break;
+      }
+
+      this.setData({
+        todayChecked: !!records[today],
+        todayDistance: records[today]?.distance || 0,
+        monthActiveDays: activeDays,
+        monthDistance: totalDist,
+        currentStreak: streak
+      });
+    } catch (e) {
+      console.warn('加载游泳数据失败:', e);
+    }
   },
 
   async loadUserInfo(forceRefresh = false) {
     const app = getApp();
-
     if (!forceRefresh && app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        isLogin: true
-      });
+      this.setData({ userInfo: app.globalData.userInfo, isLogin: true });
       return;
     }
 
     const stored = auth.getStoredUserInfo();
-
     if (stored.userInfo && stored.openid) {
-      // 已登录，从云端获取最新的用户信息
       try {
-        // 检查云开发是否可用
         if (!wx.cloud || !wx.cloud.callFunction) {
-          console.warn('云开发未配置，使用本地数据');
-          this.setData({
-            userInfo: stored.userInfo,
-            isLogin: true
-          });
+          this.setData({ userInfo: stored.userInfo, isLogin: true });
           return;
         }
-
-        const result = await request.callFunction('getUserInfo', {}, {
-          showLoad: true
-        });
-
-        // 更新本地存储
+        const result = await request.callFunction('getUserInfo', {}, { showLoad: true });
         auth.saveUserInfo(result, stored.openid);
-
-        this.setData({
-          userInfo: result,
-          isLogin: true
-        });
+        this.setData({ userInfo: result, isLogin: true });
       } catch (error) {
-        console.error('获取用户信息失败:', error);
-        // 如果获取失败，使用本地存储的数据
-        this.setData({
-          userInfo: stored.userInfo,
-          isLogin: true
-        });
+        this.setData({ userInfo: stored.userInfo, isLogin: true });
       }
     } else {
-      // 未登录，显示默认状态
       this.setData({
         userInfo: {
           nickName: '未登录',
           avatarUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png',
-          signature: '点击登录',
-          stats: {
-            dynamicsCount: 0,
-            followersCount: 0,
-            subscriptionsCount: 0
-          }
+          signature: '点击登录，开启游泳之旅',
+          stats: { dynamicsCount: 0, followersCount: 0, subscriptionsCount: 0 }
         },
         isLogin: false
       });
@@ -85,60 +90,33 @@ Page({
   },
 
   goToLogin() {
-    wx.navigateTo({
-      url: '/pages/login/login'
-    });
+    wx.navigateTo({ url: '/pages/login/login' });
   },
 
   editProfile() {
-    if (!this.data.isLogin) {
-      request.showToast('请先登录');
-      return;
-    }
-
-    wx.navigateTo({
-      url: '/pages/edit-profile/edit-profile'
-    });
-  },
-
-  goToMyDynamics() {
-    if (!this.data.isLogin) {
-      request.showToast('请先登录');
-      return;
-    }
-
-    wx.navigateTo({
-      url: '/pages/my-dynamics/my-dynamics'
-    });
-  },
-
-  goToMySubscriptions() {
-    if (!this.data.isLogin) {
-      request.showToast('请先登录');
-      return;
-    }
-
-    wx.navigateTo({
-      url: '/pages/my-likes/my-likes'
-    });
-  },
-
-  goToSettings() {
-    wx.navigateTo({
-      url: '/pages/settings/settings'
-    });
+    if (!this.data.isLogin) { request.showToast('请先登录'); return; }
+    wx.navigateTo({ url: '/pages/edit-profile/edit-profile' });
   },
 
   goToSwimRecords() {
-    wx.navigateTo({
-      url: '/pages/swim-records/swim-records'
-    });
+    wx.navigateTo({ url: '/pages/swim-records/swim-records' });
+  },
+
+  goToMyDynamics() {
+    if (!this.data.isLogin) { request.showToast('请先登录'); return; }
+    wx.navigateTo({ url: '/pages/my-dynamics/my-dynamics' });
+  },
+
+  goToMySubscriptions() {
+    if (!this.data.isLogin) { request.showToast('请先登录'); return; }
+    wx.navigateTo({ url: '/pages/my-likes/my-likes' });
+  },
+
+  goToSettings() {
+    wx.navigateTo({ url: '/pages/settings/settings' });
   },
 
   onShareAppMessage() {
-    return {
-      title: '我的主页',
-      path: '/pages/mine/mine'
-    };
+    return { title: '我的主页', path: '/pages/mine/mine' };
   }
 });
