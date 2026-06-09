@@ -1,4 +1,4 @@
-<view class="edit-page">
+<view class="edit-page" wx:if="{{youLongShow}}">
   <scroll-view class="scroll" scroll-y="true">
     <view class="section">
       <view class="section-title">选择展示方式</view>

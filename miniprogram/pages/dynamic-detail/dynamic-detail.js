@@ -16,11 +16,14 @@ Page({
     fromShare: false,
     userInfo: null,
     isShow: false,
-    isOwner: false
+    isOwner: false,
+    youLongShow: 1
   },
 
   onLoad(options) {
     const { id, from } = options;
+
+    this.loadYouLongShow();
 
     // 标记是否从分享进入
     if (from === 'share') {
@@ -52,6 +55,18 @@ Page({
       }
     } catch (error) {
       console.error('加载用户信息失败:', error);
+    }
+  },
+
+  async loadYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
     }
   },
 

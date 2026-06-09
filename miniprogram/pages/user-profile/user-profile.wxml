@@ -10,7 +10,7 @@
 
     <!-- 统计 -->
     <view class="profile-stats" wx:if="{{userInfo}}">
-      <view class="pstat-item">
+      <view class="pstat-item" wx:if="{{youLongShow}}">
         <text class="pstat-val">{{userInfo.stats.dynamicsCount || 0}}</text>
         <text class="pstat-label">游龙</text>
       </view>
@@ -33,13 +33,14 @@
   </view>
 
   <!-- 游龙列表 -->
-  <view class="dynamics-section" wx:if="{{!isEmpty}}">
+  <view class="dynamics-section" wx:if="{{!isEmpty && youLongShow}}">
     <view class="section-title-bar">
       <text class="section-title">他的游龙</text>
     </view>
     <view wx:for="{{dynamicsList}}" wx:key="_id" bindtap="onDynamicTap" data-id="{{item._id}}">
       <dynamic-item
         item="{{item}}"
+        youLongShow="{{youLongShow}}"
         bind:subscribe="onSubscribeEvent"
         bind:comment="onComment">
       </dynamic-item>
@@ -53,7 +54,7 @@
     </view>
   </view>
 
-  <view class="empty-state" wx:if="{{isEmpty && !loading}}">
+  <view class="empty-state" wx:if="{{isEmpty && !loading && youLongShow}}">
     <text class="empty-icon">📝</text>
     <text class="empty-text">还没有发布游龙</text>
   </view>

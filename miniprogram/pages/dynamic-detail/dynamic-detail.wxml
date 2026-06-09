@@ -10,6 +10,7 @@
     <dynamic-item
       item="{{dynamic}}"
       isShow="{{isShow}}"
+      youLongShow="{{youLongShow}}"
       bind:subscribe="onDynamicSubscribe"
       bind:comment="onComment"
       bind:share="onShare">
@@ -45,7 +46,7 @@
             </view>
           </view>
           <view
-            wx:if="{{isShow}}"
+            wx:if="{{isShow && youLongShow}}"
             class="like-btn {{item.isLiked ? 'liked' : ''}}"
             bindtap="onCommentLike"
             data-id="{{item._id}}"
@@ -66,7 +67,7 @@
 </view>
 
 <!-- 评论输入栏 -->
-<view wx:if="{{isShow}}" class="input-bar">
+<view wx:if="{{isShow && youLongShow}}" class="input-bar">
   <view class="input-row">
     <input
       class="input-pill"

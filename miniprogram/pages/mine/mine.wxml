@@ -14,7 +14,7 @@
 
     <!-- 社交数据 -->
     <view class="social-row" wx:if="{{isLogin}}">
-      <view class="social-item">
+      <view class="social-item" wx:if="{{youLongShow}}">
         <text class="social-num">{{userInfo.stats.dynamicsCount || 0}}</text>
         <text class="social-label">游龙</text>
       </view>
@@ -65,7 +65,7 @@
   <!-- 功能菜单 -->
   <view class="menu-section">
     <view class="menu-group-title">我的内容</view>
-    <view class="menu-card" bindtap="goToMyDynamics">
+    <view class="menu-card" bindtap="goToMyDynamics" wx:if="{{youLongShow}}">
       <view class="menu-icon icon-dynamics">📝</view>
       <text class="menu-label">我的游龙</text>
       <text class="menu-extra" wx:if="{{userInfo.stats.dynamicsCount}}">{{userInfo.stats.dynamicsCount}}</text>
@@ -76,7 +76,7 @@
       <text class="menu-label">管理订阅</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-card" bindtap="goToSwimRecords">
+    <view class="menu-card" bindtap="goToSwimRecords" wx:if="{{youLongShow}}">
       <view class="menu-icon icon-records">📊</view>
       <text class="menu-label">游龙纪录</text>
       <text class="menu-extra" wx:if="{{monthActiveDays > 0}}">{{monthActiveDays}}天</text>

@@ -12,7 +12,8 @@ Page({
     pageSize: 10,
     hasMore: true,
     loading: false,
-    isEmpty: false
+    isEmpty: false,
+    youLongShow: 1
   },
 
   onLoad(options) {
@@ -29,9 +30,22 @@ Page({
       isSelf: myOpenid === id
     });
 
+    this.loadYouLongShow();
     this.loadUserInfo();
     this.loadDynamics();
     this.checkSubscribed();
+  },
+
+  async loadYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
+    }
   },
 
   async loadUserInfo() {

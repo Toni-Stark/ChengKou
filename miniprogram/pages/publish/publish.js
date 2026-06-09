@@ -2,6 +2,7 @@ const request = require('../../utils/request.js');
 
 Page({
   data: {
+    youLongShow: 1,
     displayType: 'grid9',
     content: '',
     title: '',
@@ -17,7 +18,14 @@ Page({
       { value: 'text', label: '纯文本', desc: '只分享文字内容' }
     ]
   },
-  onLoad() {
+  async onLoad() {
+    await this.loadYouLongShow();
+    if (!this.data.youLongShow) {
+      wx.showToast({ title: '功能暂未开放', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
+    }
+
     const userInfo = wx.getStorageSync('userInfo');
     const openid = wx.getStorageSync('openid');
     if (!userInfo || !openid) {
@@ -30,6 +38,18 @@ Page({
         }
       });
       return;
+    }
+  },
+
+  async loadYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
     }
   },
 

@@ -1,16 +1,16 @@
 <view class="dynamics-page page">
   <!-- 发布按钮 -->
-  <view wx:if="{{openid && isShow}}" class="publish-btn" bindtap="goToPublish">
+  <view wx:if="{{openid && isShow && youLongShow}}" class="publish-btn" bindtap="goToPublish">
     <text class="publish-icon">+</text>
   </view>
 
   <!-- 筛选按钮 -->
-  <view wx:if="{{openid}}" class="filter-btn {{filterSubscribed ? 'active' : ''}}" bindtap="toggleFilter">
+  <view wx:if="{{openid && youLongShow}}" class="filter-btn {{filterSubscribed ? 'active' : ''}}" bindtap="toggleFilter">
     <text class="filter-icon">⚓</text>
   </view>
 
   <!-- 游龙列表 -->
-  <view class="dynamics-list container">
+  <view class="dynamics-list container" wx:if="{{youLongShow}}">
     <view class="loading-state" wx:if="{{loading && dynamicsList.length === 0}}">
       <text class="loading-text">加载中...</text>
     </view>
@@ -21,6 +21,7 @@
         wx:key="_id"
         item="{{item}}"
         isShow="{{isShow}}"
+        youLongShow="{{youLongShow}}"
         bind:userTap="onUserTap"
         bind:subscribe="onSubscribe"
         bind:comment="onComment"
@@ -42,5 +43,10 @@
         <text class="load-more-text">{{hasMore ? '上拉加载更多' : '没有更多了'}}</text>
       </view>
     </block>
+  </view>
+
+  <!-- 功能未开放 -->
+  <view class="empty-state" wx:if="{{!youLongShow}}" style="padding-top: 200rpx;">
+    <text class="empty-text" style="font-size:32rpx;color:#999;">功能暂未开放</text>
   </view>
 </view>

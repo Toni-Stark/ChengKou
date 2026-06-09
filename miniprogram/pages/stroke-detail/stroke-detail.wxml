@@ -27,7 +27,7 @@
   </view>
 
   <!-- 教学视频 -->
-  <view class="section-block">
+  <!-- <view class="section-block">
     <view class="section-header">
       <text class="section-icon">🎬</text>
       <text class="section-title">教学视频</text>
@@ -39,7 +39,7 @@
       <text class="video-label">{{stroke.name}}标准动作示范</text>
       <text class="video-hint">即将上线，敬请期待</text>
     </view>
-  </view>
+  </view> -->
 
   <!-- 分步练习 -->
   <view class="section-block">

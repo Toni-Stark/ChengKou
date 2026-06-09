@@ -12,10 +12,13 @@ Page({
     isEmpty: false,
     errorType: '',
     userInfo: null,
-    isShow: true
+    isShow: true,
+    youLongShow: 1
   },
 
   onLoad() {
+    this.loadYouLongShow();
+
     if (!auth.checkLogin()) {
       wx.showModal({
         title: '提示',
@@ -56,6 +59,18 @@ Page({
       }
     } catch (error) {
       console.error('加载用户信息失败:', error);
+    }
+  },
+
+  async loadYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
     }
   },
 

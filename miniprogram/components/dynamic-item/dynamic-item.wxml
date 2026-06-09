@@ -85,8 +85,8 @@
     <text class="location-text text-sm text-secondary">{{item.location.address || item.location.name}}</text>
   </view>
 
-  <!-- 操作栏 - 需要 is_show 权限才显示 -->
-  <view wx:if="{{isShow}}" class="dynamic-actions flex-between mt-lg pt-base border-top">
+  <!-- 操作栏 - 需要 is_show 权限和全局游龙开关才显示 -->
+  <view wx:if="{{isShow && youLongShow}}" class="dynamic-actions flex-between mt-lg pt-base border-top">
     <view class="action-btn {{item.isSubscribed ? 'subscribed' : ''}}" catch:tap="onSubscribe">
       <text class="action-icon">{{item.isSubscribed ? '🔔' : '🔕'}}</text>
       <text class="action-text text-sm">{{item.isSubscribed ? '已订阅' : '订阅'}}</text>

@@ -8,7 +8,8 @@ Page({
     todayChecked: false,
     todayDistance: 0,
     monthActiveDays: 0,
-    monthDistance: 0
+    monthDistance: 0,
+    youLongShow: 1
   },
 
   onLoad() {},
@@ -16,6 +17,19 @@ Page({
   onShow() {
     this.loadUserInfo();
     this.loadSwimStats();
+    this.syncYouLongShow();
+  },
+
+  async syncYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
+    }
   },
 
   async loadSwimStats() {

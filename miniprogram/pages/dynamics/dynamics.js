@@ -13,11 +13,14 @@ Page({
     shareInfo: null,
     userInfo: null,
     isShow: false,
-    filterSubscribed: false
+    filterSubscribed: false,
+    youLongShow: 1
   },
 
   onLoad(options){
     const { from } = options;
+
+    this.syncYouLongShow();
 
     // 如果是从分享进入，尝试静默登录
     if (from === 'share') {
@@ -63,6 +66,7 @@ Page({
 
   onShow() {
     this.loadUserInfo();
+    this.syncYouLongShow();
 
     if (wx.getStorageSync('_needRefresh')) {
       wx.removeStorageSync('_needRefresh');
@@ -72,6 +76,18 @@ Page({
 
   onPullDownRefresh() {
     this.refreshDynamics();
+  },
+
+  async syncYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
+    }
   },
 
   onReachBottom() {

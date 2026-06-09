@@ -2,6 +2,7 @@ const request = require('../../utils/request.js');
 
 Page({
   data: {
+    youLongShow: 1,
     dynamicId: '',
     displayType: 'grid9',
     content: '',
@@ -19,7 +20,14 @@ Page({
     ]
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    await this.loadYouLongShow();
+    if (!this.data.youLongShow) {
+      wx.showToast({ title: '功能暂未开放', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
+    }
+
     const { id } = options;
     if (!id) {
       wx.showToast({ title: '参数错误', icon: 'none' });
@@ -28,6 +36,18 @@ Page({
     }
     this.setData({ dynamicId: id });
     this.loadDynamic();
+  },
+
+  async loadYouLongShow() {
+    try {
+      const result = await request.callFunction('getGlobalConfig', {
+        key: 'youLongShow'
+      }, { showLoad: false, showError: false });
+      const val = result && result.value !== undefined ? Number(result.value) : 1;
+      this.setData({ youLongShow: val });
+    } catch (e) {
+      this.setData({ youLongShow: 1 });
+    }
   },
 
   async loadDynamic() {

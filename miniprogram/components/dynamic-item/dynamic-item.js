@@ -17,6 +17,10 @@ Component({
     isShow: {
       type: Boolean,
       value: true // 默认显示操作栏
+    },
+    youLongShow: {
+      type: Boolean,
+      value: true
     }
   },
 
