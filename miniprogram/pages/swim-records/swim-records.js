@@ -1,4 +1,19 @@
 const request = require('../../utils/request.js');
+const encouragements = require('../../data/encouragements.js');
+const strokesData = require('../../data/strokes.js');
+
+const SPEED_TIERS = [
+  { maxSpeed: 999, minSpeed: 180, tier: '青铜泳者', badge: '🥉', rank: 'bronze' },
+  { maxSpeed: 180, minSpeed: 150, tier: '白银泳者', badge: '🥈', rank: 'silver' },
+  { maxSpeed: 150, minSpeed: 120, tier: '黄金泳者', badge: '🥇', rank: 'gold' },
+  { maxSpeed: 120, minSpeed: 90,  tier: '铂金泳者', badge: '💎', rank: 'platinum' },
+  { maxSpeed: 90,  minSpeed: 60,  tier: '钻石泳者', badge: '👑', rank: 'diamond' },
+  { maxSpeed: 60,  minSpeed: 0,   tier: '王者泳者', badge: '⚡', rank: 'king' },
+];
+
+function getTier(speedPer100m) {
+  return SPEED_TIERS.find(t => speedPer100m >= t.minSpeed && speedPer100m < t.maxSpeed) || null;
+}
 
 Page({
   data: {
@@ -12,16 +27,24 @@ Page({
     showModal: false,
     modalDay: 0,
     modalDistance: '',
+    modalDuration: '',
+    modalStroke: '',
     modalIsToday: false,
     checkInLoading: false,
     monthlyTotal: 0,
     weeklyTotal: 0,
     rankPercent: 0,
     activeDays: 0,
-    streakDays: 0,
+    totalDuration: 0,
     weekDays: [],
     isCurrentMonth: true,
-    calTouchStartX: 0
+    calTouchStartX: 0,
+    strokeStats: [],
+    progression: null,
+    encouragement: '',
+    showCompetitionTip: false,
+    userTierInfo: null,
+    competitions: []
   },
 
   onLoad() {
@@ -32,10 +55,14 @@ Page({
       today: now.getDate()
     });
     this.loadData();
+    this.loadUserStats();
+    this.loadEncouragement();
   },
 
   onShow() {
     this.loadData();
+    this.loadUserStats();
+    this.loadEncouragement();
   },
 
   async loadData() {
@@ -120,21 +147,8 @@ Page({
       }
     });
 
-    let streakDays = 0;
-    const today = now.getDate();
-    const isCurrentMonth = now.getFullYear() === year && (now.getMonth() + 1) === month;
-    if (isCurrentMonth) {
-      for (let d = today; d >= 1; d--) {
-        const dist = records[d]?.distance || 0;
-        if (dist > 0) {
-          streakDays++;
-        } else {
-          break;
-        }
-      }
-    }
-
     let weeklyTotal = 0;
+    const today = now.getDate();
     const dayOfWeek = now.getDay();
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - dayOfWeek);
@@ -165,7 +179,112 @@ Page({
     else if (dailyAvg > 0) rankPercent = '15%';
     else rankPercent = '0%';
 
-    this.setData({ monthlyTotal, weeklyTotal, rankPercent, activeDays, streakDays, weekDays });
+    const strokeStats = this.computeStrokeStats(records);
+
+    this.setData({ monthlyTotal, weeklyTotal, rankPercent, activeDays, weekDays, strokeStats });
+    this.loadProgression(strokeStats);
+  },
+
+  computeStrokeStats(records) {
+    const stats = {};
+    strokesData.forEach(s => {
+      stats[s.id] = {
+        id: s.id,
+        name: s.name,
+        emoji: s.emoji,
+        color: s.color,
+        totalDistance: 0,
+        totalDuration: 0,
+        sessions: 0
+      };
+    });
+
+    Object.keys(records).forEach(d => {
+      const r = records[d];
+      const dist = r?.distance || 0;
+      const dur = r?.duration || 0;
+      const stroke = r?.stroke || '';
+      if (dist > 0 && dur > 0 && stats[stroke]) {
+        stats[stroke].totalDistance += dist;
+        stats[stroke].totalDuration += dur;
+        stats[stroke].sessions++;
+      }
+    });
+
+    return Object.values(stats)
+      .filter(s => s.sessions > 0)
+      .map(s => {
+        const avg = s.totalDistance > 0
+          ? Math.round((s.totalDuration / (s.totalDistance / 100)) * 10) / 10
+          : 0;
+        const tier = getTier(avg);
+        return {
+          ...s,
+          avgSpeed100m: avg,
+          tier: tier ? tier.tier : '-',
+          badge: tier ? tier.badge : '',
+          rank: tier ? tier.rank : ''
+        };
+      })
+      .sort((a, b) => a.avgSpeed100m - b.avgSpeed100m);
+  },
+
+  async loadProgression(strokeStats) {
+    if (!strokeStats || strokeStats.length === 0) {
+      this.setData({ progression: null, showCompetitionTip: false, userTierInfo: null, competitions: [] });
+      return;
+    }
+
+    const bestStroke = strokeStats[0];
+    const tier = getTier(bestStroke.avgSpeed100m);
+    const isDiamond = tier && (tier.rank === 'diamond' || tier.rank === 'king');
+    const userTierInfo = tier ? { stroke: bestStroke, tier: tier.tier, badge: tier.badge } : null;
+
+    if (!isDiamond) {
+      this.setData({
+        progression: null,
+        showCompetitionTip: true,
+        userTierInfo,
+        competitions: []
+      });
+      return;
+    }
+
+    try {
+      const result = await request.callFunction('getProgressions', {
+        stroke: bestStroke.id,
+        speedPer100m: bestStroke.avgSpeed100m
+      }, { showLoad: false, showError: false });
+
+      const data = result?.data || result;
+      const compResult = await request.callFunction('getCompetitions', {}, { showLoad: false, showError: false });
+      const competitions = compResult?.list || [];
+
+      this.setData({
+        progression: data?.current
+          ? { stroke: bestStroke, current: data.current, next: data.next }
+          : null,
+        showCompetitionTip: false,
+        userTierInfo,
+        competitions
+      });
+    } catch (e) {
+      console.warn('加载进阶数据失败:', e);
+      this.setData({
+        showCompetitionTip: false,
+        userTierInfo,
+        competitions: []
+      });
+    }
+  },
+
+  loadEncouragement() {
+    const idx = (new Date().getDate() - 1) % encouragements.length;
+    this.setData({ encouragement: encouragements[idx] });
+  },
+
+  goToCompetitions() {
+    wx.navigateTo({ url: '/pages/competitions/competitions' });
   },
 
   // 滑动切月
@@ -224,7 +343,9 @@ Page({
       showModal: true,
       modalDay: day,
       modalIsToday: isCurrentMonth && day === now.getDate(),
-      modalDistance: record ? String(record.distance) : ''
+      modalDistance: record ? String(record.distance || '') : '',
+      modalDuration: record?.duration ? String(Math.round(record.duration / 60)) : '',
+      modalStroke: record?.stroke || ''
     });
   },
 
@@ -232,19 +353,32 @@ Page({
     this.setData({ modalDistance: e.detail.value });
   },
 
+  onDurationInput(e) {
+    this.setData({ modalDuration: e.detail.value });
+  },
+
+  onStrokeSelect(e) {
+    this.setData({ modalStroke: e.currentTarget.dataset.stroke });
+  },
+
   async saveDistance() {
-    const { year, month, modalDay, modalDistance, modalIsToday } = this.data;
+    const { year, month, modalDay, modalDistance, modalDuration, modalStroke, modalIsToday } = this.data;
     const distance = parseInt(modalDistance) || 0;
+    const durationMin = parseInt(modalDuration) || 0;
+    const duration = durationMin * 60;
+    const stroke = modalStroke || '';
     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(modalDay).padStart(2, '0')}`;
 
     try {
       await request.callFunction('checkIn', {
         distance: distance,
+        duration: duration,
+        stroke: stroke,
         date: dateStr
       }, { showLoad: true });
 
       const records = { ...this.data.records };
-      records[modalDay] = { distance };
+      records[modalDay] = { distance, duration, stroke };
 
       const now = new Date();
       const today = now.getDate();
@@ -259,6 +393,7 @@ Page({
       });
       this.buildCalendar();
       this.computeStats();
+      this.loadUserStats();
     } catch (e) {
       wx.showToast({ title: '保存失败', icon: 'none' });
     }
@@ -282,12 +417,39 @@ Page({
         showModal: true,
         modalDay: realToday,
         modalIsToday: true,
-        modalDistance: record ? String(record.distance) : '',
+        modalDistance: record ? String(record.distance || '') : '',
+        modalDuration: record?.duration ? String(Math.round(record.duration / 60)) : '',
+        modalStroke: record?.stroke || '',
         checkInLoading: false
       });
     } catch (e) {
       this.setData({ checkInLoading: false });
       wx.showToast({ title: '操作失败', icon: 'none' });
+    }
+  },
+
+  async loadUserStats() {
+    try {
+      const now = new Date();
+      const result = await request.callFunction('getUserStats', {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        today: now.getDate()
+      }, { showLoad: false, showError: false });
+      const data = result?.data || result || {};
+      const totalSec = data.totalDuration || 0;
+      let totalDurationText = '';
+      if (totalSec >= 3600) {
+        totalDurationText = (totalSec / 3600).toFixed(1) + 'h';
+      } else {
+        totalDurationText = Math.round(totalSec / 60) + 'min';
+      }
+      this.setData({
+        totalDuration: data.totalDuration || 0,
+        totalDurationText
+      });
+    } catch (e) {
+      console.warn('加载用户统计失败:', e);
     }
   }
 });

@@ -22,9 +22,9 @@ function parseDate(dateStr) {
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
-  const { distance, date } = event;
+  const { distance, date, duration, stroke } = event;
 
-  console.log('[checkIn] 收到调用', { distance, date, openid: wxContext.OPENID });
+  console.log('[checkIn] 收到调用', { distance, date, duration, stroke, openid: wxContext.OPENID });
 
   try {
     const targetDateStr = date || toDateStr(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
@@ -40,14 +40,15 @@ exports.main = async (event, context) => {
 
     console.log('[checkIn] 字符串查询结果 count=' + strResult.data.length);
 
-    if (strResult.data.length > 0) {
+      if (strResult.data.length > 0) {
       const record = strResult.data[0];
-      await db.collection('check_ins').doc(record._id).update({
-        data: {
-          distance: distance !== undefined ? Number(distance) : record.distance,
-          updateTime: db.serverDate()
-        }
-      });
+      const updateData = {
+        updateTime: db.serverDate()
+      };
+      if (distance !== undefined) updateData.distance = Number(distance);
+      if (duration !== undefined) updateData.duration = Number(duration);
+      if (stroke !== undefined) updateData.stroke = stroke;
+      await db.collection('check_ins').doc(record._id).update({ data: updateData });
       console.log('[checkIn] 更新完成 (字符串匹配)');
       return {
         code: 0,
@@ -56,6 +57,8 @@ exports.main = async (event, context) => {
           _id: record._id,
           checkedIn: true,
           distance: distance !== undefined ? Number(distance) : record.distance,
+          duration: duration !== undefined ? Number(duration) : (record.duration || 0),
+          stroke: stroke !== undefined ? stroke : (record.stroke || ''),
           checkInTime: record.createTime
         }
       };
@@ -77,14 +80,14 @@ exports.main = async (event, context) => {
 
     if (dateResult.data.length > 0) {
       const record = dateResult.data[0];
-      // 更新数据，同时把 date 迁移为字符串格式
-      await db.collection('check_ins').doc(record._id).update({
-        data: {
-          date: targetDateStr,
-          distance: distance !== undefined ? Number(distance) : record.distance,
-          updateTime: db.serverDate()
-        }
-      });
+      const updateData = {
+        date: targetDateStr,
+        updateTime: db.serverDate()
+      };
+      if (distance !== undefined) updateData.distance = Number(distance);
+      if (duration !== undefined) updateData.duration = Number(duration);
+      if (stroke !== undefined) updateData.stroke = stroke;
+      await db.collection('check_ins').doc(record._id).update({ data: updateData });
       console.log('[checkIn] 更新并迁移完成 (Date → String)');
       return {
         code: 0,
@@ -93,6 +96,8 @@ exports.main = async (event, context) => {
           _id: record._id,
           checkedIn: true,
           distance: distance !== undefined ? Number(distance) : record.distance,
+          duration: duration !== undefined ? Number(duration) : (record.duration || 0),
+          stroke: stroke !== undefined ? stroke : (record.stroke || ''),
           checkInTime: record.createTime
         }
       };
@@ -104,9 +109,9 @@ exports.main = async (event, context) => {
       date: targetDateStr,
       createTime: db.serverDate()
     };
-    if (distance !== undefined) {
-      addData.distance = Number(distance);
-    }
+    if (distance !== undefined) addData.distance = Number(distance);
+    if (duration !== undefined) addData.duration = Number(duration);
+    if (stroke !== undefined) addData.stroke = stroke;
 
     console.log('[checkIn] 新增记录');
     const result = await db.collection('check_ins').add({ data: addData });
@@ -119,6 +124,8 @@ exports.main = async (event, context) => {
         _id: result._id,
         checkedIn: true,
         distance: Number(distance) || 0,
+        duration: Number(duration) || 0,
+        stroke: stroke || '',
         checkInTime: new Date()
       }
     };

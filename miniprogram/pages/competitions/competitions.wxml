@@ -1,0 +1,30 @@
+<view class="comp-page">
+  <view class="comp-header">
+    <text class="comp-title">🏆 公开赛</text>
+    <text class="comp-sub">赛事报名费由平台提供</text>
+  </view>
+
+  <view class="comp-list">
+    <view
+      class="comp-card"
+      wx:for="{{competitions}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      data-index="{{index}}"
+      bindtap="goToDetail">
+      <view class="comp-status {{item.status === 'ended' ? 'ended' : 'upcoming'}}">
+        {{item.status === 'ended' ? '已结束' : '即将开始'}}
+      </view>
+      <text class="comp-name">{{item.name}}</text>
+      <view class="comp-meta">
+        <text class="comp-date">📅 {{item.date}}</text>
+        <text class="comp-loc">📍 {{item.location}}</text>
+      </view>
+      <text class="comp-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="comp-empty" wx:if="{{competitions.length === 0}}">
+    <text>暂无公开赛信息</text>
+  </view>
+</view>

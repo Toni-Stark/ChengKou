@@ -1,0 +1,60 @@
+<view class="detail-page">
+  <view class="detail-card" wx:if="{{competition}}">
+    <view class="detail-header">
+      <text class="detail-name">{{competition.name}}</text>
+      <view class="detail-status {{competition.status === 'ended' ? 'ended' : 'upcoming'}}">
+        {{competition.status === 'ended' ? '已结束' : '即将开始'}}
+      </view>
+    </view>
+
+    <view class="detail-meta">
+      <view class="dm-item">
+        <text class="dm-icon">📅</text>
+        <text class="dm-text">{{competition.date}}</text>
+      </view>
+      <view class="dm-item">
+        <text class="dm-icon">📍</text>
+        <text class="dm-text">{{competition.location}}</text>
+      </view>
+    </view>
+
+    <view class="detail-divider"></view>
+
+    <block wx:if="{{competition.status === 'ended'}}">
+      <text class="section-title">🏅 比赛结果</text>
+      <view class="podium" wx:if="{{competition.topThree && competition.topThree.length > 0}}">
+        <view
+          class="podium-item"
+          wx:for="{{competition.topThree}}"
+          wx:key="rank">
+          <view class="podium-rank rank-{{item.rank}}">
+            <text wx:if="{{item.rank === 1}}">🥇</text>
+            <text wx:elif="{{item.rank === 2}}">🥈</text>
+            <text wx:elif="{{item.rank === 3}}">🥉</text>
+            <text wx:else>{{item.rank}}</text>
+          </view>
+          <text class="podium-name">{{item.name}}</text>
+          <text class="podium-time">{{item.time}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty-tip">暂无比赛结果</view>
+    </block>
+
+    <block wx:if="{{competition.status === 'upcoming'}}">
+      <text class="section-title">🏊 平台已报名选手</text>
+      <view class="reg-list" wx:if="{{competition.registrants && competition.registrants.length > 0}}">
+        <view
+          class="reg-item"
+          wx:for="{{competition.registrants}}"
+          wx:key="name">
+          <view class="reg-avatar">{{item.name[0]}}</view>
+          <text class="reg-name">{{item.name}}</text>
+          <text class="reg-phone">{{item.phone}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty-tip">暂无报名选手，快来成为第一个吧！</view>
+    </block>
+  </view>
+
+  <view wx:else class="empty-tip">加载赛事信息中...</view>
+</view>

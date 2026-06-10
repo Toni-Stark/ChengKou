@@ -27,12 +27,11 @@
       <text class="stat-label">活跃天数</text>
     </view>
     <view class="stat-card">
-      <text class="stat-val">{{streakDays}}</text>
-      <text class="stat-unit">天</text>
-      <text class="stat-label">连续打卡</text>
+      <text class="stat-val">{{totalDurationText || '0min'}}</text>
+      <text class="stat-label">累计用时</text>
     </view>
     <view class="stat-card highlight">
-      <text class="stat-val">{{rankPercent}}%</text>
+      <text class="stat-val">{{rankPercent}}</text>
       <text class="stat-label">超越全国泳者</text>
       <view class="stat-bar"><view class="stat-bar-fill" style="width: {{rankPercent}}"></view></view>
     </view>
@@ -101,9 +100,129 @@
         focus="{{true}}" />
       <text class="modal-unit">m</text>
     </view>
+    <view class="modal-input-row">
+      <input
+        class="modal-input"
+        type="digit"
+        placeholder="运动时长"
+        placeholder-class="input-place"
+        value="{{modalDuration}}"
+        bindinput="onDurationInput" />
+      <text class="modal-unit">分钟</text>
+    </view>
+    <view class="modal-stroke-row">
+      <text class="modal-stroke-label">泳姿</text>
+      <view class="modal-stroke-options">
+        <view
+          class="stroke-option {{modalStroke === 'freestyle' ? 'active' : ''}}"
+          data-stroke="freestyle"
+          bindtap="onStrokeSelect">
+          <text class="stroke-emoji">🏊</text>
+          <text>自由泳</text>
+        </view>
+        <view
+          class="stroke-option {{modalStroke === 'breaststroke' ? 'active' : ''}}"
+          data-stroke="breaststroke"
+          bindtap="onStrokeSelect">
+          <text class="stroke-emoji">🐸</text>
+          <text>蛙泳</text>
+        </view>
+        <view
+          class="stroke-option {{modalStroke === 'backstroke' ? 'active' : ''}}"
+          data-stroke="backstroke"
+          bindtap="onStrokeSelect">
+          <text class="stroke-emoji">🌊</text>
+          <text>仰泳</text>
+        </view>
+        <view
+          class="stroke-option {{modalStroke === 'butterfly' ? 'active' : ''}}"
+          data-stroke="butterfly"
+          bindtap="onStrokeSelect">
+          <text class="stroke-emoji">🦋</text>
+          <text>蝶泳</text>
+        </view>
+      </view>
+    </view>
     <view class="modal-actions">
       <button class="modal-cancel" bindtap="closeModal">取消</button>
       <button class="modal-save" bindtap="saveDistance">保存</button>
     </view>
   </view>
+</view>
+
+<!-- 泳姿速度统计 -->
+<view class="stroke-stats-section" wx:if="{{strokeStats.length > 0}}">
+  <view class="section-title">🏊 泳姿百米速度</view>
+  <view class="stroke-stats-list">
+    <view
+      class="stroke-stat-item"
+      wx:for="{{strokeStats}}"
+      wx:key="id"
+      style="border-left-color: {{item.color}}">
+      <view class="ssi-header">
+        <text class="ssi-emoji">{{item.emoji}}</text>
+        <text class="ssi-name">{{item.name}}</text>
+        <text class="ssi-sessions">{{item.sessions}}次</text>
+      </view>
+      <view class="ssi-body">
+        <text class="ssi-speed">{{item.avgSpeed100m}}s/100m</text>
+        <view class="ssi-tag" wx:if="{{item.tier}}" style="background: {{item.color}}22; color: {{item.color}}">
+          {{item.badge}} {{item.tier}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 进阶建议 -->
+<view class="progression-section" wx:if="{{progression}}">
+  <view class="section-title">🚀 进阶分析</view>
+  <view class="progression-card">
+    <view class="prog-badge-wrap">
+      <view class="prog-badge">
+        <text class="prog-badge-emoji">{{progression.stroke.emoji}}</text>
+        <text class="prog-badge-name">{{progression.stroke.name}}</text>
+      </view>
+      <view class="prog-tier-badge" wx:if="{{userTierInfo}}">
+        <text>{{userTierInfo.badge}} {{userTierInfo.tier}}</text>
+      </view>
+    </view>
+    <text class="prog-level-title">{{progression.current.title}}</text>
+    <text class="prog-desc">{{progression.current.description}}</text>
+    <view class="prog-tips">
+      <view class="prog-tip" wx:for="{{progression.current.tips}}" wx:key="*this" wx:for-item="tip">
+        <text class="prog-tip-dot">•</text>
+        <text>{{tip}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 公开赛提示（未达钻石） -->
+<view class="competition-tip" wx:if="{{showCompetitionTip}}">
+  <view class="comp-tip-header">
+    <text class="comp-tip-icon">❗</text>
+    <text class="comp-tip-title">未达到钻石泳者</text>
+  </view>
+  <text class="comp-tip-desc">当你达到钻石泳者后，平台将为你推荐公开赛信息！赛事报名费由平台提供。如果你有意向参与，请联系客服，我们为你安排。</text>
+</view>
+
+<!-- 公开赛入口（已达钻石） -->
+<view class="competition-entry" wx:if="{{competitions.length > 0}}">
+  <view class="comp-entry-card" bindtap="goToCompetitions">
+    <view class="comp-entry-left">
+      <text class="comp-entry-icon">🏆</text>
+      <view class="comp-entry-text">
+        <text class="comp-entry-title">公开赛</text>
+        <text class="comp-entry-sub">{{competitions.length}}场赛事 · 报名费由平台提供</text>
+      </view>
+    </view>
+    <text class="comp-entry-arrow">›</text>
+  </view>
+</view>
+
+<!-- 每日鼓励 -->
+<view class="encouragement-bar" wx:if="{{encouragement}}">
+  <text class="encouragement-emoji">💪</text>
+  <text class="encouragement-text">{{encouragement}}</text>
 </view>

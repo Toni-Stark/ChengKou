@@ -1,0 +1,97 @@
+.comp-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e8f4fd 0%, #fdf2f8 50%, #fafafa 100%);
+  padding: 24rpx;
+  padding-bottom: 48rpx;
+}
+
+.comp-header {
+  padding: 32rpx 16rpx 20rpx;
+}
+
+.comp-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.comp-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.comp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.comp-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  position: relative;
+  box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.comp-card:active {
+  transform: scale(0.98);
+}
+
+.comp-status {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.comp-status.upcoming {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.comp-status.ended {
+  background: #f5f5f5;
+  color: #999;
+}
+
+.comp-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.comp-meta {
+  display: flex;
+  gap: 24rpx;
+}
+
+.comp-date,
+.comp-loc {
+  font-size: 24rpx;
+  color: #888;
+}
+
+.comp-arrow {
+  position: absolute;
+  right: 24rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+.comp-empty {
+  text-align: center;
+  padding: 80rpx 0;
+  font-size: 28rpx;
+  color: #999;
+}

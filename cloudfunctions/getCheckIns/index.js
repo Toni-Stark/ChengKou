@@ -60,6 +60,8 @@ exports.main = async (event, context) => {
       records[day] = {
         _id: item._id,
         distance: item.distance || 0,
+        duration: item.duration || 0,
+        stroke: item.stroke || '',
         createTime: item.createTime
       };
     }

@@ -9,6 +9,8 @@ Page({
     todayDistance: 0,
     monthActiveDays: 0,
     monthDistance: 0,
+    totalDistance: 0,
+    totalActiveDays: 0,
     youLongShow: 1
   },
 
@@ -39,31 +41,20 @@ Page({
     try {
       if (!wx.cloud || !wx.cloud.callFunction) return;
       const now = new Date();
-      const result = await request.callFunction('getCheckIns', {
+      const result = await request.callFunction('getUserStats', {
         year: now.getFullYear(),
-        month: now.getMonth() + 1
+        month: now.getMonth() + 1,
+        today: now.getDate()
       }, { showLoad: false, showError: false });
 
-      const records = result?.records || {};
-      const today = now.getDate();
-      let activeDays = 0;
-      let totalDist = 0;
-      Object.keys(records).forEach(d => {
-        const dist = records[d]?.distance || 0;
-        if (dist > 0) { activeDays++; totalDist += dist; }
-      });
-
-      let streak = 0;
-      for (let d = today; d >= 1; d--) {
-        if ((records[d]?.distance || 0) > 0) streak++; else break;
-      }
-
+      const data = result?.data || result || {};
       this.setData({
-        todayChecked: !!records[today],
-        todayDistance: records[today]?.distance || 0,
-        monthActiveDays: activeDays,
-        monthDistance: totalDist,
-        currentStreak: streak
+        todayChecked: data.todayChecked || false,
+        todayDistance: data.todayDistance || 0,
+        monthActiveDays: data.monthActiveDays || 0,
+        monthDistance: data.monthDistance || 0,
+        totalDistance: data.totalDistance || 0,
+        totalActiveDays: data.totalActiveDays || 0
       });
     } catch (e) {
       console.warn('加载游泳数据失败:', e);

@@ -1,0 +1,9 @@
+{
+  "name": "cleanupCheckIns",
+  "version": "1.0.0",
+  "description": "清理打卡数据脏数据，去重+日期格式迁移",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

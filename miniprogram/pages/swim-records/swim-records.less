@@ -461,3 +461,323 @@
   border: none;
   padding: 0;
 }
+
+// ======== 弹窗 - 泳姿选择 ========
+.modal-stroke-row {
+  margin-bottom: @space-xl;
+}
+
+.modal-stroke-label {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-bottom: @space-sm;
+  text-align: center;
+}
+
+.modal-stroke-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: @space-sm;
+  justify-content: center;
+}
+
+.stroke-option {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 10rpx 20rpx;
+  background: #f5f6fa;
+  border-radius: 28rpx;
+  font-size: 24rpx;
+  color: #666;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+
+  &.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+.stroke-emoji {
+  font-size: 28rpx;
+}
+
+// ======== 泳姿速度统计 ========
+.stroke-stats-section {
+  margin-top: @space-lg;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: @space-base;
+  padding: 0 4rpx;
+}
+
+.stroke-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: @space-sm;
+}
+
+.stroke-stat-item {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: @space-base @space-lg;
+  border-left: 8rpx solid #667eea;
+  box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.06);
+}
+
+.ssi-header {
+  display: flex;
+  align-items: center;
+  gap: @space-xs;
+  margin-bottom: 6rpx;
+}
+
+.ssi-emoji {
+  font-size: 36rpx;
+}
+
+.ssi-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.ssi-sessions {
+  font-size: 22rpx;
+  color: #999;
+  background: #f5f6fa;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+}
+
+.ssi-body {
+  display: flex;
+  align-items: baseline;
+  gap: @space-base;
+  padding-left: 44rpx;
+}
+
+.ssi-speed {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #5c6bc0;
+}
+
+.ssi-tag {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+}
+
+// ======== 进阶建议 ========
+.progression-section {
+  margin-top: @space-lg;
+}
+
+.progression-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: @space-xl;
+  box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.08);
+}
+
+.prog-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: @space-sm;
+  margin-bottom: @space-base;
+  flex-wrap: wrap;
+}
+
+.prog-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  background: linear-gradient(135deg, #e8f0fe, #f0e6ff);
+  padding: 8rpx 20rpx;
+  border-radius: 24rpx;
+}
+
+.prog-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #ffd54f, #ffb300);
+  color: #5d4037;
+  font-size: 24rpx;
+  font-weight: bold;
+  box-shadow: 0 2rpx 8rpx rgba(255, 179, 0, 0.3);
+}
+
+.prog-badge-emoji {
+  font-size: 32rpx;
+}
+
+.prog-badge-name {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #5c6bc0;
+}
+
+.prog-level-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: @space-sm;
+}
+
+.prog-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: @space-base;
+}
+
+.prog-tips {
+  display: flex;
+  flex-direction: column;
+  gap: @space-xs;
+}
+
+.prog-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #555;
+  line-height: 1.5;
+}
+
+.prog-tip-dot {
+  color: #667eea;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+// ======== 鼓励语 ========
+.encouragement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: @space-xs;
+  margin-top: @space-xl;
+  padding: @space-lg @space-xl;
+  background: linear-gradient(135deg, #fff9e6, #fff3e0);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 183, 77, 0.1);
+}
+
+.encouragement-emoji {
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.encouragement-text {
+  font-size: 26rpx;
+  color: #e65100;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+// ======== 公开赛提示 ========
+.competition-tip {
+  margin-top: @space-lg;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: @space-xl;
+  box-shadow: 0 4rpx 16rpx rgba(149, 157, 224, 0.06);
+  border-left: 6rpx solid #ff9800;
+}
+
+.comp-tip-header {
+  display: flex;
+  align-items: center;
+  gap: @space-xs;
+  margin-bottom: @space-sm;
+}
+
+.comp-tip-icon {
+  font-size: 32rpx;
+}
+
+.comp-tip-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #e65100;
+}
+
+.comp-tip-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+// ======== 公开赛入口 ========
+.competition-entry {
+  margin-top: @space-lg;
+}
+
+.comp-entry-card {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20rpx;
+  padding: @space-xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+}
+
+.comp-entry-card:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.comp-entry-left {
+  display: flex;
+  align-items: center;
+  gap: @space-base;
+}
+
+.comp-entry-icon {
+  font-size: 48rpx;
+}
+
+.comp-entry-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.comp-entry-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.comp-entry-sub {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.comp-entry-arrow {
+  font-size: 40rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: bold;
+}

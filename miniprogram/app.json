@@ -13,6 +13,8 @@
     "pages/settings/settings",
     "pages/get-openid/get-openid",
     "pages/swim-records/swim-records",
+    "pages/competitions/competitions",
+    "pages/competition-detail/competition-detail",
     "pages/stroke-detail/stroke-detail",
     "pages/coach-detail/coach-detail",
     "pages/lifeguard-detail/lifeguard-detail",
