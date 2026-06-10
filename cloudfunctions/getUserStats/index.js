@@ -53,6 +53,23 @@ exports.main = async (event, context) => {
     let monthActiveDays = 0;
     let todayDistance = 0;
     let todayChecked = false;
+    let bestPace = Infinity;
+    let bestPaceStroke = '';
+    let monthMaxDistance = 0;
+    let monthActiveDaysCount = 0;
+
+    const STROKE_EMOJI = {
+      freestyle: '🏊',
+      breaststroke: '🐸',
+      backstroke: '🌊',
+      butterfly: '🦋'
+    };
+
+    function formatPace(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return m + ':' + String(s).padStart(2, '0');
+    }
 
     const uniqueRecords = Object.values(dateMap);
 
@@ -80,14 +97,27 @@ exports.main = async (event, context) => {
       if (itemMonth === month) {
         if (dist > 0) {
           monthDistance += dist;
-          monthActiveDays++;
+          monthActiveDaysCount++;
         }
+        if (dist > monthMaxDistance) monthMaxDistance = dist;
         if (itemDay === today) {
           todayChecked = true;
           todayDistance = dist;
         }
       }
+
+      if (dist > 0 && dur > 0) {
+        const pace = dur / (dist / 100);
+        if (pace < bestPace) {
+          bestPace = pace;
+          bestPaceStroke = item.stroke || '';
+        }
+      }
     });
+
+    const bestPaceFormatted = bestPace < Infinity ? formatPace(bestPace) : '';
+    const bestPaceEmoji = STROKE_EMOJI[bestPaceStroke] || '⏱';
+    const isIronWill = monthDistance > 45000 || monthMaxDistance > 12000;
 
     return {
       code: 0,
@@ -97,9 +127,14 @@ exports.main = async (event, context) => {
         totalActiveDays,
         totalDuration,
         monthDistance,
-        monthActiveDays,
+        monthActiveDays: monthActiveDaysCount,
         todayDistance,
-        todayChecked
+        todayChecked,
+        bestPaceFormatted,
+        bestPaceEmoji,
+        bestPaceStroke,
+        isIronWill,
+        monthMaxDistance
       }
     };
   } catch (error) {

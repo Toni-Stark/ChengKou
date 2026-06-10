@@ -11,6 +11,8 @@ Page({
     monthDistance: 0,
     totalDistance: 0,
     totalActiveDays: 0,
+    bestPaceFormatted: '',
+    bestPaceEmoji: '⏱',
     youLongShow: 1
   },
 
@@ -54,7 +56,9 @@ Page({
         monthActiveDays: data.monthActiveDays || 0,
         monthDistance: data.monthDistance || 0,
         totalDistance: data.totalDistance || 0,
-        totalActiveDays: data.totalActiveDays || 0
+        totalActiveDays: data.totalActiveDays || 0,
+        bestPaceFormatted: data.bestPaceFormatted || '',
+        bestPaceEmoji: data.bestPaceEmoji || '⏱'
       });
     } catch (e) {
       console.warn('加载游泳数据失败:', e);
@@ -62,26 +66,9 @@ Page({
   },
 
   async loadUserInfo(forceRefresh = false) {
-    const app = getApp();
-    if (!forceRefresh && app.globalData.userInfo) {
-      this.setData({ userInfo: app.globalData.userInfo, isLogin: true });
-      return;
-    }
-
     const stored = auth.getStoredUserInfo();
-    if (stored.userInfo && stored.openid) {
-      try {
-        if (!wx.cloud || !wx.cloud.callFunction) {
-          this.setData({ userInfo: stored.userInfo, isLogin: true });
-          return;
-        }
-        const result = await request.callFunction('getUserInfo', {}, { showLoad: true });
-        auth.saveUserInfo(result, stored.openid);
-        this.setData({ userInfo: result, isLogin: true });
-      } catch (error) {
-        this.setData({ userInfo: stored.userInfo, isLogin: true });
-      }
-    } else {
+
+    if (!stored.userInfo || !stored.openid) {
       this.setData({
         userInfo: {
           nickName: '未登录',
@@ -91,6 +78,22 @@ Page({
         },
         isLogin: false
       });
+      return;
+    }
+
+    // 先用缓存即时展示，再拉取最新数据
+    this.setData({ userInfo: stored.userInfo, isLogin: true });
+
+    if (!wx.cloud || !wx.cloud.callFunction) return;
+
+    try {
+      const result = await request.callFunction('getUserInfo', {}, { showLoad: false, showError: false });
+      if (result) {
+        auth.saveUserInfo(result, stored.openid);
+        this.setData({ userInfo: result, isLogin: true });
+      }
+    } catch (error) {
+      // 接口失败时不覆盖缓存数据
     }
   },
 

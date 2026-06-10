@@ -17,26 +17,28 @@ exports.main = async (event, context) => {
     const skip = (page - 1) * pageSize;
 
     let where = {
-      status: 'published',
-      isPrivate: false
+      status: 'published'
     };
 
     if (myOwn && wxContext.OPENID) {
       where._openid = wxContext.OPENID;
       console.log('[getUserDynamics] myOwn mode, OPENID:', wxContext.OPENID);
-    } else if (userId) {
-      where._openid = userId;
-    } else if (subscribedOnly && wxContext.OPENID) {
-      const subResult = await db.collection('subscriptions')
-        .where({ subscriberOpenid: wxContext.OPENID })
-        .get();
+    } else {
+      where.isPrivate = false;
+      if (userId) {
+        where._openid = userId;
+      } else if (subscribedOnly && wxContext.OPENID) {
+        const subResult = await db.collection('subscriptions')
+          .where({ subscriberOpenid: wxContext.OPENID })
+          .get();
 
-      const subscribedOpenids = subResult.data.map(item => item.targetOpenid);
-      if (subscribedOpenids.length > 0) {
-        subscribedOpenids.push(wxContext.OPENID);
-        where._openid = _.in(subscribedOpenids);
-      } else {
-        where._openid = wxContext.OPENID;
+        const subscribedOpenids = subResult.data.map(item => item.targetOpenid);
+        if (subscribedOpenids.length > 0) {
+          subscribedOpenids.push(wxContext.OPENID);
+          where._openid = _.in(subscribedOpenids);
+        } else {
+          where._openid = wxContext.OPENID;
+        }
       }
     }
 

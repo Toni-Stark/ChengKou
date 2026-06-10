@@ -34,11 +34,16 @@ exports.main = async (event, context) => {
     const userInfo = userResult.data[0];
 
     // 统计用户的动态数
+    const dynamicsWhere = {
+      _openid: targetOpenid,
+      status: 'published'
+    };
+    if (userId) {
+      // 查看他人时，只统计公开游龙
+      dynamicsWhere.isPrivate = false;
+    }
     const dynamicsCount = await db.collection('user_dynamics')
-      .where({
-        _openid: targetOpenid,
-        status: 'published'
-      })
+      .where(dynamicsWhere)
       .count();
 
     // 统计用户的粉丝数（有多少人订阅了我）

@@ -51,9 +51,8 @@
       <text class="overview-label">本月共游</text>
     </view>
     <view class="overview-card">
-      <text class="overview-val">{{totalActiveDays}}</text>
-      <text class="overview-unit">天</text>
-      <text class="overview-label">打卡天数</text>
+      <text class="overview-val">{{bestPaceEmoji}} {{bestPaceFormatted || '--:--'}}</text>
+      <text class="overview-label">最佳 PB</text>
     </view>
     <view class="overview-card">
       <text class="overview-val">{{totalDistance}}</text>

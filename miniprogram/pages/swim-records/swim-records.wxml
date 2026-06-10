@@ -22,9 +22,8 @@
       <text class="stat-label">本月共游</text>
     </view>
     <view class="stat-card">
-      <text class="stat-val">{{activeDays}}</text>
-      <text class="stat-unit">天</text>
-      <text class="stat-label">活跃天数</text>
+      <text class="stat-val">{{bestPaceEmoji}} {{bestPaceFormatted || '--:--'}}</text>
+      <text class="stat-label">最佳 PB</text>
     </view>
     <view class="stat-card">
       <text class="stat-val">{{totalDurationText || '0min'}}</text>
@@ -218,6 +217,15 @@
       </view>
     </view>
     <text class="comp-entry-arrow">›</text>
+  </view>
+</view>
+
+<!-- 特殊称号 -->
+<view class="special-title-card" wx:if="{{specialTitle}}">
+  <text class="stc-icon">🏅</text>
+  <view class="stc-text">
+    <text class="stc-title">{{specialTitle}}</text>
+    <text class="stc-desc">月游泳超45km 或 单日超12km 可获得此称号</text>
   </view>
 </view>
 

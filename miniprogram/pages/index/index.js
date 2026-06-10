@@ -22,8 +22,8 @@ Page({
   async loadFeaturedDynamic() {
     this.setData({
       featuredDynamic: {
-        title: '2026游泳春训班开始报名',
-        desc: '专业教练团队，小班教学',
+        title: '2026游泳暑期训练开始报名',
+        desc: '专业教练团队，小班教学，一对一指导',
         image: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
       }
     });

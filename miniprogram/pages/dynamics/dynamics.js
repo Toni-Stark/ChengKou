@@ -244,7 +244,7 @@ Page({
     try {
       wx.showLoading({ title: '删除中...' });
 
-      await request.callFunction('deleteDynamic', { id });
+      await request.callFunction('deleteDynamic', { dynamicId: id });
 
       // 暂时只更新UI
       const newList = this.data.dynamicsList.filter(item => item._id !== id);

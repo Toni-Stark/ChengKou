@@ -781,3 +781,39 @@
   color: rgba(255, 255, 255, 0.7);
   font-weight: bold;
 }
+
+// ======== 特殊称号 ========
+.special-title-card {
+  display: flex;
+  align-items: center;
+  gap: @space-base;
+  margin-top: @space-xl;
+  padding: @space-lg @space-xl;
+  background: linear-gradient(135deg, #fff8e1, #ffe082);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 179, 0, 0.2);
+  border: 2rpx solid rgba(255, 152, 0, 0.3);
+}
+
+.stc-icon {
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+
+.stc-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.stc-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #e65100;
+}
+
+.stc-desc {
+  font-size: 22rpx;
+  color: #bf360c;
+  opacity: 0.7;
+}
