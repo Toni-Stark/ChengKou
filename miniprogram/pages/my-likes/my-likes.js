@@ -9,7 +9,9 @@ Page({
     hasMore: true,
     loading: false,
     isEmpty: false,
-    userInfo: null
+    userInfo: null,
+    viewMode: 'grid',
+    deletingOpenid: ''
   },
 
   onLoad() {
@@ -139,5 +141,20 @@ Page({
     wx.switchTab({
       url: '/pages/dynamics/dynamics'
     });
+  },
+
+  toggleViewMode() {
+    this.setData({
+      viewMode: this.data.viewMode === 'grid' ? 'list' : 'grid'
+    });
+  },
+
+  onUserTap(e) {
+    const openid = e.currentTarget.dataset.openid;
+    if (openid) {
+      wx.navigateTo({
+        url: `/pages/user-profile/user-profile?openid=${openid}`
+      });
+    }
   }
 });

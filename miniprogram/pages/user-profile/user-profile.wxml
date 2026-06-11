@@ -1,9 +1,15 @@
 <view class="profile-page">
   <!-- Banner -->
   <view class="profile-banner">
-    <view class="banner-decor"></view>
+    <view class="banner-decor-top"></view>
+    <view class="banner-decor-bottom"></view>
+    <view class="banner-glow"></view>
+
     <view class="profile-header" wx:if="{{userInfo}}">
-      <user-avatar src="{{userInfo.avatarUrl}}" size="large" shape="circle"></user-avatar>
+      <view class="profile-avatar-wrap">
+        <user-avatar src="{{userInfo.avatarUrl}}" size="large" shape="circle"></user-avatar>
+        <view class="avatar-ring-anim"></view>
+      </view>
       <text class="profile-name">{{userInfo.nickName || '未知用户'}}</text>
       <text class="profile-sig">{{userInfo.signature || '这个人很懒，什么都没留下'}}</text>
     </view>
@@ -27,7 +33,8 @@
     <!-- 订阅按钮 -->
     <view class="subscribe-bar" wx:if="{{!isSelf && userInfo}}">
       <view class="sub-btn {{isSubscribed ? 'active' : ''}}" bindtap="onSubscribe">
-        <text>{{isSubscribed ? '已订阅' : '+ 订阅'}}</text>
+        <view class="sub-ripple {{isSubscribed ? '' : 'animating'}}"></view>
+        <text class="sub-text">{{isSubscribed ? '✓ 已订阅' : '+ 订阅'}}</text>
       </view>
     </view>
   </view>
@@ -35,27 +42,52 @@
   <!-- 游龙列表 -->
   <view class="dynamics-section" wx:if="{{!isEmpty && youLongShow}}">
     <view class="section-title-bar">
-      <text class="section-title">他的游龙</text>
+      <view class="title-deco">
+        <view class="deco-dot"></view>
+        <view class="deco-line"></view>
+      </view>
+      <text class="section-title">TA 的游龙</text>
+      <text class="section-count" wx:if="{{dynamicsList.length}}">{{dynamicsList.length}}条</text>
     </view>
-    <view wx:for="{{dynamicsList}}" wx:key="_id" bindtap="onDynamicTap" data-id="{{item._id}}">
-      <dynamic-item
-        item="{{item}}"
-        youLongShow="{{youLongShow}}"
-        bind:subscribe="onSubscribeEvent"
-        bind:comment="onComment">
-      </dynamic-item>
+
+    <view class="dynamics-feed">
+      <view
+        wx:for="{{dynamicsList}}"
+        wx:key="_id"
+        class="feed-item"
+        style="animation-delay: {{index * 0.05}}s;"
+        bindtap="onDynamicTap"
+        data-id="{{item._id}}">
+        <dynamic-item
+          item="{{item}}"
+          youLongShow="{{youLongShow}}"
+          bind:subscribe="onSubscribeEvent"
+          bind:comment="onComment">
+        </dynamic-item>
+      </view>
     </view>
 
     <view class="load-more" wx:if="{{loading}}">
-      <text class="text-secondary text-sm">加载中...</text>
+      <view class="dot-loading">
+        <view class="ldot"></view>
+        <view class="ldot"></view>
+        <view class="ldot"></view>
+      </view>
+      <text class="load-text">加载中...</text>
     </view>
     <view class="load-more" wx:if="{{!hasMore && dynamicsList.length > 0}}">
-      <text class="text-secondary text-sm">没有更多了</text>
+      <text class="load-end">— 已经到底了 —</text>
     </view>
   </view>
 
   <view class="empty-state" wx:if="{{isEmpty && !loading && youLongShow}}">
-    <text class="empty-icon">📝</text>
-    <text class="empty-text">还没有发布游龙</text>
+    <view class="empty-art">
+      <view class="empty-circle e1"></view>
+      <view class="empty-circle e2"></view>
+      <view class="empty-circle e3"></view>
+      <text class="empty-emoji">🏊</text>
+    </view>
+    <text class="empty-title">还没有发布游龙</text>
+    <text class="empty-desc">TA正在泳池里扑腾呢 ~</text>
   </view>
 </view>

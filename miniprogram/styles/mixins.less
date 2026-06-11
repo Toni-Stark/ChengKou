@@ -129,3 +129,271 @@
     transform: scale(@scale);
   }
 }
+
+// ======= 重构新增 Mixins =======
+
+// 对话气泡 - 左边（他人）
+.chat-bubble-left(@bg: @bubble-other-bg) {
+  position: relative;
+  background: @bg;
+  border-radius: @radius-xl;
+  padding: @space-lg @space-xl;
+  margin-left: 40rpx;
+  box-shadow: @shadow-sm;
+  border: 1rpx solid @bubble-other-border;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -12rpx;
+    top: 32rpx;
+    width: 0;
+    height: 0;
+    border-top: 12rpx solid transparent;
+    border-bottom: 12rpx solid transparent;
+    border-right: 12rpx solid @bg;
+  }
+}
+
+// 对话气泡 - 右边（自己）
+.chat-bubble-right() {
+  position: relative;
+  background: @bubble-self-bg;
+  border-radius: @radius-xl;
+  padding: @space-lg @space-xl;
+  margin-right: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.12);
+  border: 1rpx solid @bubble-self-border;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -12rpx;
+    top: 32rpx;
+    width: 0;
+    height: 0;
+    border-top: 12rpx solid transparent;
+    border-bottom: 12rpx solid transparent;
+    border-left: 12rpx solid #e8f0fe;
+  }
+}
+
+// 热门徽章
+.hot-badge() {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 20rpx;
+  background: @gold-gradient;
+  border-radius: 24rpx;
+  font-size: 22rpx;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: @shadow-gold;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+// 杂志卡片 - 图片为主
+.magazine-card-photo() {
+  position: relative;
+  border-radius: @radius-2xl;
+  overflow: hidden;
+  box-shadow: @shadow-card;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:active {
+    transform: translateY(-4rpx);
+    box-shadow: @shadow-float;
+  }
+
+  .magazine-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24rpx 20rpx;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+    color: #fff;
+  }
+}
+
+// 杂志卡片 - 色彩为主
+.magazine-card-color(@color: #667eea) {
+  background: linear-gradient(135deg, @color 0%, darken(@color, 15%) 100%);
+  border-radius: @radius-2xl;
+  padding: @space-xl;
+  color: #fff;
+  box-shadow: 0 8rpx 24rpx fade(@color, 30%);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 60%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: translateY(-4rpx) scale(0.98);
+    box-shadow: 0 12rpx 32rpx fade(@color, 40%);
+  }
+}
+
+// 浮动标签输入框
+.floating-label() {
+  position: relative;
+  background: #f5f6fa;
+  border-radius: @radius-lg;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+  padding: 24rpx @space-lg @space-base;
+
+  .floating-label-text {
+    position: absolute;
+    left: @space-lg;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 28rpx;
+    color: @text-placeholder;
+    transition: all 0.25s ease;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  &.focused, &.has-value {
+    border-color: @brand-start;
+    background: #fff;
+    box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.06);
+
+    .floating-label-text {
+      top: 10rpx;
+      font-size: 20rpx;
+      color: @brand-start;
+      transform: translateY(0);
+    }
+  }
+}
+
+// 预览选择卡片
+.preview-select-card() {
+  width: 160rpx;
+  height: 180rpx;
+  border-radius: @radius-xl;
+  padding: @space-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: @space-sm;
+  background: #fff;
+  border: 3rpx solid @border-light;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+
+  &.selected {
+    border-color: @brand-start;
+    background: linear-gradient(135deg, #f5f0ff 0%, #eef4ff 100%);
+    box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.2);
+    transform: translateY(-4rpx);
+
+    &::after {
+      content: '✓';
+      position: absolute;
+      top: @space-xs;
+      right: @space-sm;
+      width: 36rpx;
+      height: 36rpx;
+      background: @brand-gradient;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 22rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// 自定义滚动条（微信小程序可能不支持，但保留）
+.custom-scrollbar() {
+  &::-webkit-scrollbar {
+    width: 6rpx;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3rpx;
+  }
+}
+
+// 闪烁加载占位
+.shimmer() {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+// ======= 动画 Keyframes =======
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8rpx); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(0) translateZ(0) scaleY(1); }
+  25% { transform: translateX(-25%) translateZ(0) scaleY(0.55); }
+  50% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+  75% { transform: translateX(-25%) translateZ(0) scaleY(0.85); }
+}
+
+@keyframes rippleIn {
+  0% { transform: scale(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-60rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(60rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}

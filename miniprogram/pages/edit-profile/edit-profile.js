@@ -1,8 +1,7 @@
 const auth = require('../../utils/auth.js');
 const request = require('../../utils/request.js');
 
-const QINIU_BASE = 'http://tg00h6qkg.hn-bkt.clouddn.com';
-const DEFAULT_AVATAR = QINIU_BASE + '/common/default-avatar.png';
+const DEFAULT_AVATAR = request.QINIU_BASE + '/common/default-avatar.png';
 
 Page({
   data: {
@@ -12,7 +11,11 @@ Page({
       signature: ''
     },
     originalData: {},
-    saving: false
+    saving: false,
+    nickFocused: false,
+    sigFocused: false,
+    nickCount: 0,
+    sigCount: 0
   },
 
   onLoad() {
@@ -35,7 +38,9 @@ Page({
           avatarUrl: userInfo.avatarUrl || DEFAULT_AVATAR,
           nickName: userInfo.nickName || '',
           signature: userInfo.signature || ''
-        }
+        },
+        nickCount: (userInfo.nickName || '').length,
+        sigCount: (userInfo.signature || '').length
       });
     }
   },
@@ -70,16 +75,34 @@ Page({
   onNickNameInput(e) {
     console.log(e);
     this.setData({
-      'form.nickName': e.detail.value
+      'form.nickName': e.detail.value,
+      nickCount: (e.detail.value || '').length
     });
+  },
+
+  onNickFocus() {
+    this.setData({ nickFocused: true });
+  },
+
+  onNickBlur() {
+    this.setData({ nickFocused: false });
   },
 
   // 输入签名
   onSignatureInput(e) {
 
     this.setData({
-      'form.signature': e.detail.value
+      'form.signature': e.detail.value,
+      sigCount: (e.detail.value || '').length
     });
+  },
+
+  onSigFocus() {
+    this.setData({ sigFocused: true });
+  },
+
+  onSigBlur() {
+    this.setData({ sigFocused: false });
   },
 
   // 保存资料

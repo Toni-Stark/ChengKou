@@ -7,6 +7,7 @@ Page({
     content: '',
     title: '',
     video: '',
+    videoDuration: 0,
     subtitle: '',
     images: [],
     location: null,
@@ -103,12 +104,17 @@ Page({
       count: 1,
       mediaType: ['video'],
       sourceType: ['album', 'camera'],
-      maxDuration: 60,
+      maxDuration: 120,
       camera: 'back',
       success: (res) => {
         const file = res.tempFiles[0];
+        if (file.duration > 120) {
+          wx.showToast({ title: '视频时长不能超过2分钟', icon: 'none' });
+          return;
+        }
         this.setData({
           video: file.tempFilePath,
+          videoDuration: file.duration,
           thumbnail: file.thumbTempFilePath || ''
         });
       }
@@ -131,7 +137,7 @@ Page({
   },
 
   deleteVideo() {
-    this.setData({ video: '', thumbnail: '' });
+    this.setData({ video: '', videoDuration: 0, thumbnail: '' });
   },
 
   onVideoError(e) {
@@ -175,11 +181,15 @@ Page({
   },
 
   async publish() {
-    const { displayType, content, title, subtitle, video, images, location } = this.data;
+    const { displayType, content, title, subtitle, video, videoDuration, images, location } = this.data;
 
     if (displayType === 'video') {
       if (!video) {
         request.showToast('请选择视频');
+        return;
+      }
+      if (videoDuration > 120) {
+        request.showToast('视频时长不能超过2分钟');
         return;
       }
     } else if (displayType === 'large') {

@@ -23,7 +23,7 @@ module.exports = [
       { title: '高肘划水技术', desc: '在水中划臂时保持肘部高于手腕和前臂，形成对水面最大化。关键是从入水就开始高肘，推水阶段加速发力。' }
     ],
     videoUrl: '',
-    imageUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/swim/freestyle.png'
+    imageUrl: 'https://lovebeyonddays.com/swim/freestyle.png'
   },
   {
     id: 'breaststroke',
@@ -49,7 +49,7 @@ module.exports = [
       { title: '窄蹬腿技术', desc: '缩小蹬腿幅度，加快动作频率。适合短距离冲刺，减少阻力面。膝盖间距不超过肩宽。' }
     ],
     videoUrl: '',
-    imageUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/swim/breaststroke.png'
+    imageUrl: 'https://lovebeyonddays.com/swim/breaststroke.png'
   },
   {
     id: 'backstroke',
@@ -75,7 +75,7 @@ module.exports = [
       { title: '双侧呼吸节奏', desc: '虽然仰泳面部始终露出水面，但建立与划臂配合的呼吸节奏很重要。推水时吸气、移臂时呼气。' }
     ],
     videoUrl: '',
-    imageUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/swim/backstroke.png'
+    imageUrl: 'https://lovebeyonddays.com/swim/backstroke.png'
   },
   {
     id: 'butterfly',
@@ -101,6 +101,6 @@ module.exports = [
       { title: '节奏变速游', desc: '在训练中交替使用快慢节奏，强化爆发力。快节奏时强调划水力量，慢节奏时注重动作幅度和流畅度。' }
     ],
     videoUrl: '',
-    imageUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/swim/butterfly.png'
+    imageUrl: 'https://lovebeyonddays.com/swim/butterfly.png'
   }
 ];

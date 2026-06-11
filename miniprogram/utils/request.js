@@ -4,7 +4,7 @@
 
 let loadingCount = 0;
 
-const QINIU_BASE = 'http://tg00h6qkg.hn-bkt.clouddn.com';
+const QINIU_BASE = 'https://lovebeyonddays.com';
 
 const _urlCache = {};
 const CACHE_TTL = 5 * 60 * 1000;
@@ -306,6 +306,7 @@ function clearUrlCache() {
 }
 
 module.exports = {
+  QINIU_BASE,
   showLoading,
   hideLoading,
   showToast,

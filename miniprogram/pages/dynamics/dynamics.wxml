@@ -16,18 +16,22 @@
     </view>
 
     <block wx:else>
-      <dynamic-item
+      <view
         wx:for="{{dynamicsList}}"
         wx:key="_id"
-        item="{{item}}"
-        isShow="{{isShow}}"
-        youLongShow="{{youLongShow}}"
-        bind:userTap="onUserTap"
-        bind:subscribe="onSubscribe"
-        bind:comment="onComment"
-        bind:share="onShare"
-        bind:delete="onDelete">
-      </dynamic-item>
+        bindtap="onCardTap"
+        data-id="{{item._id}}">
+        <dynamic-item
+          item="{{item}}"
+          isShow="{{isShow}}"
+          youLongShow="{{youLongShow}}"
+          bind:userTap="onUserTap"
+          bind:subscribe="onSubscribe"
+          bind:comment="onComment"
+          bind:share="onShare"
+          bind:delete="onDelete">
+        </dynamic-item>
+      </view>
 
       <view class="empty-state" wx:if="{{dynamicsList.length === 0 && !loading}}">
         <view class="empty-art">

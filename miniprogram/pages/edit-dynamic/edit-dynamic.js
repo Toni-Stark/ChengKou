@@ -5,18 +5,20 @@ Page({
     youLongShow: 1,
     dynamicId: '',
     displayType: 'grid9',
+    displayTypeInfo: { value: 'grid9', label: '九宫格', icon: '▦', desc: '分享多张图片和文字', preview: 'grid' },
     content: '',
     title: '',
     video: '',
+    videoDuration: 0,
     images: [],
     location: null,
     submitting: false,
     loaded: false,
     displayTypes: [
-      { value: 'grid9', label: '九宫格', desc: '' },
-      { value: 'large', label: '大图模式', desc: '' },
-      { value: 'video', label: '视频', desc: '' },
-      { value: 'text', label: '纯文本', desc: '' }
+      { value: 'grid9', label: '九宫格', icon: '▦', desc: '分享多张图片和文字', preview: 'grid' },
+      { value: 'large', label: '大图', icon: '🖼', desc: '大图封面 + 文字内容', preview: 'large' },
+      { value: 'video', label: '视频', icon: '🎬', desc: '分享精彩游姿视频', preview: 'video' },
+      { value: 'text', label: '纯文字', icon: '📝', desc: '只分享文字内容', preview: 'text' }
     ]
   },
 
@@ -62,8 +64,11 @@ Page({
         return;
       }
 
+      const dt = result.displayType || 'grid9';
+      const dtInfo = this.data.displayTypes.find(d => d.value === dt) || this.data.displayTypes[0];
       this.setData({
-        displayType: result.displayType || 'grid9',
+        displayType: dt,
+        displayTypeInfo: dtInfo,
         content: result.content || '',
         title: result.title || '',
         video: result.video || '',
@@ -78,6 +83,18 @@ Page({
 
   onDisplayTypeChange(e) {
     this.setData({ displayType: e.detail.value, images: [], video: '', content: '', title: '' });
+  },
+
+  onDisplayTypeTap(e) {
+    const { type } = e.currentTarget.dataset;
+    if (type === this.data.displayType) return;
+    this.setData({ displayType: type, images: [], video: '', content: '', title: '' });
+    this.updateDisplayTypeInfo(type);
+  },
+
+  updateDisplayTypeInfo(type) {
+    const info = this.data.displayTypes.find(d => d.value === type) || this.data.displayTypes[0];
+    this.setData({ displayTypeInfo: info });
   },
 
   onContentInput(e) { this.setData({ content: e.detail.value }); },
@@ -102,15 +119,19 @@ Page({
 
   chooseVideo() {
     wx.chooseMedia({
-      count: 1, mediaType: ['video'], sourceType: ['album', 'camera'], maxDuration: 60,
+      count: 1, mediaType: ['video'], sourceType: ['album', 'camera'], maxDuration: 120,
       success: (res) => {
         const f = res.tempFiles[0];
-        this.setData({ video: f.tempFilePath, thumbnail: f.thumbTempFilePath || '' });
+        if (f.duration > 120) {
+          wx.showToast({ title: '视频时长不能超过2分钟', icon: 'none' });
+          return;
+        }
+        this.setData({ video: f.tempFilePath, videoDuration: f.duration, thumbnail: f.thumbTempFilePath || '' });
       }
     });
   },
 
-  deleteVideo() { this.setData({ video: '', thumbnail: '' }); },
+  deleteVideo() { this.setData({ video: '', videoDuration: 0, thumbnail: '' }); },
 
   chooseLocation() {
     wx.chooseLocation({
@@ -142,9 +163,12 @@ Page({
   },
 
   async save() {
-    const { displayType, content, title, video, images } = this.data;
+    const { displayType, content, title, video, videoDuration, images } = this.data;
 
-    if (displayType === 'video' && !video) { wx.showToast({ title: '请选择视频', icon: 'none' }); return; }
+    if (displayType === 'video') {
+      if (!video) { wx.showToast({ title: '请选择视频', icon: 'none' }); return; }
+      if (videoDuration > 120) { wx.showToast({ title: '视频时长不能超过2分钟', icon: 'none' }); return; }
+    }
     if (displayType === 'large' && (!title.trim() || images.length === 0)) { wx.showToast({ title: '标题和封面图必填', icon: 'none' }); return; }
     if (displayType === 'grid9' && !content.trim() && images.length === 0) { wx.showToast({ title: '请输入内容或添加图片', icon: 'none' }); return; }
     if (displayType === 'text' && !content.trim()) { wx.showToast({ title: '请输入文本', icon: 'none' }); return; }

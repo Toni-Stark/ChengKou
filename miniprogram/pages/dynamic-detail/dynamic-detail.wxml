@@ -11,74 +11,112 @@
       item="{{dynamic}}"
       isShow="{{isShow}}"
       youLongShow="{{youLongShow}}"
+      hideActions="{{true}}"
       bind:subscribe="onDynamicSubscribe"
-      bind:comment="onComment"
       bind:share="onShare">
     </dynamic-item>
   </view>
 
   <!-- 评论区 -->
   <view class="comments-section">
-    <view class="section-title">
-      <text class="title-icon">💬</text>
-      <text class="title-text">玛卡巴卡</text>
-      <text class="title-count">{{dynamic.commentsCount || 0}}</text>
+    <view class="section-header">
+      <text class="header-icon">💬</text>
+      <text class="header-text">评论</text>
+      <text class="header-count" wx:if="{{dynamic.commentsCount > 0}}">{{dynamic.commentsCount}}</text>
     </view>
 
-    <view class="comments-list">
+    <!-- 热门评论 -->
+    <view class="hot-zone" wx:if="{{commentsList.length >= 3}}">
+      <view class="hot-tag">
+        <text>🔥 热门</text>
+      </view>
       <view
-        class="comment-card"
-        wx:for="{{commentsList}}"
+        class="comment-card hot-card"
+        wx:for="{{hotComments}}"
         wx:key="_id">
-        <view class="comment-top">
+        <view class="card-left">
           <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
-          <view class="comment-body">
-            <view class="comment-meta">
-              <text class="comment-author">{{item.userInfo.nickName}}</text>
-              <text class="comment-time">{{item.displayTime || item.createTime}}</text>
-            </view>
-            <view class="comment-content">
-              <text class="comment-text">{{item.content}}</text>
-            </view>
-            <view class="comment-reply-to" wx:if="{{item.replyToUser}}">
-              <text class="reply-prefix">回复</text>
-              <text class="reply-name">{{item.replyToUser.nickName}}</text>
+        </view>
+        <view class="card-right">
+          <view class="card-row">
+            <text class="card-name hot-name">{{item.userInfo.nickName}}</text>
+            <text class="card-time">{{item.displayTime || item.createTime}}</text>
+            <view class="hot-likes">
+              <text>⚡{{item.likesCount || 0}}</text>
             </view>
           </view>
-          <view
-            wx:if="{{isShow && youLongShow}}"
-            class="like-btn {{item.isLiked ? 'liked' : ''}}"
-            bindtap="onCommentLike"
-            data-id="{{item._id}}"
-            data-index="{{index}}">
-            <text class="heart-icon">{{item.isLiked ? '❤️' : '🤍'}}</text>
-            <text class="like-count" wx:if="{{item.likesCount > 0}}">{{item.likesCount}}</text>
+          <text class="card-text">{{item.content}}</text>
+          <view class="card-reply" wx:if="{{item.replyToUser}}">
+            <text class="reply-mark">↩</text>
+            <text>{{item.replyToUser.nickName}}</text>
           </view>
         </view>
       </view>
-
-      <view class="comments-empty" wx:if="{{commentsList.length === 0 && !loading}}">
-        <text class="empty-emoji">🐉</text>
-        <text class="empty-title">还没有人说话</text>
-        <text class="empty-sub">快来抢个沙发吧 ~</text>
+      <view class="divider-row">
+        <view class="divider"></view>
+        <text class="divider-label">全部评论</text>
+        <view class="divider"></view>
       </view>
+    </view>
+
+    <!-- 常规评论 -->
+    <view
+      class="comment-card {{index % 2 === 0 ? 'card-tint-a' : 'card-tint-b'}} {{item.isMine ? 'card-mine' : ''}}"
+      wx:for="{{regularComments}}"
+      wx:key="_id"
+      style="animation-delay: {{index * 0.04}}s;">
+      <view class="card-left">
+        <user-avatar src="{{item.userInfo.avatarUrl}}" size="medium"></user-avatar>
+      </view>
+      <view class="card-right">
+        <view class="card-row">
+          <text class="card-name">{{item.userInfo.nickName}}</text>
+          <text class="card-time">{{item.displayTime || item.createTime}}</text>
+          <view class="card-spacer"></view>
+          <view
+            wx:if="{{isShow && youLongShow}}"
+            class="card-like {{item.isLiked ? 'liked' : ''}}"
+            catchtap="onCommentLike"
+            data-id="{{item._id}}">
+            <text>{{item.isLiked ? '❤️' : '🤍'}}</text>
+            <text wx:if="{{item.likesCount > 0}}" class="like-num">{{item.likesCount}}</text>
+          </view>
+        </view>
+        <text class="card-text">{{item.content}}</text>
+        <view class="card-reply" wx:if="{{item.replyToUser}}">
+          <text class="reply-mark">↩</text>
+          <text>{{item.replyToUser.nickName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="load-hint" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="comments-empty" wx:if="{{commentsList.length === 0 && !loading}}">
+      <text class="empty-emoji">🫧</text>
+      <text class="empty-title">还没有评论</text>
+      <text class="empty-sub">说点什么，做个第一个发声的人 ~</text>
     </view>
   </view>
 </view>
 
-<!-- 评论输入栏 -->
+<!-- 输入栏 -->
 <view wx:if="{{isShow && youLongShow}}" class="input-bar">
   <view class="input-row">
     <input
       class="input-pill"
       type="text"
-      placeholder="和游龙们说点什么..."
+      placeholder="扔一个漂流瓶..."
       placeholder-class="text-placeholder"
       value="{{commentContent}}"
       bindinput="onCommentInput"
       confirm-type="send"
       bindconfirm="submitComment">
     </input>
-    <button class="send-btn" bindtap="submitComment">叮一下</button>
+    <button class="send-btn" bindtap="submitComment">发送</button>
   </view>
 </view>

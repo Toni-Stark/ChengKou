@@ -191,6 +191,16 @@ Page({
     console.log('订阅状态已更新:', e.detail);
   },
 
+  // 卡片点击进入详情
+  onCardTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id) {
+      wx.navigateTo({
+        url: `/pages/dynamic-detail/dynamic-detail?id=${id}`
+      });
+    }
+  },
+
   // 切换筛选
   toggleFilter() {
     this.setData({

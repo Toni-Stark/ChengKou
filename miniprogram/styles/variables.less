@@ -8,6 +8,38 @@
 @ocean-gradient-end: #00BCD4; // 渐变结束色（青色）
 @ocean-gradient: linear-gradient(135deg, @ocean-gradient-start 0%, @ocean-gradient-end 100%);
 
+// 品牌蓝紫渐变
+@brand-start: #667eea;
+@brand-end: #764ba2;
+@brand-gradient: linear-gradient(135deg, @brand-start 0%, @brand-end 100%);
+
+// 暖阳金渐变（热门/精选）
+@gold-start: #f6a449;
+@gold-end: #f9c270;
+@gold-gradient: linear-gradient(135deg, @gold-start 0%, @gold-end 100%);
+
+// 薄荷绿渐变（成功/完成）
+@mint-start: #11998e;
+@mint-end: #38ef7d;
+@mint-gradient: linear-gradient(135deg, @mint-start 0%, @mint-end 100%);
+
+// 珊瑚粉渐变（点赞/互动）
+@coral-start: #ff6b81;
+@coral-end: #ff9a76;
+@coral-gradient: linear-gradient(135deg, @coral-start 0%, @coral-end 100%);
+
+// 夜空紫渐变（会员/专属）
+@night-start: #4a4eab;
+@night-end: #7c3aed;
+@night-gradient: linear-gradient(135deg, @night-start 0%, @night-end 100%);
+
+// 气泡色
+@bubble-self-bg: linear-gradient(135deg, #e8f0fe 0%, #d4e4fc 100%);
+@bubble-other-bg: #ffffff;
+@bubble-self-border: #b8d0f5;
+@bubble-other-border: #e8e8ec;
+
+// 功能色
 @text-color: #333333;
 @text-secondary: #666666;
 @text-placeholder: #999999;
@@ -16,6 +48,7 @@
 @bg-color: #ffffff;
 @bg-white: #ffffff;
 @bg-gray: #f0f0f0;
+@bg-page: #f5f7fa;
 
 @border-color: #e5e5e5;
 @border-light: #f0f0f0;
@@ -26,6 +59,17 @@
 @info-color: #1989fa;
 
 @link-color: #576b95;
+
+// 装饰色（多彩标签/徽章用）
+@deco-colors:
+  #667eea, // 蓝紫
+  #f6a449, // 金
+  #11998e, // 薄荷
+  #e0409e, // 品红
+  #2ec4b6, // 青
+  #ff7b54, // 橙
+  #7c3aed, // 紫
+  #06a5c4; // 海蓝
 
 // 字体大小
 @font-xs: 10px;
@@ -50,9 +94,15 @@
 @radius-base: 8px;
 @radius-lg: 12px;
 @radius-xl: 16px;
+@radius-2xl: 24px;
+@radius-3xl: 32px;
 @radius-round: 50%;
 
-// 阴影
+// 阴影（增强版）
 @shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
 @shadow-base: 0 2px 8px rgba(0, 0, 0, 0.1);
 @shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+@shadow-card: 0 8px 32px rgba(30, 136, 229, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+@shadow-float: 0 16px 48px rgba(30, 136, 229, 0.2), 0 8px 16px rgba(0, 0, 0, 0.08);
+@shadow-gold: 0 6px 20px rgba(246, 164, 73, 0.35);
+@shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);

@@ -14,7 +14,9 @@
     <block wx:else>
     <view
       wx:for="{{dynamicsList}}"
-      wx:key="_id">
+      wx:key="_id"
+      bindtap="onDynamicTap"
+      data-id="{{item._id}}">
       <dynamic-item
         item="{{item}}"
         showEdit="{{true}}"

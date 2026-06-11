@@ -157,7 +157,7 @@ async function sendPushPlusNotification(data) {
   };
 
   try {
-    const response = await axios.post('http://www.pushplus.plus/send', message);
+    const response = await axios.post('https://www.pushplus.plus/send', message);
     console.log('PushPlus通知发送成功:', response.data);
     return { success: true, response: response.data };
   } catch (error) {

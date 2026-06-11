@@ -72,7 +72,7 @@ Page({
       this.setData({
         userInfo: {
           nickName: '未登录',
-          avatarUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png',
+          avatarUrl: 'https://lovebeyonddays.com/common/default-avatar.png',
           signature: '点击登录，开启游泳之旅',
           stats: { dynamicsCount: 0, followersCount: 0, subscriptionsCount: 0 }
         },

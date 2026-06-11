@@ -1,43 +1,90 @@
-<view class="edit-profile-page page">
-  <view class="container">
-    <!-- 头像 -->
-    <view class="form-item">
-      <text class="label">头像</text>
-      <view class="avatar-wrapper" bindtap="chooseAvatar">
-        <user-avatar src="{{form.avatarUrl}}" size="large"></user-avatar>
-        <text class="change-text">点击更换</text>
+<view class="edit-profile-page">
+  <!-- 实时预览卡片 -->
+  <view class="preview-card">
+    <view class="preview-deco top-right"></view>
+    <view class="preview-deco bottom-left"></view>
+    <view class="preview-body">
+      <view class="preview-avatar-wrap">
+        <image class="preview-avatar" src="{{form.avatarUrl}}" mode="aspectFill"></image>
+        <view class="preview-avatar-ring"></view>
       </view>
+      <text class="preview-name">{{form.nickName || '未设置昵称'}}</text>
+      <text class="preview-sig">{{form.signature || '这个人很懒，什么都没留下'}}</text>
+    </view>
+    <text class="preview-label">资料预览</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-section">
+    <!-- 头像 -->
+    <view class="form-card" bindtap="chooseAvatar">
+      <view class="card-icon-wrap icon-avatar">
+        <text class="card-icon">📷</text>
+      </view>
+      <view class="card-body">
+        <text class="card-label">头像</text>
+        <text class="card-hint">点击更换头像</text>
+      </view>
+      <view class="card-avatar-preview">
+        <image class="card-avt-img" src="{{form.avatarUrl}}" mode="aspectFill"></image>
+      </view>
+      <text class="card-arrow">›</text>
     </view>
 
     <!-- 昵称 -->
-    <view class="form-item">
-      <text class="label">昵称</text>
-      <input
-        class="input"
-        type="text"
-        value="{{form.nickName}}"
-        placeholder="请输入昵称"
-        maxlength="20"
-        bindinput="onNickNameInput"
-      />
+    <view class="form-card form-input-card">
+      <view class="card-icon-wrap icon-nick">
+        <text class="card-icon">✏️</text>
+      </view>
+      <view class="card-body">
+        <view class="floating-input {{nickFocused || nickCount > 0 ? 'active' : ''}}">
+          <text class="floating-label">昵称</text>
+          <input
+            class="floating-field"
+            type="text"
+            value="{{form.nickName}}"
+            placeholder=""
+            maxlength="20"
+            bindinput="onNickNameInput"
+            bindfocus="onNickFocus"
+            bindblur="onNickBlur"
+          />
+          <text class="floating-count">{{nickCount}}/20</text>
+        </view>
+      </view>
     </view>
 
     <!-- 个性签名 -->
-    <view class="form-item">
-      <text class="label">个性签名</text>
-      <textarea
-        class="textarea"
-        value="{{form.signature}}"
-        placeholder="请输入个性签名"
-        maxlength="100"
-        bindinput="onSignatureInput"
-        auto-height
-      />
+    <view class="form-card form-textarea-card">
+      <view class="card-icon-wrap icon-sig">
+        <text class="card-icon">💬</text>
+      </view>
+      <view class="card-body">
+        <view class="floating-input textarea {{sigFocused || sigCount > 0 ? 'active' : ''}}">
+          <text class="floating-label">个性签名</text>
+          <textarea
+            class="floating-area"
+            value="{{form.signature}}"
+            placeholder=""
+            maxlength="100"
+            bindinput="onSignatureInput"
+            bindfocus="onSigFocus"
+            bindblur="onSigBlur"
+            auto-height
+          />
+        </view>
+        <text class="floating-count textarea-count">{{sigCount}}/100</text>
+      </view>
     </view>
 
     <!-- 保存按钮 -->
-    <button class="save-btn btn-primary" bindtap="saveProfile" disabled="{{saving}}">
-      {{saving ? '保存中...' : '保存'}}
-    </button>
+    <view class="save-section">
+      <button class="save-btn" bindtap="saveProfile" disabled="{{saving}}">
+        <view class="save-btn-inner">
+          <text class="save-icon">{{saving ? '⏳' : '✅'}}</text>
+          <text class="save-text">{{saving ? '保存中...' : '保存修改'}}</text>
+        </view>
+      </button>
+    </view>
   </view>
 </view>

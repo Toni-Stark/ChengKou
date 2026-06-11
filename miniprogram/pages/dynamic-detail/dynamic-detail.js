@@ -7,6 +7,9 @@ Page({
     dynamicId: '',
     dynamic: null,
     commentsList: [],
+    hotComments: [],
+    regularComments: [],
+    hotCount: 0,
     page: 1,
     pageSize: 20,
     hasMore: true,
@@ -151,9 +154,11 @@ Page({
         showLoad: !loadMore
       });
 
+      const storedOpenid = this.data.storedOpenid;
       const processedList = result.list.map(comment => ({
         ...comment,
-        displayTime: util.formatRelativeTime(comment.createTime)
+        displayTime: util.formatRelativeTime(comment.createTime),
+        isMine: comment._openid === storedOpenid
       }));
 
       const newList = loadMore
@@ -165,10 +170,32 @@ Page({
         hasMore: result.hasMore,
         loading: false
       });
+      this.splitComments();
     } catch (error) {
       console.error('加载评论失败:', error);
       this.loadMockComments();
     }
+  },
+
+  splitComments() {
+    const list = this.data.commentsList;
+    if (list.length < 3) {
+      this.setData({ hotComments: [], regularComments: list, hotCount: 0 });
+      return;
+    }
+
+    // 按点赞数排序，取前2条作为热门
+    const sorted = [...list].sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
+    const hotIds = new Set(sorted.slice(0, 2).map(c => c._id));
+
+    const hot = list.filter(c => hotIds.has(c._id));
+    const regular = list.filter(c => !hotIds.has(c._id));
+
+    this.setData({
+      hotComments: hot,
+      regularComments: regular,
+      hotCount: hot.length
+    });
   },
 
   // 加载模拟评论数据
@@ -177,6 +204,9 @@ Page({
 
     this.setData({
       commentsList: mockComments,
+      hotComments: [],
+      regularComments: [],
+      hotCount: 0,
       hasMore: false,
       loading: false
     });
@@ -221,7 +251,7 @@ Page({
           _openid: 'current_user',
           userInfo: {
             nickName: '我',
-            avatarUrl: 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'
+            avatarUrl: 'https://lovebeyonddays.com/common/default-avatar.png'
           },
           content: content,
           likesCount: 0,
@@ -235,6 +265,7 @@ Page({
           'dynamic.commentsCount': (this.data.dynamic.commentsCount || 0) + 1,
           submitting: false
         });
+        this.splitComments();
         return;
       }
 
@@ -273,7 +304,6 @@ Page({
 
   async onCommentLike(e) {
     const commentId = e.currentTarget.dataset.id;
-    const index = e.currentTarget.dataset.index;
 
     try {
       const result = await request.callFunction('toggleLike', {
@@ -284,14 +314,18 @@ Page({
         showError: true
       });
 
-      // 更新UI
-      const comment = this.data.commentsList[index];
+      // 找到在 commentsList 中的索引
+      const fullIndex = this.data.commentsList.findIndex(c => c._id === commentId);
+      if (fullIndex === -1) return;
+
+      const comment = this.data.commentsList[fullIndex];
       const likesChange = result.isLiked ? 1 : -1;
 
       this.setData({
-        [`commentsList[${index}].isLiked`]: result.isLiked,
-        [`commentsList[${index}].likesCount`]: (comment.likesCount || 0) + likesChange
+        [`commentsList[${fullIndex}].isLiked`]: result.isLiked,
+        [`commentsList[${fullIndex}].likesCount`]: (comment.likesCount || 0) + likesChange
       });
+      this.splitComments();
 
     } catch (error) {
       console.error('点赞失败:', error);
@@ -396,46 +430,6 @@ Page({
       shareTitle = `${dynamic.userInfo?.nickName || '用户'}的游龙`;
     }
 
-    let shareImageUrl = '';
-    if (dynamic.images && dynamic.images.length > 0) {
-      shareImageUrl = dynamic.images[0];
-    }
-
-    const shareData2 = {
-      title: shareTitle,
-      query: `id=${this.data.dynamicId}&from=share`
-    };
-
-    if (shareImageUrl) {
-      shareData.imageUrl = shareImageUrl;
-    }
-
-    return shareData;
-  },
-
-  // 分享到朋友圈
-  onShareTimeline() {
-    const dynamic = this.data.dynamic;
-
-    if (!dynamic) {
-      return {
-        title: '查看动态详情'
-      };
-    }
-
-    // 获取分享标题
-    let shareTitle = '';
-    if (dynamic.title) {
-      shareTitle = dynamic.title;
-    } else if (dynamic.content) {
-      shareTitle = dynamic.content.length > 30
-        ? dynamic.content.substring(0, 30) + '...'
-        : dynamic.content;
-    } else {
-      shareTitle = `${dynamic.userInfo?.nickName || '用户'}的动态`;
-    }
-
-    // 获取分享图片
     let shareImageUrl = '';
     if (dynamic.images && dynamic.images.length > 0) {
       shareImageUrl = dynamic.images[0];

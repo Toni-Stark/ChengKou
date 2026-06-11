@@ -1,7 +1,7 @@
 <view class="user-avatar avatar-{{size}} avatar-{{shape}}" bindtap="onTap">
   <image
     class="avatar-image"
-    src="{{src || 'http://tg00h6qkg.hn-bkt.clouddn.com/common/default-avatar.png'}}"
+    src="{{src || 'https://lovebeyonddays.com/common/default-avatar.png'}}"
     mode="aspectFill"
     lazy-load="{{true}}"
     binderror="onImageError">
