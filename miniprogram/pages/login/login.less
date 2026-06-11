@@ -72,25 +72,58 @@
   font-size: @font-lg;
   font-weight: bold;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s;
 
   &:active {
     opacity: 0.8;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 
 // 协议区域
 .agreement-section {
-  text-align: center;
+  margin-bottom: @space-xl;
   display: flex;
   justify-content: center;
+}
+
+.agreement-check {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: @radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: @space-sm;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  &.checked {
+    background-color: #fff;
+    border-color: #fff;
+  }
+}
+
+.check-icon {
+  font-size: 12px;
+  color: #667eea;
+  font-weight: bold;
 }
 
 .agreement-text {
   font-size: @font-xs;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
-  display: flex;
-  align-items: center;
 }
 
 .link {

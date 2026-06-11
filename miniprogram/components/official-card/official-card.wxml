@@ -1,0 +1,18 @@
+<view class="official-card">
+  <view class="oc-tag-row">
+    <view class="oc-tag">
+      <text>📢 官方</text>
+    </view>
+    <text class="oc-time">{{item.publishTime || item.createTime}}</text>
+  </view>
+
+  <text class="oc-title">{{item.title}}</text>
+  <text class="oc-desc">{{item.summary || item.content}}</text>
+
+  <view class="oc-action">
+    <text class="oc-action-text">查看详情</text>
+    <button class="oc-share-btn" open-type="share" catchtap="onShare">
+      <text class="oc-share-icon">↗</text>
+    </button>
+  </view>
+</view>

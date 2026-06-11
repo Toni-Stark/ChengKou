@@ -1,0 +1,9 @@
+{
+  "name": "getAds",
+  "version": "1.0.0",
+  "description": "获取广告列表",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,321 @@
+@import "../../styles/variables.less";
+@import "../../styles/mixins.less";
+
+page {
+  background: @bg-page;
+  font-size: @font-base;
+  color: @text-color;
+}
+
+.edit-profile-page {
+  min-height: 100vh;
+  padding-bottom: 80rpx;
+}
+
+// 实时预览卡片
+.preview-card {
+  position: relative;
+  margin: 28rpx 28rpx 24rpx;
+  padding: 48rpx 32rpx 36rpx;
+  background: @bg-white;
+  border-radius: 32rpx;
+  box-shadow: @shadow-card;
+  overflow: hidden;
+}
+
+.preview-deco {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.06;
+  pointer-events: none;
+
+  &.top-right {
+    top: -40rpx;
+    right: -40rpx;
+    width: 200rpx;
+    height: 200rpx;
+    background: @brand-start;
+  }
+
+  &.bottom-left {
+    bottom: -60rpx;
+    left: -30rpx;
+    width: 160rpx;
+    height: 160rpx;
+    background: @brand-end;
+  }
+}
+
+.preview-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.preview-avatar-wrap {
+  width: 140rpx;
+  height: 140rpx;
+  margin-bottom: 24rpx;
+  border-radius: @radius-round;
+  padding: 6rpx;
+  background: @brand-gradient;
+}
+
+.preview-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: @radius-round;
+}
+
+.preview-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: @text-color;
+  margin-bottom: 8rpx;
+  max-width: 80%;
+  text-align: center;
+  .text-ellipsis-mixin(1);
+}
+
+.preview-sig {
+  font-size: 24rpx;
+  color: @text-placeholder;
+  max-width: 85%;
+  text-align: center;
+  line-height: 1.5;
+  .text-ellipsis-mixin(2);
+}
+
+.preview-label {
+  position: absolute;
+  top: 16rpx;
+  right: 20rpx;
+  font-size: 20rpx;
+  color: @brand-start;
+  background: rgba(102, 126, 234, 0.08);
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+// 表单区域
+.form-section {
+  padding: 0 28rpx;
+}
+
+.form-card {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 24rpx;
+  margin-bottom: 16rpx;
+  background: @bg-white;
+  border-radius: 24rpx;
+  box-shadow: @shadow-sm;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.form-input-card,
+.form-textarea-card {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.form-textarea-card {
+  padding-bottom: 32rpx;
+}
+
+.card-icon-wrap {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.icon-avatar { background: linear-gradient(135deg, #e8f0fe, #d4e4fc); }
+  &.icon-nick   { background: linear-gradient(135deg, #f0e8fe, #e0d4fc); }
+  &.icon-sig    { background: linear-gradient(135deg, #e8fef0, #d4fce4); }
+}
+
+.card-icon {
+  font-size: 28rpx;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+  margin-left: 20rpx;
+}
+
+.form-input-card .card-body,
+.form-textarea-card .card-body {
+  margin-left: 0;
+}
+
+.card-label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-color;
+  margin-bottom: 4rpx;
+}
+
+.card-hint {
+  font-size: 22rpx;
+  color: @text-placeholder;
+}
+
+.card-avatar-preview {
+  flex-shrink: 0;
+}
+
+.card-avt-img {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: @radius-round;
+  box-shadow: @shadow-sm;
+}
+
+.card-arrow {
+  font-size: 40rpx;
+  color: @border-color;
+  flex-shrink: 0;
+  margin-left: 8rpx;
+}
+
+// 浮动标签输入框
+.floating-input {
+  position: relative;
+  background: @bg-page;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  padding: 32rpx 20rpx 12rpx;
+  margin-top: 14rpx;
+  transition: all 0.3s;
+
+  &.active {
+    border-color: @brand-start;
+    background: @bg-white;
+    box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.05);
+  }
+}
+
+.floating-label {
+  position: absolute;
+  left: 20rpx;
+  top: 18rpx;
+  font-size: 28rpx;
+  color: @text-placeholder;
+  pointer-events: none;
+  transition: all 0.25s;
+
+  .floating-input.active & {
+    font-size: 20rpx;
+    color: @brand-start;
+    top: 8rpx;
+  }
+}
+
+.floating-field {
+  width: 100%;
+  height: 52rpx;
+  font-size: 28rpx;
+  color: @text-color;
+  position: relative;
+  z-index: 1;
+}
+
+.floating-area {
+  width: 100%;
+  min-height: 80rpx;
+  font-size: 28rpx;
+  color: @text-color;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.floating-count {
+  position: absolute;
+  right: 16rpx;
+  bottom: 8rpx;
+  font-size: 20rpx;
+  color: @border-color;
+
+  &.textarea-count {
+    position: static;
+    display: block;
+    text-align: right;
+    margin-top: 6rpx;
+    padding-right: 8rpx;
+  }
+}
+
+// 保存按钮
+.save-section {
+  margin-top: 40rpx;
+  padding: 0 4rpx;
+}
+
+.save-btn {
+  width: 100%;
+  height: 96rpx;
+  border: none;
+  border-radius: 48rpx;
+  padding: 0;
+  background: @brand-gradient;
+  box-shadow: 0 8rpx 28rpx rgba(102, 126, 234, 0.35);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  &:active::before {
+    left: 100%;
+  }
+
+  &:active {
+    transform: scale(0.96);
+    box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.25);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+
+  &::after {
+    border: none;
+  }
+}
+
+.save-btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.save-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.save-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 2rpx;
+}

@@ -3,7 +3,8 @@ const auth = require('../../utils/auth.js');
 Page({
   data: {
     loading: false,
-    redirectUrl: ''
+    redirectUrl: '',
+    agreed: false
   },
 
   onLoad(options) {
@@ -17,6 +18,22 @@ Page({
     if (options.redirect) {
       this.setData({ redirectUrl: decodeURIComponent(options.redirect) });
     }
+  },
+
+  toggleAgree() {
+    this.setData({ agreed: !this.data.agreed });
+  },
+
+  openAgreement() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement'
+    });
+  },
+
+  openPrivacy() {
+    wx.navigateTo({
+      url: '/pages/privacy/privacy'
+    });
   },
 
   async handleLogin() {

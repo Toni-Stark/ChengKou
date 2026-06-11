@@ -1,0 +1,85 @@
+<view class="agreement-page">
+  <view class="content-card">
+    <view class="title">用户协议</view>
+    <view class="update-date">更新日期：2024年6月1日</view>
+    <view class="update-date">生效日期：2024年6月8日</view>
+
+    <view class="section">
+      <view class="section-title">一、总则</view>
+      <view class="section-text">欢迎使用本小程序（以下简称"本平台"）。本协议是您与本平台运营方之间关于使用本平台服务所订立的协议。在注册或使用本平台服务前，请您仔细阅读本协议的全部内容。如您不同意本协议的任何条款，请不要注册或使用本平台服务。您点击"同意"、"注册"、"登录"或实际使用本平台服务，即视为您已阅读、理解并同意接受本协议的全部内容。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">二、账号注册与使用</view>
+      <view class="section-text">2.1 您在使用本平台服务时，需要通过微信授权登录。您应保证所提供的用户信息真实、准确、完整，并在信息变更时及时更新。</view>
+      <view class="section-text">2.2 您应当对以您的账号进行的所有活动和事件承担法律责任。请妥善保管您的账号信息，因账号被盗用或泄露而导致的损失，由您自行承担。</view>
+      <view class="section-text">2.3 您不得将账号转让、出借或与他人共用。如发现任何未经授权使用您账号的情况，请立即通知我们。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">三、用户行为规范</view>
+      <view class="section-text">3.1 您在使用本平台服务时，应遵守中华人民共和国相关法律法规，不得利用本平台从事违法违规行为，包括但不限于：</view>
+      <view class="section-text">（1）发布、传播反对宪法所确定的基本原则的内容；</view>
+      <view class="section-text">（2）发布、传播危害国家安全、泄露国家秘密、颠覆国家政权、破坏国家统一的内容；</view>
+      <view class="section-text">（3）发布、传播损害国家荣誉和利益的内容；</view>
+      <view class="section-text">（4）发布、传播煽动民族仇恨、民族歧视，破坏民族团结的内容；</view>
+      <view class="section-text">（5）发布、传播破坏国家宗教政策，宣扬邪教和封建迷信的内容；</view>
+      <view class="section-text">（6）发布、传播谣言，扰乱社会秩序，破坏社会稳定的内容；</view>
+      <view class="section-text">（7）发布、传播淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的内容；</view>
+      <view class="section-text">（8）侮辱或者诽谤他人，侵害他人合法权益的内容；</view>
+      <view class="section-text">（9）含有法律、行政法规禁止的其他内容。</view>
+      <view class="section-text">3.2 您不得利用本平台进行任何可能对互联网正常运转造成不利影响的行为，包括但不限于：</view>
+      <view class="section-text">（1）上传或传播计算机病毒、木马程序等恶意软件；</view>
+      <view class="section-text">（2）以任何方式干扰或破坏本平台的正常运行；</view>
+      <view class="section-text">（3）通过爬虫、机器人等方式批量获取本平台数据。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">四、发布内容规范</view>
+      <view class="section-text">4.1 您在本平台发布的"游龙"动态及其他内容（包括但不限于文字、图片、视频、位置信息等），应遵守本协议第三条所述的行为规范。</view>
+      <view class="section-text">4.2 您应对您发布的内容的真实性和合法性负责。如因您发布的内容引发任何纠纷或法律责任，由您自行承担。</view>
+      <view class="section-text">4.3 您授予本平台在全球范围内免费的、非独家的、可再许可的使用权，以便本平台提供、推广和改进服务。该使用权包括但不限于复制、改编、翻译、展示、传播您发布的内容。</view>
+      <view class="section-text">4.4 本平台有权对违反法律法规或本协议的内容进行删除、屏蔽或限制展示。对于严重违规的用户，本平台有权暂停或永久封禁其账号。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">五、知识产权</view>
+      <view class="section-text">5.1 本平台的所有软件、技术、程序、界面设计、图标、标识等的知识产权归本平台运营方所有。未经许可，您不得以任何方式使用、复制、修改、传播。</view>
+      <view class="section-text">5.2 您在本平台发布的内容，其知识产权仍归您所有。您同意授权本平台在提供服务所需的范围内使用这些内容。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">六、隐私保护</view>
+      <view class="section-text">本平台高度重视您的个人隐私和数据安全。我们制定了单独的《隐私政策》，详细说明了我们如何收集、使用、存储和保护您的个人信息。请您同时仔细阅读《隐私政策》。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">七、免责声明</view>
+      <view class="section-text">7.1 本平台按"现状"提供服务，不对服务的及时性、准确性、可靠性、完整性做出任何明示或默示的保证。</view>
+      <view class="section-text">7.2 因网络故障、系统维护、第三方服务等原因导致的服务中断或数据丢失，本平台不承担责任，但将尽合理努力及时修复。</view>
+      <view class="section-text">7.3 您理解并同意，在使用本平台服务过程中，可能会遇到他人发布的不当内容。您可通过举报功能向我们反馈，我们将及时处理。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">八、协议修改</view>
+      <view class="section-text">8.1 本平台有权根据法律法规的变化和业务发展的需要，对本协议进行修改和更新。</view>
+      <view class="section-text">8.2 修改后的协议将在本平台公布，并在必要时通过适当方式通知您。如您继续使用本平台服务，视为您同意修改后的协议。</view>
+      <view class="section-text">8.3 如您不同意修改后的协议，您应停止使用本平台服务。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">九、法律适用与争议解决</view>
+      <view class="section-text">9.1 本协议的订立、执行和解释及争议的解决均适用中华人民共和国法律。</view>
+      <view class="section-text">9.2 因本协议引起的或与之相关的任何争议，双方应友好协商解决。协商不成的，任何一方均有权向本平台运营方所在地有管辖权的人民法院提起诉讼。</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">十、其他</view>
+      <view class="section-text">10.1 本协议各条款的标题仅为阅读方便而设，不影响条款的含义和解释。</view>
+      <view class="section-text">10.2 如本协议的任何条款被认定为无效或不可执行，其余条款仍然有效。</view>
+      <view class="section-text">10.3 本协议的最终解释权归本平台运营方所有。</view>
+    </view>
+
+    <view class="footer-text">如您对本协议有任何疑问，请通过平台内的反馈渠道与我们联系。</view>
+  </view>
+</view>

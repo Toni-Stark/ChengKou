@@ -1,0 +1,36 @@
+<view class="ad-detail-page">
+  <view class="add-card" wx:if="{{item}}">
+    <view class="add-tag {{item.cardType === 'competition' ? 'tag-comp' : 'tag-ad'}}">
+      <text>{{item.cardType === 'competition' ? '🏆 赛事' : '💼 推荐'}}</text>
+    </view>
+
+    <text class="add-title">{{item.title}}</text>
+    <text class="add-time">{{item.createTime}}</text>
+
+    <view class="add-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+      <text class="add-tag-item" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="add-divider"></view>
+
+    <text class="add-section-title">{{item.cardType === 'competition' ? '赛事详情' : '详细介绍'}}</text>
+    <text class="add-body">{{item.description}}</text>
+
+    <view class="add-divider" wx:if="{{item.contactInfo}}"></view>
+
+    <view class="add-contact" wx:if="{{item.contactInfo}}">
+      <text class="add-contact-title">{{item.cardType === 'competition' ? '报名联系' : '联系方式'}}</text>
+      <view class="add-contact-row">
+        <text class="add-contact-info">{{item.contactType === 'phone' ? '📞 ' : '💬 '}}{{item.contactInfo}}</text>
+        <view class="add-contact-btn" wx:if="{{item.contactType === 'wechat'}}" bindtap="copyContact">
+          <text>复制微信号</text>
+        </view>
+        <view class="add-contact-btn" wx:if="{{item.contactType === 'phone'}}" bindtap="callContact">
+          <text>拨打电话</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="add-empty">加载中...</view>
+</view>

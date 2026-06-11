@@ -9,31 +9,35 @@
     <text class="filter-icon">⚓</text>
   </view>
 
-  <!-- 游龙列表 -->
+  <!-- 混合内容流 -->
   <view class="dynamics-list container" wx:if="{{youLongShow}}">
-    <view class="loading-state" wx:if="{{loading && dynamicsList.length === 0}}">
+    <view class="loading-state" wx:if="{{loading && feedCards.length === 0}}">
       <text class="loading-text">加载中...</text>
     </view>
 
     <block wx:else>
-      <view
-        wx:for="{{dynamicsList}}"
-        wx:key="_id"
-        bindtap="onCardTap"
-        data-id="{{item._id}}">
-        <dynamic-item
-          item="{{item}}"
-          isShow="{{isShow}}"
-          youLongShow="{{youLongShow}}"
-          bind:userTap="onUserTap"
-          bind:subscribe="onSubscribe"
-          bind:comment="onComment"
-          bind:share="onShare"
-          bind:delete="onDelete">
-        </dynamic-item>
-      </view>
+      <block wx:for="{{feedCards}}" wx:key="_id">
+        <view wx:if="{{item.cardType === 'dynamic'}}" bindtap="onCardTap" data-id="{{item._id}}">
+          <dynamic-item
+            item="{{item}}"
+            isShow="{{isShow}}"
+            youLongShow="{{youLongShow}}"
+            bind:userTap="onUserTap"
+            bind:subscribe="onSubscribe"
+            bind:comment="onComment"
+            bind:share="onShare"
+            bind:delete="onDelete">
+          </dynamic-item>
+        </view>
+        <view wx:elif="{{item.cardType === 'ad' || item.cardType === 'competition'}}" bindtap="onAdTap" data-id="{{item._id}}">
+          <ad-card item="{{item}}" bind:share="onAdShare"></ad-card>
+        </view>
+        <view wx:elif="{{item.cardType === 'official'}}" bindtap="onOfficialTap" data-id="{{item._id}}">
+          <official-card item="{{item}}" bind:share="onOfficialShare"></official-card>
+        </view>
+      </block>
 
-      <view class="empty-state" wx:if="{{dynamicsList.length === 0 && !loading}}">
+      <view class="empty-state" wx:if="{{feedCards.length === 0 && !loading}}">
         <view class="empty-art">
           <view class="art-circle c1"></view>
           <view class="art-circle c2"></view>
@@ -43,7 +47,7 @@
         <text class="empty-text">暂无游龙</text>
       </view>
 
-      <view class="load-more" wx:if="{{dynamicsList.length > 0}}">
+      <view class="load-more" wx:if="{{feedCards.length > 0}}">
         <text class="load-more-text">{{hasMore ? '上拉加载更多' : '没有更多了'}}</text>
       </view>
     </block>

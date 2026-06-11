@@ -6,6 +6,8 @@
     "pages/login/login",
     "pages/publish/publish",
     "pages/dynamic-detail/dynamic-detail",
+    "pages/ad-detail/ad-detail",
+    "pages/official-detail/official-detail",
     "pages/featured-detail/featured-detail",
     "pages/edit-profile/edit-profile",
     "pages/my-dynamics/my-dynamics",
@@ -19,7 +21,9 @@
     "pages/coach-detail/coach-detail",
     "pages/lifeguard-detail/lifeguard-detail",
     "pages/user-profile/user-profile",
-    "pages/edit-dynamic/edit-dynamic"
+    "pages/edit-dynamic/edit-dynamic",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy"
   ],
   "window": {
     "backgroundTextStyle": "light",

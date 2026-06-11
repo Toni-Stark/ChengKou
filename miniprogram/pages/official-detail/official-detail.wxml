@@ -1,0 +1,16 @@
+<view class="od-page">
+  <view class="od-card" wx:if="{{item}}">
+    <view class="od-tag">
+      <text>📢 官方</text>
+    </view>
+
+    <text class="od-title">{{item.title}}</text>
+    <text class="od-time">{{item.publishTime || item.createTime}}</text>
+
+    <view class="od-divider"></view>
+
+    <text class="od-body">{{item.content}}</text>
+  </view>
+
+  <view wx:else class="od-empty">加载中...</view>
+</view>

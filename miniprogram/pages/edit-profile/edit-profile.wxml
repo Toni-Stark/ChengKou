@@ -18,9 +18,6 @@
   <view class="form-section">
     <!-- 头像 -->
     <view class="form-card" bindtap="chooseAvatar">
-      <view class="card-icon-wrap icon-avatar">
-        <text class="card-icon">📷</text>
-      </view>
       <view class="card-body">
         <text class="card-label">头像</text>
         <text class="card-hint">点击更换头像</text>
@@ -33,9 +30,7 @@
 
     <!-- 昵称 -->
     <view class="form-card form-input-card">
-      <view class="card-icon-wrap icon-nick">
-        <text class="card-icon">✏️</text>
-      </view>
+     
       <view class="card-body">
         <view class="floating-input {{nickFocused || nickCount > 0 ? 'active' : ''}}">
           <text class="floating-label">昵称</text>
@@ -56,9 +51,7 @@
 
     <!-- 个性签名 -->
     <view class="form-card form-textarea-card">
-      <view class="card-icon-wrap icon-sig">
-        <text class="card-icon">💬</text>
-      </view>
+     
       <view class="card-body">
         <view class="floating-input textarea {{sigFocused || sigCount > 0 ? 'active' : ''}}">
           <text class="floating-label">个性签名</text>
@@ -81,7 +74,6 @@
     <view class="save-section">
       <button class="save-btn" bindtap="saveProfile" disabled="{{saving}}">
         <view class="save-btn-inner">
-          <text class="save-icon">{{saving ? '⏳' : '✅'}}</text>
           <text class="save-text">{{saving ? '保存中...' : '保存修改'}}</text>
         </view>
       </button>

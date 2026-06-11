@@ -1,6 +1,8 @@
 {
   "usingComponents": {
-    "dynamic-item": "../../components/dynamic-item/dynamic-item"
+    "dynamic-item": "../../components/dynamic-item/dynamic-item",
+    "ad-card": "../../components/ad-card/ad-card",
+    "official-card": "../../components/official-card/official-card"
   },
   "navigationBarTitleText": "翩若惊鸿",
   "enablePullDownRefresh": true,
