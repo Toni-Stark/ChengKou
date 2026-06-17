@@ -1,25 +1,22 @@
 <view class="edit-page" wx:if="{{youLongShow}}">
-  <scroll-view class="scroll" scroll-y="true">
     <!-- 展示方式选择 - 可视化预览卡片 -->
     <view class="section">
       <view class="section-header">
         <text class="section-icon">🎨</text>
         <text class="section-title">选择展示方式</text>
       </view>
-      <scroll-view class="type-selector" scroll-x="true" show-scrollbar="{{false}}">
-        <view class="type-cards">
-          <view
-            wx:for="{{displayTypes}}"
-            wx:key="value"
-            class="type-card {{displayType === item.value ? 'selected' : ''}}"
-            data-type="{{item.value}}"
-            bindtap="onDisplayTypeTap">
-            <text class="type-icon">{{item.icon}}</text>
-            <text class="type-label">{{item.label}}</text>
-            <text class="type-desc">{{item.desc}}</text>
-          </view>
+      <view class="type-cards">
+        <view
+          wx:for="{{displayTypes}}"
+          wx:key="value"
+          class="type-card {{displayType === item.value ? 'selected' : ''}}"
+          data-type="{{item.value}}"
+          bindtap="onDisplayTypeTap">
+          <text class="type-icon">{{item.icon}}</text>
+          <text class="type-label">{{item.label}}</text>
+          <text class="type-desc">{{item.desc}}</text>
         </view>
-      </scroll-view>
+      </view>
     </view>
 
     <!-- 当前选中类型的高亮标签 -->
@@ -30,24 +27,7 @@
 
     <!-- 视频模式 -->
     <view class="section" wx:if="{{displayType === 'video'}}">
-      <view class="video-upload-zone" wx:if="{{video}}">
-        <view class="video-preview">
-          <image class="video-thumb" src="{{thumbnail}}" mode="aspectFill"></image>
-          <view class="video-play-overlay">
-            <view class="play-circle">
-              <text class="play-icon">▶</text>
-            </view>
-          </view>
-        </view>
-        <view class="video-meta">
-          <text class="vm-title">视频已就绪</text>
-          <view class="vm-actions">
-            <view class="vm-btn change" bindtap="chooseVideo">更换视频</view>
-            <view class="vm-btn remove" bindtap="deleteVideo">移除</view>
-          </view>
-        </view>
-      </view>
-      <view class="upload-zone" bindtap="chooseVideo" wx:else>
+      <view class="upload-zone" bindtap="chooseVideo" wx:if="{{!video}}">
         <view class="upload-icon-wrap">
           <text class="upload-icon">🎬</text>
         </view>
@@ -143,14 +123,30 @@
     </view>
 
     <view style="height: 140rpx;"></view>
-  </scroll-view>
+
+  <!-- 视频播放区（scroll-view 外，避免原生组件冲突） -->
+  <view class="video-section" wx:if="{{displayType === 'video' && video}}">
+    <video
+      class="video-full"
+      src="{{video}}"
+      object-fit="fill"
+      controls
+      show-center-play-btn="{{true}}"
+      show-fullscreen-btn="{{true}}">
+    </video>
+    <view class="upload-spot" wx:if="{{uploading}}">
+      <view class="upload-spot-ring"></view>
+      <text class="upload-spot-text">{{uploadProgress}}%</text>
+    </view>
+    <view class="video-actions-bar">
+      <view class="va-btn change" bindtap="chooseVideo">更换视频</view>
+      <view class="va-btn remove" bindtap="deleteVideo">移除</view>
+    </view>
+  </view>
 
   <!-- 保存栏 -->
   <view class="save-bar">
-    <view class="save-info" wx:if="{{!submitting}}">
-      <text class="save-info-icon">🖊</text>
-      <text>修改后记得保存哦</text>
-    </view>
+
     <button class="save-btn" type="primary" disabled="{{submitting}}" bindtap="save">
       <text class="save-btn-text">{{submitting ? '保存中...' : '保存修改'}}</text>
     </button>

@@ -36,7 +36,17 @@
   <!-- 视频模式 (video) -->
   <view wx:elif="{{item.displayType === 'video'}}" class="dynamic-video-mode">
     <view class="video-wrapper mt-base" wx:if="{{item.video}}">
-      <video class="feed-video" style="width: 100%;border-radius: 25rpx;" src="{{item.video}}" controls show-center-play-btn="{{true}}" show-fullscreen-btn="{{true}}" object-fit="fill" direction="{{0}}"></video>
+      <video class="feed-video" 
+        style="width: 100%;height:56vw;border-radius: 20rpx;" 
+        src="{{item.video}}" 
+        controls
+        show-center-play-btn="{{onList?false:true}}" 
+        show-fullscreen-btn="{{onList?false:true}}" 
+        show-progress="{{onList?false:true}}" 
+        show-play-btn="{{onList?false:true}}" 
+        enable-progress-gesture="{{onList?false:true}}" 
+        title="{{item.title}}"
+        object-fit="cover"></video>
     </view>
     <view class="video-content mt-base">
       <text class="video-title text-lg font-bold" wx:if="{{item.title}}">{{item.title}}</text>

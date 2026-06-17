@@ -259,7 +259,7 @@ async function processDynamicsImages(dynamics) {
   return processedDynamics;
 }
 
-async function uploadToQiniu(filePath, folder = 'dynamics') {
+async function uploadToQiniu(filePath, folder = 'dynamics', onProgress) {
   try {
     const tokenRes = await callFunction('getQiniuToken', {}, {
       showLoad: false,
@@ -271,11 +271,12 @@ async function uploadToQiniu(filePath, folder = 'dynamics') {
     const key = `${folder}/${Date.now()}_${Math.floor(Math.random() * 10000)}.${ext}`;
 
     return new Promise((resolve, reject) => {
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: 'https://upload-z2.qiniup.com',
         filePath,
         name: 'file',
         formData: { token, key },
+        timeout: 600000,
         success(res) {
           try {
             console.log('[uploadToQiniu] statusCode:', res.statusCode);
@@ -294,6 +295,12 @@ async function uploadToQiniu(filePath, folder = 'dynamics') {
           reject(err);
         }
       });
+
+      if (onProgress) {
+        uploadTask.onProgressUpdate((res) => {
+          onProgress(res.progress);
+        });
+      }
     });
   } catch (e) {
     console.error('[uploadToQiniu] error:', e);

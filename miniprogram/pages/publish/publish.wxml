@@ -1,5 +1,4 @@
 <view class="publish-page" wx:if="{{youLongShow}}">
-  <scroll-view class="scroll" scroll-y="true">
     <!-- 选择展示类型 -->
     <view class="section">
       <view class="section-title">选择展示方式</view>
@@ -26,17 +25,27 @@
         <text class="upload-text">点击选择视频</text>
         <text class="upload-tip">支持最长60秒</text>
       </view>
-      <view class="video-thumb-row" wx:if="{{video}}">
-        <image class="video-thumb" src="{{thumbnail}}" mode="aspectFill"></image>
-        <view class="video-play-mask" bindtap="previewVideo">
-          <text class="play-btn">▶</text>
+      <view class="video-preview-wrap" wx:if="{{video}}">
+        <view class="video-player-box">
+          <video
+            class="video-player"
+            src="{{video}}"
+            controls
+            show-center-play-btn
+            object-fit="contain"
+            binderror="onVideoError"
+          ></video>
+          <view class="video-progress-mask" wx:if="{{uploading && uploadFileIndex >= images.length}}">
+            <view class="upload-spot-ring"></view>
+            <text class="upload-spot-text">{{uploadProgress}}%</text>
+          </view>
         </view>
-        <view class="video-info">
-          <text class="video-name">视频已选择</text>
-          <text class="video-action" bindtap="chooseVideo">重新选择</text>
-        </view>
-        <view class="delete-video-btn" catchtap="deleteVideo">
-          <text class="delete-icon">×</text>
+        <view class="video-actions-row" wx:if="{{!uploading}}">
+          <text class="video-file-name">已选择视频</text>
+          <view class="video-action-right">
+            <text class="video-action-link" bindtap="chooseVideo">重新选择</text>
+            <text class="video-action-link" catchtap="deleteVideo">删除</text>
+          </view>
         </view>
       </view>
 
@@ -67,8 +76,12 @@
       <view class="images-grid large-mode">
         <view class="image-wrapper" wx:if="{{images.length > 0}}">
           <image class="image-item" src="{{images[0]}}" mode="aspectFill"></image>
-          <view class="delete-image-btn" bindtap="deleteImage" data-index="0">
+          <view class="delete-image-btn" bindtap="deleteImage" data-index="0" wx:if="{{!uploading}}">
             <text class="delete-icon">×</text>
+          </view>
+          <view class="upload-spot" wx:if="{{uploading && uploadFileIndex === 0}}">
+            <view class="upload-spot-ring"></view>
+            <text class="upload-spot-text">{{uploadProgress}}%</text>
           </view>
         </view>
         <view class="add-image-btn" bindtap="chooseImages" wx:if="{{images.length === 0}}">
@@ -98,8 +111,12 @@
       <view class="images-grid">
         <view class="image-wrapper" wx:for="{{images}}" wx:key="index">
           <image class="image-item" src="{{item}}" mode="aspectFill"></image>
-          <view class="delete-image-btn" bindtap="deleteImage" data-index="{{index}}">
+          <view class="delete-image-btn" bindtap="deleteImage" data-index="{{index}}" wx:if="{{!uploading}}">
             <text class="delete-icon">×</text>
+          </view>
+          <view class="upload-spot" wx:if="{{uploading && uploadFileIndex === index}}">
+            <view class="upload-spot-ring"></view>
+            <text class="upload-spot-text">{{uploadProgress}}%</text>
           </view>
         </view>
         <view class="add-image-btn" bindtap="chooseImages" wx:if="{{images.length < 9}}">
@@ -131,12 +148,11 @@
     </view>
 
     <view style="height: 120rpx;"></view>
-  </scroll-view>
 
   <!-- 发布按钮（固定底部） -->
   <view class="publish-bar">
-    <button class="publish-btn" type="primary" disabled="{{submitting}}" bindtap="publish">
-      {{submitting ? '发布中...' : '发布'}}
+    <button class="publish-btn" type="primary" disabled="{{submitting || uploading}}" bindtap="publish">
+      {{uploading ? '上传中 ' + (uploadFileIndex + 1) + '/' + uploadTotalFiles : (submitting ? '发布中...' : '发布')}}
     </button>
   </view>
 </view>

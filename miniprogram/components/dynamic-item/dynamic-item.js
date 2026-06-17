@@ -25,6 +25,10 @@ Component({
     hideActions: {
       type: Boolean,
       value: false
+    },
+    onList: {
+      type: Boolean,
+      value: false
     }
   },
 

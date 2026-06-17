@@ -12,6 +12,10 @@ Page({
     images: [],
     location: null,
     submitting: false,
+    uploading: false,
+    uploadProgress: 0,
+    uploadFileIndex: 0,
+    uploadTotalFiles: 0,
     displayTypes: [
       { value: 'grid9', label: '九宫格', desc: '适合分享多张图片和文字' },
       { value: 'large', label: '大图模式', desc: '适合展示精美图片和标题' },
@@ -104,14 +108,16 @@ Page({
       count: 1,
       mediaType: ['video'],
       sourceType: ['album', 'camera'],
-      maxDuration: 120,
+      maxDuration: 30,
       camera: 'back',
+      type:'video',
       success: (res) => {
         const file = res.tempFiles[0];
         if (file.duration > 120) {
           wx.showToast({ title: '视频时长不能超过2分钟', icon: 'none' });
           return;
         }
+        console.log(file, '选中短视频')
         this.setData({
           video: file.tempFilePath,
           videoDuration: file.duration,
@@ -181,69 +187,52 @@ Page({
   },
 
   async publish() {
-    const { displayType, content, title, subtitle, video, videoDuration, images, location } = this.data;
+    const { displayType, content, title, subtitle, video, videoDuration, images, location, uploading } = this.data;
 
+    // 验证
     if (displayType === 'video') {
-      if (!video) {
-        request.showToast('请选择视频');
-        return;
-      }
-      if (videoDuration > 120) {
-        request.showToast('视频时长不能超过2分钟');
-        return;
-      }
+      if (!video) { request.showToast('请选择视频'); return; }
+      if (videoDuration > 120) { request.showToast('视频时长不能超过2分钟'); return; }
     } else if (displayType === 'large') {
-      if (!title.trim()) {
-        request.showToast('请输入标题');
-        return;
-      }
-      if (images.length === 0) {
-        request.showToast('请选择图片');
-        return;
-      }
+      if (!title.trim()) { request.showToast('请输入标题'); return; }
+      if (images.length === 0) { request.showToast('请选择图片'); return; }
     } else if (displayType === 'grid9') {
-      if (!content.trim() && images.length === 0) {
-        request.showToast('请输入内容或添加图片');
-        return;
-      }
+      if (!content.trim() && images.length === 0) { request.showToast('请输入内容或添加图片'); return; }
     } else if (displayType === 'text') {
-      if (!content.trim()) {
-        request.showToast('请输入文本内容');
-        return;
-      }
+      if (!content.trim()) { request.showToast('请输入文本内容'); return; }
     }
 
+    if (uploading) return;
     if (this.data.submitting) return;
 
-    this.setData({ submitting: true });
+    if (!wx.cloud || !wx.cloud.callFunction) {
+      request.showToast('发布成功（模拟）', 'success');
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
+    }
+
+    const totalFiles = images.length + (video ? 1 : 0);
+    this.setData({ uploading: true, uploadTotalFiles: totalFiles, uploadFileIndex: 0, uploadProgress: 0 });
 
     try {
-      // 检查云开发是否可用
-      if (!wx.cloud || !wx.cloud.callFunction) {
-        console.warn('云开发未配置，模拟发布成功');
-        request.showToast('发布成功（模拟）', 'success');
-
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 1500);
-
-        this.setData({ submitting: false });
-        return;
-      }
-
-      // 上传图片到云存储
       let uploadedImages = [];
-      if (images.length > 0) {
-        const qiniuImages = await Promise.all(
-          images.map(img => request.uploadToQiniu(img, 'dynamics'))
-        );
-        uploadedImages = qiniuImages;
+      for (let i = 0; i < images.length; i++) {
+        this.setData({ uploadFileIndex: i, uploadProgress: 0 });
+        const url = await request.uploadToQiniu(images[i], 'dynamics', (progress) => {
+          this.setData({ uploadProgress: progress });
+        });
+        uploadedImages.push(url);
       }
 
       let uploadedVideo = '';
       if (video) {
-        uploadedVideo = await request.uploadToQiniu(video, 'videos');
+        this.setData({ uploadFileIndex: images.length, uploadProgress: 0 });
+        uploadedVideo = await request.uploadToQiniu(video, 'videos', (progress) => {
+          this.setData({ uploadProgress: progress });
+        });
       }
+
+      this.setData({ submitting: true });
 
       await request.callFunction('publishDynamic', {
         displayType,
@@ -253,19 +242,11 @@ Page({
         video: uploadedVideo,
         images: uploadedImages,
         location
-      }, {
-        showLoad: true,
-        loadText: '发布中...'
-      });
+      }, { showLoad: true, loadText: '发布中...' });
 
       request.showToast('发布成功', 'success');
-
       wx.setStorageSync('_needRefresh', true);
-
-      setTimeout(() => {
-        wx.navigateBack();
-      }, 1500);
-
+      setTimeout(() => wx.navigateBack(), 1500);
     } catch (error) {
       console.error('发布失败:', error);
       const msg = error.errMsg || error.message || '';
@@ -275,7 +256,7 @@ Page({
         wx.showToast({ title: '发布失败，请重试', icon: 'none' });
       }
     } finally {
-      this.setData({ submitting: false });
+      this.setData({ uploading: false, submitting: false });
     }
   }
 });

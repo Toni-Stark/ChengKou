@@ -13,6 +13,8 @@ Page({
     images: [],
     location: null,
     submitting: false,
+    uploading: false,
+    uploadProgress: 0,
     loaded: false,
     displayTypes: [
       { value: 'grid9', label: '九宫格', icon: '▦', desc: '分享多张图片和文字', preview: 'grid' },
@@ -174,23 +176,33 @@ Page({
     if (displayType === 'text' && !content.trim()) { wx.showToast({ title: '请输入文本', icon: 'none' }); return; }
 
     if (this.data.submitting) return;
-    this.setData({ submitting: true });
+    this.setData({ submitting: true, uploading: true, uploadProgress: 0 });
 
     try {
       let uploadedImages = [];
       if (images.length > 0) {
-        const qiniuImages = await Promise.all(
-          images.filter(i => !i.startsWith('http')).map(i => request.uploadToQiniu(i, 'dynamics'))
-        );
+        const newImages = images.filter(i => !i.startsWith('http'));
         const existingImages = images.filter(i => i.startsWith('http'));
+        const qiniuImages = [];
+        for (let i = 0; i < newImages.length; i++) {
+          const url = await request.uploadToQiniu(newImages[i], 'dynamics', (progress) => {
+            this.setData({ uploadProgress: progress });
+          });
+          qiniuImages.push(url);
+        }
         uploadedImages = [...existingImages, ...qiniuImages];
         if (uploadedImages.length === 0) uploadedImages = images;
       }
 
       let uploadedVideo = this.data.video;
       if (video && !video.startsWith('http')) {
-        uploadedVideo = await request.uploadToQiniu(video, 'videos');
+        this.setData({ uploadProgress: 0 });
+        uploadedVideo = await request.uploadToQiniu(video, 'videos', (progress) => {
+          this.setData({ uploadProgress: progress });
+        });
       }
+
+      this.setData({ uploading: false });
 
       await request.callFunction('updateDynamic', {
         dynamicId: this.data.dynamicId,
@@ -210,7 +222,7 @@ Page({
     } catch (e) {
       wx.showToast({ title: '保存失败', icon: 'none' });
     } finally {
-      this.setData({ submitting: false });
+      this.setData({ uploading: false, submitting: false });
     }
   }
 });
